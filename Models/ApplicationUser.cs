@@ -13,6 +13,7 @@ namespace Models
     {
         public UserType Type { get; set; }
         public ICollection<Collection>? Collections { get; set; }
+        public ICollection<UserCollection>? UserCollection { get; set; }
 
     }
 }
