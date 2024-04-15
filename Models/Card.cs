@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public class Card
+    public record Card
     {
         public long Id { get; set; }
         public String Name { get; set; }
