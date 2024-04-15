@@ -19,5 +19,7 @@ namespace Models
         [ForeignKey(nameof(ApplicationUser))]
         public long UserId { get; set; }
         public ApplicationUser User { get; set; }
+
+        public ICollection<Card> Cards { get; set; }
     }
 }

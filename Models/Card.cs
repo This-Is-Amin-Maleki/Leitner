@@ -1,6 +1,7 @@
 ﻿using Shared;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,5 +15,9 @@ namespace Models
         public String Answer { get; set; }
         public String? Description { get; set; }
         public bool HasMp3 { get; set; }
+
+        [ForeignKey(nameof(Collection))]
+        public long CollectionId { get; set; }
+        public Collection Collection { get; set; }
     }
 }
