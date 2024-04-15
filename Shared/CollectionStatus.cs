@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Shared
 {
-    public enum CardStatus
+    public enum CollectionStatus
     {
         Draft,
         Submit,

@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public record Card
+    public record Collection
     {
         public long Id { get; set; }
         public String Name { get; set; }
         public String? Description { get; set; }
         public DateTime Date { get; set; }
-        public CardStatus Status { get; set; }
+        public CollectionStatus Status { get; set; }
     }
 }
