@@ -16,7 +16,7 @@ namespace Models
         public String? Description { get; set; }
         public bool HasMp3 { get; set; }
 
-        [ForeignKey(nameof(Collection))]
+        [ForeignKey("Collection")]
         public long CollectionId { get; set; }
         public Collection Collection { get; set; }
     }

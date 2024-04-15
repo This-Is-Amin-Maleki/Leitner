@@ -16,7 +16,7 @@ namespace Models
         public DateTime Date { get; set; }
         public CollectionStatus Status { get; set; }
 
-        [ForeignKey(nameof(ApplicationUser))]
+        [ForeignKey("ApplicationUser")]
         public long UserId { get; set; }
         public ApplicationUser User { get; set; }
 
