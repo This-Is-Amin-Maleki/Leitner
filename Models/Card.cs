@@ -11,13 +11,13 @@ namespace Models
     public record Card
     {
         public long Id { get; set; }
-        public String Ask { get; set; }
-        public String Answer { get; set; }
+        public required String Ask { get; set; }
+        public required String Answer { get; set; }
         public String? Description { get; set; }
         public bool HasMp3 { get; set; }
 
         [ForeignKey("Collection")]
         public long CollectionId { get; set; }
-        public Collection Collection { get; set; }
+        public required Collection Collection { get; set; }
     }
 }
