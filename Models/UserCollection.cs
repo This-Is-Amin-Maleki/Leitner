@@ -23,10 +23,10 @@ namespace Models
 
         [ForeignKey("ApplicationUser")]
         public long UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        public required ApplicationUser User { get; set; }
 
         [ForeignKey("Collection")]
         public long CollectionId { get; set; }
-        public Collection Collection { get; set; }
+        public required Collection Collection { get; set; }
     }
 }
