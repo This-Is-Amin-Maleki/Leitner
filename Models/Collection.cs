@@ -20,6 +20,6 @@ namespace Models
         public long UserId { get; set; }
         public required ApplicationUser User { get; set; }
 
-        public ICollection<Card> Cards { get; set; }
+        public ICollection<Card>? Cards { get; set; }
     }
 }
