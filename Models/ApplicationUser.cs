@@ -12,7 +12,7 @@ namespace Models
     public class ApplicationUser : IdentityUser<long>
     {
         public UserType Type { get; set; }
-        public ICollection<Collection> Collections { get; set; }
+        public ICollection<Collection>? Collections { get; set; }
 
     }
 }
