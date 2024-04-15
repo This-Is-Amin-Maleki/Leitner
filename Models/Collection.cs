@@ -13,7 +13,7 @@ namespace Models
         public long Id { get; set; }
         public String Name { get; set; }
         public String? Description { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime PublishedDate { get; set; }
         public CollectionStatus Status { get; set; }
 
         [ForeignKey("ApplicationUser")]
