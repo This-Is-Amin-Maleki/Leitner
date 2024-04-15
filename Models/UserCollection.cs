@@ -15,18 +15,18 @@ namespace Models
 
         public DateTime AddedForStudyDate { get; set; }
 
-        public DateTime LastReviewedDate { get; set; }
-        public long LastReviewedCardId { get; set; }
+        public DateTime? LastReviewedDate { get; set; }
+        public long? LastReviewedCardId { get; set; }
 
         public Card[][]? Boxes { get; set; }
         public Card[]? TempBox { get; set; }
 
         [ForeignKey("ApplicationUser")]
         public long UserId { get; set; }
-        public required ApplicationUser User { get; set; }
+        public ApplicationUser? User { get; set; }
 
         [ForeignKey("Collection")]
         public long CollectionId { get; set; }
-        public required Collection Collection { get; set; }
+        public Collection? Collection { get; set; }
     }
 }
