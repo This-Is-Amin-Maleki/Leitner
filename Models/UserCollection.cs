@@ -18,8 +18,8 @@ namespace Models
         public DateTime LastReviewedDate { get; set; }
         public long LastReviewedCardId { get; set; }
 
-        public Card[][] Boxes { get; set; }
-        public Card[] TempBox { get; set; }
+        public Card[][]? Boxes { get; set; }
+        public Card[]? TempBox { get; set; }
 
         [ForeignKey("ApplicationUser")]
         public long UserId { get; set; }
