@@ -1,3 +1,8 @@
+using DataAccess.Context;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Models;
+
 namespace View
 {
     public class Program
@@ -8,6 +13,23 @@ namespace View
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            builder.Services.Configure<IdentityOptions>(o =>
+            {
+                o.Lockout.MaxFailedAccessAttempts = 3;
+                o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                o.SignIn.RequireConfirmedEmail = true;
+            });
+            builder.Services.ConfigureApplicationCookie(o =>
+                o.AccessDeniedPath = "/"
+            );
 
             var app = builder.Build();
 
@@ -23,6 +45,8 @@ namespace View
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
