@@ -18,6 +18,6 @@ namespace Models
 
         [ForeignKey("Collection")]
         public long CollectionId { get; set; }
-        public required Collection Collection { get; set; }
+        public Collection? Collection { get; set; }
     }
 }
