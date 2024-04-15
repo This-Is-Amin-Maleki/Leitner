@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Models
@@ -19,5 +20,10 @@ namespace Models
         [ForeignKey("Collection")]
         public long CollectionId { get; set; }
         public Collection? Collection { get; set; }
+
+        [ForeignKey("Group")]
+        public long GroupId { get; set; }
+        public Group? Group { get; set; }
+
     }
 }
