@@ -11,6 +11,7 @@ namespace Models
     public record Slot
     {
         public long Id { get; set; }
+        public ICollection<Group>? Groups { get; set; }
         public ICollection<UserCollection>? UserCollection { get; set; }
     }
 }
