@@ -11,14 +11,14 @@ namespace Models
     public record Collection
     {
         public long Id { get; set; }
-        public String Name { get; set; }
+        public required String Name { get; set; }
         public String? Description { get; set; }
         public DateTime PublishedDate { get; set; }
         public CollectionStatus Status { get; set; }
 
         [ForeignKey("ApplicationUser")]
         public long UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        public required ApplicationUser User { get; set; }
 
         public ICollection<Card> Cards { get; set; }
     }
