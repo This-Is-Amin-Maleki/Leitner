@@ -11,7 +11,7 @@ namespace Models
     public record Slot
     {
         public long Id { get; set; }
-        public ICollection<Group>? Groups { get; set; }
+        public ICollection<Container> Containers { get; set; }
 
         [ForeignKey("Box")]
         public long BoxId { get; set; }

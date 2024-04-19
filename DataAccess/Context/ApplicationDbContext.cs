@@ -17,7 +17,7 @@ namespace DataAccess.Context
         public DbSet<Card> Cards { get; set; }
         public DbSet<Box> Boxes { get; set; }
         public DbSet<Slot> Slots { get; set; }
-        public DbSet<Group> Groups { get; set; }
+        public DbSet<Container> Containers { get; set; }
 
 
         public int CleanSaveChanges()

@@ -21,9 +21,9 @@ namespace Models
         public long CollectionId { get; set; }
         public Collection? Collection { get; set; }
 
-        [ForeignKey("Group")]
-        public long GroupId { get; set; }
-        public Group? Group { get; set; }
+        [ForeignKey("Container")]
+        public long ContainerId { get; set; }
+        public Container Container { get; set; }
 
     }
 }
