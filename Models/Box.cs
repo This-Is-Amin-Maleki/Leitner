@@ -8,32 +8,29 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public record UserCollection
+    public record Box
     {
         public long Id { get; set; }
 
-
         public DateTime AddedForStudyDate { get; set; }
 
-        public DateTime? LastReviewedDate { get; set; }
+        public DateTime LastReviewedDate { get; set; }
         /// <summary>
         /// Default value should be -2, indicating: 'Start studying from slot 4 and decrease the slot number after each study, until it reaches -2'.
-        /// -1 indicating : 'It'ss tempBox, add some new cards to fill and study mistakes'.
+        /// -1 indicating : 'It'ss tempSlot, add some new cards to fill and study mistakes'.
         /// 0-4 indicating : 'Start studying cards of slot[(2^StdySlot) - 1]'.
         /// </summary>
-        public int StudySlot { get; set; }
-        public long? LastReviewedCardId { get; set; }
+        public int LastReviewedSlot { get; set; }
+        public long LastReviewedCardId { get; set; }
 
         [ForeignKey("ApplicationUser")]
         public long UserId { get; set; }
-        public ApplicationUser? User { get; set; }
+        public ApplicationUser User { get; set; }
 
         [ForeignKey("Collection")]
         public long CollectionId { get; set; }
-        public Collection? Collection { get; set; }
+        public Collection Collection { get; set; }
 
-        [ForeignKey("Slot")]
-        public long Slot { get; set; }
-        public Slot[]? Slots { get; set; }
+        public ICollection<Slot> Slots { get; set; }
     }
 }

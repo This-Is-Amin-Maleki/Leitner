@@ -12,6 +12,9 @@ namespace Models
     {
         public long Id { get; set; }
         public ICollection<Group>? Groups { get; set; }
-        public ICollection<UserCollection>? UserCollection { get; set; }
+
+        [ForeignKey("Box")]
+        public long BoxId { get; set; }
+        public Box Box { get; set; }
     }
 }

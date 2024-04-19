@@ -21,6 +21,6 @@ namespace Models
         public ApplicationUser? User { get; set; }
 
         public ICollection<Card>? Cards { get; set; }
-        public ICollection<UserCollection>? UserCollection { get; set; }
+        public ICollection<Box> Boxes { get; set; }
     }
 }
