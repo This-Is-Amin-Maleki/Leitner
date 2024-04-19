@@ -19,12 +19,6 @@ namespace DataAccess.Context
         public DbSet<Slot> Slots { get; set; }
         public DbSet<Container> Containers { get; set; }
 
-
-        public int CleanSaveChanges()
-        {
-            int result = base.SaveChanges();
-            return result;
-        }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             options.UseSqlServer("Database = Leitner;Data Source=ARTEMISIA;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
