@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using DataAccess.Data.Configurations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using Models;
 using Shared;
+using System.Drawing;
+using System.Xml.Schema;
 
 namespace DataAccess.Context
 {
@@ -25,7 +28,21 @@ namespace DataAccess.Context
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(BoxConfiguration).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(CardConfiguration).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(CollectionConfiguration).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContainerConfiguration).Assembly);
+
+            //...
+
             base.OnModelCreating(modelBuilder);
+
+            /*
+            modelBuilder.Entity<Box>()
+            .HasOne(c => c.Collection)
+            .WithMany()
+            .OnDelete(DeleteBehavior.ClientSetNull);
+            */
         }
     }
 }

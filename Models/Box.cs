@@ -27,7 +27,7 @@ namespace Models
         public long UserId { get; set; }
         public ApplicationUser User { get; set; }
 
-        [ForeignKey("Collection")]
+        //[ForeignKey("Collection")]
         public long CollectionId { get; set; }
         public Collection Collection { get; set; }
 

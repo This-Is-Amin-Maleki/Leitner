@@ -21,7 +21,7 @@ namespace Models
         public long CollectionId { get; set; }
         public Collection Collection { get; set; }
 
-        [ForeignKey("Container")]
+        //[ForeignKey("Container")]
         public long ContainerId { get; set; }
         public Container Container { get; set; }
 
