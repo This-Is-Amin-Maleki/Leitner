@@ -19,5 +19,9 @@ namespace View.Controllers
             _collectionService = collectionService;
         }
 
+        // GET: HomeController1
+        public async Task<ActionResult> Index() =>
+            View(await _collectionService.GetCollectionsAsync());
+
     }
 }
