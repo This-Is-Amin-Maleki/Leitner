@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
-using Models;
+using Models.Entities;
 using Shared;
 using System.Drawing;
 using System.Xml.Schema;
@@ -14,7 +14,6 @@ namespace DataAccess.Context
     public class ApplicationDbContext : IdentityDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
-
         //public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Collection> Collections { get; set; }
         public DbSet<Card> Cards { get; set; }

@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Models
+namespace Models.Entities
 {
     public record Collection
     {
         public long Id { get; set; }
-        public  String Name { get; set; }
-        public String Description { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
         public DateTime PublishedDate { get; set; }
         public CollectionStatus Status { get; set; }
 

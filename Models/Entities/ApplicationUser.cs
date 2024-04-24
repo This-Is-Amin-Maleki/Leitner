@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Models
+namespace Models.Entities
 {
     public class ApplicationUser : IdentityUser<long>
     {

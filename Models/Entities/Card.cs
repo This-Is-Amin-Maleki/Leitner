@@ -7,14 +7,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Models
+namespace Models.Entities
 {
     public record Card
     {
         public long Id { get; set; }
-        public String Ask { get; set; }
-        public  String Answer { get; set; }
-        public String Description { get; set; }
+        public string Ask { get; set; }
+        public string Answer { get; set; }
+        public string Description { get; set; }
         public bool HasMp3 { get; set; }
 
         [ForeignKey("Collection")]

@@ -2,6 +2,7 @@ using DataAccess.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using Models.Entities;
 
 namespace View
 {
