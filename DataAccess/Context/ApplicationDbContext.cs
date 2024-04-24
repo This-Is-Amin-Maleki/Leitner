@@ -15,7 +15,7 @@ namespace DataAccess.Context
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        //public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Collection> Collections { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<Box> Boxes { get; set; }
@@ -33,16 +33,7 @@ namespace DataAccess.Context
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(CollectionConfiguration).Assembly);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContainerConfiguration).Assembly);
 
-            //...
-
             base.OnModelCreating(modelBuilder);
-
-            /*
-            modelBuilder.Entity<Box>()
-            .HasOne(c => c.Collection)
-            .WithMany()
-            .OnDelete(DeleteBehavior.ClientSetNull);
-            */
         }
     }
 }
