@@ -1,8 +1,8 @@
 using DataAccess.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Models;
-using Models.Entities;
+using Microsoft.Extensions.Configuration;
+using Services.Services;
 
 namespace View
 {
@@ -21,6 +21,8 @@ namespace View
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            builder.Services.AddScoped<CollectionService>();
 
             builder.Services.Configure<IdentityOptions>(o =>
             {
