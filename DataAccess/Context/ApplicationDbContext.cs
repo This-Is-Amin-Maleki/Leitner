@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Models.Entities;
 using Shared;
 using System.Drawing;
@@ -11,7 +12,9 @@ namespace DataAccess.Context
 {
     public class ApplicationDbContext:DbContext
     {
-        public ApplicationDbContext() { }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options) 
+        { }
         public DbSet<Collection> Collections { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<Box> Boxes { get; set; }
