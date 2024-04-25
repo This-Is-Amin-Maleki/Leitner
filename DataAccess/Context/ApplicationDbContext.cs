@@ -1,6 +1,4 @@
 ﻿using DataAccess.Data.Configurations;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
@@ -11,10 +9,9 @@ using System.Xml.Schema;
 
 namespace DataAccess.Context
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext:DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
-        //public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public ApplicationDbContext() { }
         public DbSet<Collection> Collections { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<Box> Boxes { get; set; }

@@ -23,10 +23,6 @@ namespace Models.Entities
         public int LastReviewedSlot { get; set; }
         public long LastReviewedCardId { get; set; }
 
-        [ForeignKey("ApplicationUser")]
-        public long UserId { get; set; }
-        public ApplicationUser User { get; set; }
-
         //[ForeignKey("Collection")]
         public long CollectionId { get; set; }
         public Collection Collection { get; set; }
