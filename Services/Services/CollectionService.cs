@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using Models.DTOs;
 using Services.Interfaces;
+using Shared;
 
 namespace Services.Services
 {
@@ -69,11 +70,17 @@ namespace Services.Services
         {
             var collection = MapDTOToCollection(collectionDTO);
             await _dbContext.Collections.AddAsync(collection);
+
+            //add published date Time
+            collection.PublishedDate = collection.Status is CollectionStatus.Published ? DateTime.UtcNow : new();
             await _dbContext.SaveChangesAsync();
         }
         public async Task EditCollectionAsync(CollectionDTO collectionDTO)
         {
             var collection = MapDTOToCollection(collectionDTO);
+
+            //add published date Time
+            collection.PublishedDate = collection.Status is CollectionStatus.Published ? DateTime.UtcNow : new();
 
             var hasCollection = await _dbContext.Collections
                 .AnyAsync(x => x.Id == collectionDTO.Id);
