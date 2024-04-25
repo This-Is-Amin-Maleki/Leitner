@@ -15,7 +15,6 @@ namespace Models.ViewModels
         public string Description { get; set; }
         public DateTime PublishedDate { get; set; }
         public CollectionStatus Status { get; set; }
-        public long UserId { get; set; }
 
         public long CardsQ { get; set; }
         public long BoxCount { get; set; }
