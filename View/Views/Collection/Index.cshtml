@@ -1,0 +1,38 @@
+﻿@using Models.DTOs
+@model IEnumerable<CollectionDTO>
+
+@{
+    ViewData["Title"] = " Collection Index";
+}
+
+<h1>Collections</h1>
+
+<a asp-action="Create" class="font-14 menu btn btn-outline-info">
+    <i class="bi bi-plus-circle"></i>
+</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>User Id</th>
+            <th>Published Date</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var collection in Model)
+        {
+            <tr>
+                <td>@collection.Name</td>
+                <td>@collection.UserId</td>
+                <td>@collection.PublishedDate</td>
+                <td>@collection.Status</td>
+                <td>
+                    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@collection.Id">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
