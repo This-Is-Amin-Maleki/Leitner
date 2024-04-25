@@ -21,7 +21,6 @@ namespace View.Controllers
 
         // GET: CollectionController
         public async Task<ActionResult> Index() =>
-            View(await _collectionService.GetCollectionsAsync());
             View(await _collectionService.ReadCollectionsAsync());
 
         // GET: CollectionController/Details/5
