@@ -69,11 +69,19 @@ namespace Services.Services
         public async Task AddCollectionAsync(CollectionDTO collectionDTO)
         {
             var collection = MapDTOToCollection(collectionDTO);
-            await _dbContext.Collections.AddAsync(collection);
 
             //add published date Time
             collection.PublishedDate = collection.Status is CollectionStatus.Published ? DateTime.UtcNow : new();
+#warning catch!!
+            try
+            {
+                await _dbContext.Collections.AddAsync(collection);
             await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
         public async Task EditCollectionAsync(CollectionDTO collectionDTO)
         {
@@ -89,8 +97,16 @@ namespace Services.Services
             {
                 throw new Exception("Not Found");
             }
-            await _dbContext.Collections.AddAsync(collection);
-            await _dbContext.SaveChangesAsync();
+#warning catch!!
+            try
+            {
+                _dbContext.Collections.Update(collection);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
         public async Task DeleteCollectionAsync(CollectionDTO collectionDTO)
         {
@@ -103,10 +119,19 @@ namespace Services.Services
             {
                 throw new Exception("Not Found");
             }
-            _dbContext.Collections.Remove(collection);
-            await _dbContext.SaveChangesAsync();
-        }
 
+#warning catch!!
+            try
+            {
+                _dbContext.Collections.Remove(collection);
+                await _dbContext.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
 
         ////////////////////////////////////////////////////////
         private CollectionDTO CreateEmptyCollectionDTO()
