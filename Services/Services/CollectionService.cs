@@ -156,8 +156,8 @@ namespace Services.Services
             return new Collection()
             {
                 Id = collectionViewModel.Id,
-                Description = collectionViewModel.Description,
-                Name = collectionViewModel.Name,
+                Description = collectionViewModel.Description.Trim(),
+                Name = collectionViewModel.Name.Trim(),
                 Status = collectionViewModel.Status,
             };
         }
