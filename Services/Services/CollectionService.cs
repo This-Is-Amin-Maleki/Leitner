@@ -23,7 +23,6 @@ namespace Services.Services
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    UserId = x.UserId,
                     Description = x.Description,
                     PublishedDate = x.PublishedDate,
                     Status = x.Status,
@@ -37,7 +36,6 @@ namespace Services.Services
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    UserId = x.UserId,
                     Description = x.Description,
                     PublishedDate = x.PublishedDate,
                     Status = x.Status,
@@ -116,7 +114,6 @@ namespace Services.Services
                 Name = collection.Name,
                 PublishedDate = collection.PublishedDate,
                 Status = collection.Status,
-                UserId = collection.UserId
             };
         }
         private Collection MapDTOToCollection(CollectionDTO collectionDTO)
@@ -128,7 +125,6 @@ namespace Services.Services
                 Name = collectionDTO.Name,
                 PublishedDate = DateTime.Now,
                 Status = collectionDTO.Status,
-                UserId = collectionDTO.UserId,
             };
         }
     }

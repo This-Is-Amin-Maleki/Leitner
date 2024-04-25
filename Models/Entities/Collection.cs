@@ -16,10 +16,6 @@ namespace Models.Entities
         public DateTime PublishedDate { get; set; }
         public CollectionStatus Status { get; set; }
 
-        [ForeignKey("ApplicationUser")]
-        public long UserId { get; set; }
-        public ApplicationUser User { get; set; }
-
         public ICollection<Card> Cards { get; set; }
         public ICollection<Box> Boxes { get; set; }
     }

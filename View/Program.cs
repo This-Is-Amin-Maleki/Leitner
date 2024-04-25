@@ -24,12 +24,6 @@ namespace View
 
             builder.Services.AddScoped<CollectionService>();
 
-            builder.Services.Configure<IdentityOptions>(o =>
-            {
-                o.Lockout.MaxFailedAccessAttempts = 3;
-                o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-                o.SignIn.RequireConfirmedEmail = true;
-            });
             builder.Services.ConfigureApplicationCookie(o =>
                 o.AccessDeniedPath = "/"
             );
