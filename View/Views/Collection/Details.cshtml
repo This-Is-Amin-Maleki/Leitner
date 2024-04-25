@@ -1,0 +1,24 @@
+﻿@using Models.DTOs
+@model CollectionDTO
+
+@{
+    ViewData["Title"] = $"Collection {Model.Name} Details";
+}
+
+<h2>Collection <b>@Model.Name</b> Details</h2>
+
+<div>
+    <dl>
+        <dt>Id:</dt>
+        <dd>@Model.Id</dd>
+        <dt>Description:</dt>
+        <dd>@Model.Description</dd>
+        @if (Model.Status is Shared.CollectionStatus.Published)
+        {
+            <dt>Published Date:</dt>
+            <dd>@Model.PublishedDate</dd>
+        }
+        <dt>Status:</dt>
+        <dd>@Model.Status</dd>
+    </dl>
+</div>
