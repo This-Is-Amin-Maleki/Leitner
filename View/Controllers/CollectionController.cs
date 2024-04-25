@@ -14,7 +14,7 @@ namespace View.Controllers
     public class CollectionController: Controller
     {
         CollectionService _collectionService;
-        public CollectionController(CollectionService collectionService, RawDbService raw)
+        public CollectionController(CollectionService collectionService)
         {
             _collectionService = collectionService;
         }
