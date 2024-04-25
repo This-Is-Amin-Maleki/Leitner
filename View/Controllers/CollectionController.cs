@@ -24,5 +24,10 @@ namespace View.Controllers
             View(await _collectionService.GetCollectionsAsync());
             View(await _collectionService.ReadCollectionsAsync());
 
+        // GET: CollectionController/Details/5
+        public async Task<ActionResult> Details(long id) =>
+            View(await _collectionService.ReadCollectionAsync(id));
+
+
     }
 }
