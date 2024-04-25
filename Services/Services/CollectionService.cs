@@ -4,6 +4,7 @@ using Models.Entities;
 using Models.DTOs;
 using Services.Interfaces;
 using Shared;
+using Models.ViewModels;
 
 namespace Services.Services
 {
@@ -66,9 +67,9 @@ namespace Services.Services
                 CreateEmptyCollectionDTO() :
                 MapCollectionToDTO(collection);
         }
-        public async Task AddCollectionAsync(CollectionDTO collectionDTO)
+        public async Task AddCollectionAsync(CollectionViewModel collectionViewModel)
         {
-            var collection = MapDTOToCollection(collectionDTO);
+            var collection = MapViewModelToCollection(collectionViewModel);
 
             //add published date Time
             collection.PublishedDate = collection.Status is CollectionStatus.Published ? DateTime.UtcNow : new();
@@ -83,15 +84,15 @@ namespace Services.Services
 
             }
         }
-        public async Task EditCollectionAsync(CollectionDTO collectionDTO)
+        public async Task EditCollectionAsync(CollectionViewModel collectionViewModel)
         {
-            var collection = MapDTOToCollection(collectionDTO);
+            var collection = MapViewModelToCollection(collectionViewModel);
 
             //add published date Time
             collection.PublishedDate = collection.Status is CollectionStatus.Published ? DateTime.UtcNow : new();
 
             var hasCollection = await _dbContext.Collections
-                .AnyAsync(x => x.Id == collectionDTO.Id);
+                .AnyAsync(x => x.Id == collectionViewModel.Id);
 
             if (hasCollection is false)
             {
@@ -108,12 +109,12 @@ namespace Services.Services
 
             }
         }
-        public async Task DeleteCollectionAsync(CollectionDTO collectionDTO)
+        public async Task DeleteCollectionAsync(CollectionViewModel collectionViewModel)
         {
-            var collection = MapDTOToCollection(collectionDTO);
+            var collection = MapViewModelToCollection(collectionViewModel);
 
             var hasCollection = await _dbContext.Collections
-                .AnyAsync(x => x.Id == collectionDTO.Id);
+                .AnyAsync(x => x.Id == collectionViewModel.Id);
 
             if (hasCollection is false)
             {
@@ -150,15 +151,14 @@ namespace Services.Services
                 Status = collection.Status,
             };
         }
-        private Collection MapDTOToCollection(CollectionDTO collectionDTO)
+        private Collection MapViewModelToCollection(CollectionViewModel collectionViewModel)
         {
             return new Collection()
             {
-                Id = collectionDTO.Id ?? 0,
-                Description = collectionDTO.Description,
-                Name = collectionDTO.Name,
-                PublishedDate = DateTime.Now,
-                Status = collectionDTO.Status,
+                Id = collectionViewModel.Id,
+                Description = collectionViewModel.Description,
+                Name = collectionViewModel.Name,
+                Status = collectionViewModel.Status,
             };
         }
     }

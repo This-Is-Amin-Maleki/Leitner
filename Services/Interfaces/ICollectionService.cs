@@ -1,4 +1,5 @@
 ﻿using Models.DTOs;
+using Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,9 @@ namespace Services.Interfaces
 {
     public interface ICollectionService
     {
-        Task AddCollectionAsync(CollectionDTO collectionDTO);
-        Task DeleteCollectionAsync(CollectionDTO collectionDTO);
-        Task EditCollectionAsync(CollectionDTO collectionDTO);
+        Task AddCollectionAsync(CollectionViewModel collectionViewModel);
+        Task DeleteCollectionAsync(CollectionViewModel collectionViewModel);
+        Task EditCollectionAsync(CollectionViewModel collectionViewModel);
         Task<CollectionDTO> GetCollectionAsync(long id);
         Task<List<CollectionDTO>> GetCollectionsAsync();
         Task<CollectionDTO> ReadCollectionAsync(long id);
