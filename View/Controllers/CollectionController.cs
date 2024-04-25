@@ -29,5 +29,32 @@ namespace View.Controllers
             View(await _collectionService.ReadCollectionAsync(id));
 
 
+        // GET: CollectionController/Create
+        public ActionResult Create() => View();
+
+        // POST: CollectionController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(CollectionViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("XX", "Not Valid!");
+                return View(model);
+            }
+
+#warning catch!!
+            try
+            { 
+               await _collectionService.AddCollectionAsync(model);
+               return RedirectToAction(nameof(Index));
+            }
+            catch( Exception ex)
+            {
+                ModelState.AddModelError("xx", ex.Message);
+                return View(model);
+            }
+        }
+
     }
 }
