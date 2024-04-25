@@ -84,5 +84,32 @@ namespace View.Controllers
              }
         }
 
+        // GET: CollectionController/Delete
+        //public async Task<ActionResult> Delete(long id) =>
+        //    View(await _collectionService.ReadCollectionAsync(id));
+
+        // POST: CollectionController/Delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Delete(CollectionViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("XX", "Not Valid!");
+                return View(model);
+            }
+
+            try
+            {
+                await _collectionService.DeleteCollectionAsync(model);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("xx", ex.Message);
+                return View(model);
+            }
+        }
+
     }
 }
