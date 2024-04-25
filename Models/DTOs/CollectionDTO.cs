@@ -19,7 +19,5 @@ namespace Models.DTOs
         public DateTime PublishedDate { get; set; }
         [Required]
         public CollectionStatus Status { get; set; }
-
-        public long UserId { get; set; }
     }
 }
