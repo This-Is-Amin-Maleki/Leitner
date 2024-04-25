@@ -29,18 +29,20 @@
     <br />
     <input type="hidden" asp-for="Id" />
     <a asp-action="Index" class="btn btn-dark">Return</a>
-    <button id="DeleteButton" class="btn btn-danger">Delete</button>
-    <button type="submit" class="btn btn-success">Save</button>
+    <a href="#" id="DeleteButton" class="btn btn-danger">Delete</a>
+    <button type="submit" class="btn btn-success" autofocus>Save</button>
 </form>
 
 @section Scripts {
     <script>
         $(document).ready(function () {
             $('#DeleteButton').click(function () {
-                var currentUrl = $('#EditForm').attr('action');
-                var newUrl = currentUrl.replace('Edit', 'Delete');
-                $('#EditForm').attr('action', newUrl);
-                $('#EditForm').submit();
+                if ((confirm('Are you sure to DELETE "@(Html.Raw(Model.Name))" Collection?'))) {
+                    var currentUrl = $('#EditForm').attr('action');
+                    var newUrl = currentUrl.replace('Edit', 'Delete');
+                    $('#EditForm').attr('action', newUrl);
+                    $('#EditForm').submit();
+                }
             });
         });
     </script>
