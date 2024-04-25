@@ -18,6 +18,7 @@ namespace Services.Services
         public async Task<List<CollectionDTO>> ReadCollectionsAsync()
         {//use auto mapper
             return await _dbContext.Collections
+                .FromSqlRaw("SELECT Id, Name, LEFT(Description, 200) AS Description, PublishedDate, Status FROM Collections")
                 .AsNoTracking()
                 .Select(x => new CollectionDTO()
                 {
@@ -32,6 +33,7 @@ namespace Services.Services
         public async Task<List<CollectionDTO>> GetCollectionsAsync()
         {//use auto mapper
             return await _dbContext.Collections
+                .FromSqlRaw("SELECT Id, Name, LEFT(Description, 200) AS Description, PublishedDate, Status FROM Collections")
                 .Select(x => new CollectionDTO()
                 {
                     Id = x.Id,
