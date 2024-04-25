@@ -56,5 +56,33 @@ namespace View.Controllers
             }
         }
 
+        // GET: CollectionController/Edit
+        public async Task<ActionResult> Edit(long id) => 
+            View(await _collectionService.ReadCollectionAsync(id));
+
+        // POST: CollectionController/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(CollectionViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("XX", "Not Valid!");
+                return View(model);
+            }
+
+#warning catch!!
+            try
+             {
+                await _collectionService.EditCollectionAsync(model);
+                return RedirectToAction(nameof(Index));
+             }
+             catch (Exception ex)
+             {
+                 ModelState.AddModelError("xx", ex.Message);
+                 return View(model);
+             }
+        }
+
     }
 }
