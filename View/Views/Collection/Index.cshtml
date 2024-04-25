@@ -25,7 +25,12 @@
         {
             <tr>
                 <td>@collection.Name</td>
-                <td>@collection.PublishedDate</td>
+                <td>
+                    @if (collection.Status is Shared.CollectionStatus.Published)
+                    {
+                        @collection.PublishedDate
+                    }
+                </td>
                 <td>@collection.Status</td>
                 <td>
                     <a class="btn btn-primary" asp-action="Edit" asp-route-id="@collection.Id">Edit</a>
