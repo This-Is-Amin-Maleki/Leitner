@@ -13,9 +13,9 @@ namespace Services.Interfaces
         Task AddCollectionAsync(CollectionViewModel collectionViewModel);
         Task DeleteCollectionAsync(CollectionViewModel collectionViewModel);
         Task EditCollectionAsync(CollectionViewModel collectionViewModel);
-        Task<CollectionDTO> GetCollectionAsync(long id);
-        Task<List<CollectionDTO>> GetCollectionsAsync();
-        Task<CollectionDTO> ReadCollectionAsync(long id);
-        Task<List<CollectionDTO>> ReadCollectionsAsync();
+        Task<CollectionViewModel> GetCollectionAsync(long id);
+        Task<List<CollectionViewModel>> GetCollectionsAsync();
+        Task<CollectionViewModel> ReadCollectionAsync(long id);
+        Task<List<CollectionViewModel>> ReadCollectionsAsync();
     }
 }
