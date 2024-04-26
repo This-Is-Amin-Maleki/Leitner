@@ -85,5 +85,12 @@ namespace Services.Services
             }
             return (list, collectionName);
         }
+        ////////////////////////////////////////////////////////
+        
+        private CardViewModel CreateEmptyCardViewModel()
+        {
+            return new CardViewModel();
+        }
+
     }
 }
