@@ -140,6 +140,11 @@ namespace Services.Services
             return new CollectionDTO();
         }
 
+        private CollectionViewModel CreateEmptyCollectionViewModel()
+        {
+            return new CollectionViewModel();
+        }
+
         private CollectionDTO MapCollectionToDTO(Collection collection)
         {
             return new CollectionDTO()
@@ -151,6 +156,19 @@ namespace Services.Services
                 Status = collection.Status,
             };
         }
+
+        private CollectionViewModel MapCollectionViewModel(Collection collection)
+        {
+            return new CollectionViewModel()
+            {
+                Id = collection.Id,
+                Description = collection.Description,
+                Name = collection.Name,
+                PublishedDate = collection.PublishedDate,
+                Status = collection.Status,
+            };
+        }
+
         private Collection MapViewModelToCollection(CollectionViewModel collectionViewModel)
         {
             return new Collection()
