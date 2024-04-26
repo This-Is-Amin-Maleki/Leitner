@@ -12,12 +12,13 @@ namespace DataAccess.Data.Configurations
     public class ContainerConfiguration : IEntityTypeConfiguration<Container>
     {
         public void Configure(EntityTypeBuilder<Container> builder)
-        {
+        {/*
             builder.HasMany(x => x.Cards)
                 .WithOne(x => x.Container)
                 .HasForeignKey(x => x.ContainerId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict); //  <= this will prevent that error
+          */
         }
     }
 }

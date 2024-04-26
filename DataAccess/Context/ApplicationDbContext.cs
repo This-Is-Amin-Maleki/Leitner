@@ -28,9 +28,9 @@ namespace DataAccess.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(BoxConfiguration).Assembly);
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(CardConfiguration).Assembly);
+            //modelBuilder.ApplyConfigurationsFromAssembly(typeof(CardConfiguration).Assembly);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(CollectionConfiguration).Assembly);
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContainerConfiguration).Assembly);
+            //modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContainerConfiguration).Assembly);
 
             base.OnModelCreating(modelBuilder);
         }

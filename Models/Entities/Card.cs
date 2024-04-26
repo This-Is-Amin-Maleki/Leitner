@@ -22,8 +22,7 @@ namespace Models.Entities
         public Collection Collection { get; set; }
 
         //[ForeignKey("Container")]
-        public long ContainerId { get; set; }
-        public Container Container { get; set; }
+        public ICollection<Container> Containers { get; set; }
 
     }
 }

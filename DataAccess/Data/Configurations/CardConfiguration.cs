@@ -13,11 +13,12 @@ namespace DataAccess.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Card> builder)
         {
-            builder.HasOne(x => x.Container)
+            /*builder.HasOne(x => x.Container)
                 .WithMany(x => x.Cards)
                 .HasForeignKey(x => x.ContainerId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict); //  <= this will prevent that error
+            */
         }
     }
 }
