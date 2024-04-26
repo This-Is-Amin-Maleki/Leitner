@@ -59,5 +59,33 @@ namespace View.Controllers
             }
         }
 
+        // GET: CardController/Edit
+        public async Task<ActionResult> Edit(long id) => 
+            View(await _cardService.ReadCardAsync(id));
+
+        // POST: CardController/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(CardViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("XX", "Not Valid!");
+                return View(model);
+            }
+
+#warning catch!!
+            try
+             {
+                await _cardService.EditCardAsync(model);
+                return RedirectToAction(nameof(Index), new { id = model.Collection.Id });
+            }
+             catch (Exception ex)
+             {
+                 ModelState.AddModelError("xx", ex.Message);
+                 return View(model);
+             }
+        }
+
     }
 }
