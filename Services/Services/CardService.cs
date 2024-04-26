@@ -123,6 +123,28 @@ namespace Services.Services
 
             }
         }
+        public async Task EditCardAsync(CardViewModel cardViewModel)
+        {
+            var card = MapViewModelToCard(cardViewModel);
+
+            var hasCard = await _dbContext.Cards
+                .AnyAsync(x => x.Id == cardViewModel.Id);
+
+            if (hasCard is false)
+            {
+                throw new Exception("Not Found");
+            }
+#warning catch!!
+            try
+            {
+                _dbContext.Cards.Update(card);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
         ////////////////////////////////////////////////////////
         
         private CardViewModel CreateEmptyCardViewModel()
