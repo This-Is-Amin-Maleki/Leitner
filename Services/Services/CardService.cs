@@ -109,5 +109,17 @@ namespace Services.Services
             };
         }
 
+        private Card MapViewModelToCard(CardViewModel cardViewModel)
+        {
+            return new Card()
+            {
+                Id = cardViewModel.Id,
+                Ask = cardViewModel.Ask,
+                Answer = cardViewModel.Answer,
+                Description = cardViewModel.Description,
+                HasMp3 = cardViewModel.HasMp3,
+                CollectionId = cardViewModel.Collection.Id,
+            };
+        }
     }
 }
