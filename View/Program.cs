@@ -23,6 +23,7 @@ namespace View
             });
 
             builder.Services.AddScoped<CollectionService>();
+            builder.Services.AddScoped<CardService>();
 
             builder.Services.ConfigureApplicationCookie(o =>
                 o.AccessDeniedPath = "/"
