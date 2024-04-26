@@ -108,6 +108,21 @@ namespace Services.Services
                 CreateEmptyCardViewModel() :
                 MapCardToViewModel(card);
         }
+        public async Task AddCardAsync(CardViewModel cardViewModel)
+        {
+            var card = MapViewModelToCard(cardViewModel);
+            card.Id = 0;
+
+            try
+            {
+                await _dbContext.Cards.AddAsync(card);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
         ////////////////////////////////////////////////////////
         
         private CardViewModel CreateEmptyCardViewModel()
