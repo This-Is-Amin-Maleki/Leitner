@@ -92,5 +92,22 @@ namespace Services.Services
             return new CardViewModel();
         }
 
+        private CardViewModel MapCardToViewModel(Card card)
+        {
+            return new CardViewModel()
+            {
+                Id = card.Id,
+                Ask = card.Ask,
+                Answer = card.Answer,
+                Description = card.Description,
+                HasMp3 = card.HasMp3,
+                Collection = new CardCollectionViewModel()
+                {
+                    Id = card.Collection.Id,
+                    Name = card.Collection.Name,
+                },
+            };
+        }
+
     }
 }
