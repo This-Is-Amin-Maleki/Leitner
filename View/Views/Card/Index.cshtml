@@ -1,0 +1,38 @@
+﻿@using Models.ViewModels
+@model IEnumerable<CardViewModel>
+
+@{
+    ViewData["Title"] = $"{ViewData["CollectionName"]} Card Index";
+}
+
+<h2>@ViewData["CollectionName"] Cards</h2>
+
+<a asp-action="Create" asp-route-id="@ViewData["CollectionId"]" class="font-14 menu btn btn-outline-info">
+    <i class="bi bi-plus-circle"></i>
+</a>
+<a asp-controller="Collection" asp-action="Index" asp-route-id="@ViewData["CollectionId"]" class="btn btn-dark">Return</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ask</th>
+            <th>Answer</th>
+            <th>Audio</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var card in Model)
+        {
+            <tr>
+                <td>@card.Ask</td>
+                <td>@card.Answer</td>
+                <td>@card.HasMp3</td>
+                <td>
+                    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@card.Id">Edit</a>
+                    <a class="btn btn-primary" asp-action="Details" asp-route-id="@card.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
