@@ -17,12 +17,12 @@ namespace Services.Services
             _dbContext = dbContext;
         }
 
-        public async Task<List<CollectionDTO>> ReadCollectionsAsync()
+        public async Task<List<CollectionViewModel>> ReadCollectionsAsync()
         {//use auto mapper
             return await _dbContext.Collections
                 .FromSqlRaw("SELECT Id, Name, LEFT(Description, 200) AS Description, PublishedDate, Status FROM Collections")
                 .AsNoTracking()
-                .Select(x => new CollectionDTO()
+                .Select(x => new CollectionViewModel()
                 {
                     Id = x.Id,
                     Name = x.Name,
@@ -32,11 +32,11 @@ namespace Services.Services
                 })
                 .ToListAsync();
         }
-        public async Task<List<CollectionDTO>> GetCollectionsAsync()
+        public async Task<List<CollectionViewModel>> GetCollectionsAsync()
         {//use auto mapper
             return await _dbContext.Collections
                 .FromSqlRaw("SELECT Id, Name, LEFT(Description, 200) AS Description, PublishedDate, Status FROM Collections")
-                .Select(x => new CollectionDTO()
+                .Select(x => new CollectionViewModel()
                 {
                     Id = x.Id,
                     Name = x.Name,
@@ -47,25 +47,25 @@ namespace Services.Services
                 .ToListAsync();
         }
 #warning check performance
-        public async Task<CollectionDTO> ReadCollectionAsync(long id)
+        public async Task<CollectionViewModel> ReadCollectionAsync(long id)
         {
             var collection = await _dbContext.Collections
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             return collection is null ?
-                CreateEmptyCollectionDTO() :
-                MapCollectionToDTO(collection);
+                CreateEmptyCollectionViewModel() :
+                MapCollectionViewModel(collection);
         }
 #warning check performance
-        public async Task<CollectionDTO> GetCollectionAsync(long id)
+        public async Task<CollectionViewModel> GetCollectionAsync(long id)
         {
             var collection = await _dbContext.Collections
                 .FindAsync(id);
 
             return collection is null ?
-                CreateEmptyCollectionDTO() :
-                MapCollectionToDTO(collection);
+                CreateEmptyCollectionViewModel() :
+                MapCollectionViewModel(collection);
         }
         public async Task AddCollectionAsync(CollectionViewModel collectionViewModel)
         {
