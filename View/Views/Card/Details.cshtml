@@ -1,0 +1,28 @@
+﻿@using Models.ViewModels
+@model CardViewModel
+
+@{
+    ViewData["Title"] = $"Card {Model.Ask} Details";
+}
+
+<h2>Card <b>@Model.Ask</b> Details</h2>
+
+<div>
+    <dl>
+        <dt>Id:</dt>
+        <dd>@Model.Id</dd>
+        <dt>Collection:</dt>
+        <dd>@Model.Collection.Name</dd>
+        <dt>Ask:</dt>
+        <dd>@Model.Ask</dd>
+        <dt>Answer:</dt>
+        <dd>@Model.Answer</dd>
+        <dt>Description:</dt>
+        <dd>@Model.Description</dd>
+        <dt>Has Audio:</dt>
+        <dd>@Model.HasMp3</dd>
+    </dl>
+    <br />
+
+    <a asp-action="Index" asp-route-id="@Model.Collection.Id" class="btn btn-dark">Return</a>
+</div>
