@@ -23,5 +23,10 @@ namespace View.Controllers
             return View(model.list);
         }
 
+        // GET: CardController/Details/5
+        public async Task<ActionResult> Details(long id) =>
+            View(await _cardService.ReadCardAsync(id));
+
+
     }
 }
