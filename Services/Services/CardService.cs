@@ -55,5 +55,35 @@ namespace Services.Services
             }
             return (list, collectionName);
         }
+        public async Task<(List<CardViewModel>, string)> GetCardsAsync(long collectionId)
+        {//use auto mapper
+            string collectionName = "";
+            List<CardViewModel> list = await _dbContext.Cards
+                .Include(x => x.Collection)
+                .Where(x => x.CollectionId == collectionId)
+                .Select(x => new CardViewModel()
+                {
+                    Id = x.Id,
+                    Ask = x.Ask,
+                    Answer = x.Answer,
+                    Description = x.Description,
+                    HasMp3 = x.HasMp3,
+                })
+                .ToListAsync();
+            if (list.Count > 0)
+            {
+                collectionName = list.FirstOrDefault().Collection.Name;
+            }
+            else
+            {
+                var collection = await _dbContext.Collections
+                .AsNoTracking()
+                .Select(x => new { x.Name, x.Id })
+                .FirstOrDefaultAsync(x => x.Id == collectionId);
+
+                collectionName = collection.Name;
+            }
+            return (list, collectionName);
+        }
     }
 }
