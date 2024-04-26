@@ -87,5 +87,32 @@ namespace View.Controllers
              }
         }
 
+        // GET: CardController/Delete
+        //public async Task<ActionResult> Delete(long id) =>
+        //    View(await _cardService.ReadCardAsync(id));
+
+        // POST: CardController/Delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Delete(CardViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("XX", "Not Valid!");
+                return View(model);
+            }
+
+            try
+            {
+                await _cardService.DeleteCardAsync(model);
+                return RedirectToAction(nameof(Index), new { id = model.Collection.Id });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("xx", ex.Message);
+                return View(model);
+            }
+        }
+
     }
 }
