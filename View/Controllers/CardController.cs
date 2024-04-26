@@ -28,5 +28,36 @@ namespace View.Controllers
             View(await _cardService.ReadCardAsync(id));
 
 
+        // GET: CardController/Create
+        public ActionResult Create(long id)
+        {
+            ViewData["CollectionId"] = id;
+            return View();
+        }
+
+        // POST: CardController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(CardViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("XX", "Not Valid!");
+                return View(model);
+            }
+
+#warning catch!!
+            try
+            { 
+               await _cardService.AddCardAsync(model);
+               return RedirectToAction(nameof(Index), new { id = model.Collection.Id });
+            }
+            catch( Exception ex)
+            {
+                ModelState.AddModelError("xx", ex.Message);
+                return View(model);
+            }
+        }
+
     }
 }
