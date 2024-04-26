@@ -173,7 +173,7 @@ namespace Services.Services
         {
             return new Collection()
             {
-                Id = collectionViewModel.Id,
+                Id = collectionViewModel.Id ?? 0,
                 Description = collectionViewModel.Description.Trim(),
                 Name = collectionViewModel.Name.Trim(),
                 Status = collectionViewModel.Status,
