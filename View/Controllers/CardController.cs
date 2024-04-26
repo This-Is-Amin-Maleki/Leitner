@@ -13,5 +13,15 @@ namespace View.Controllers
             _cardService = cardService;
         }
 
+        // GET: CardController
+        public async Task<ActionResult> Index(long id)
+        {
+            (List<CardViewModel> list, string collectionName) model = await _cardService.ReadCardsAsync(id);
+
+            ViewData["CollectionId"] = id;
+            ViewData["CollectionName"] = model.collectionName;
+            return View(model.list);
+        }
+
     }
 }
