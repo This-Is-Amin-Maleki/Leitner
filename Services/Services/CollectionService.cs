@@ -135,26 +135,9 @@ namespace Services.Services
         }
 
         ////////////////////////////////////////////////////////
-        private CollectionDTO CreateEmptyCollectionDTO()
-        {
-            return new CollectionDTO();
-        }
-
         private CollectionViewModel CreateEmptyCollectionViewModel()
         {
             return new CollectionViewModel();
-        }
-
-        private CollectionDTO MapCollectionToDTO(Collection collection)
-        {
-            return new CollectionDTO()
-            {
-                Id = collection.Id,
-                Description = collection.Description,
-                Name = collection.Name,
-                PublishedDate = collection.PublishedDate,
-                Status = collection.Status,
-            };
         }
 
         private CollectionViewModel MapCollectionViewModel(Collection collection)
