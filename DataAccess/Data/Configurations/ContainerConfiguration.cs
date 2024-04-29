@@ -12,13 +12,12 @@ namespace DataAccessLeit.Data.Configurations
     public class ContainerConfiguration : IEntityTypeConfiguration<Container>
     {
         public void Configure(EntityTypeBuilder<Container> builder)
-        {/*
-            builder.HasMany(x => x.Cards)
+        {
+            builder.HasMany(x => x.ContainerCards)
                 .WithOne(x => x.Container)
                 .HasForeignKey(x => x.ContainerId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict); //  <= this will prevent that error
-          */
+                .IsRequired();
+                //.OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

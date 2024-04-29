@@ -13,12 +13,10 @@ namespace DataAccessLeit.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Card> builder)
         {
-            /*builder.HasOne(x => x.Container)
-                .WithMany(x => x.Cards)
+            builder.HasMany(x => x.ContainerCards)
+                .WithOne(x => x.Card)
                 .HasForeignKey(x => x.ContainerId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict); //  <= this will prevent that error
-            */
+                .IsRequired();
         }
     }
 }
