@@ -1,4 +1,4 @@
-namespace View.Models
+namespace ModelsLeit.ViewModels
 {
     public class ErrorViewModel
     {
