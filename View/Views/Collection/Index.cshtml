@@ -9,7 +9,10 @@
 <h2>Collections</h2>
 
 <a asp-action="Create" class="font-14 menu btn btn-outline-info">
-    <i class="bi bi-plus-circle"></i>
+    <i class="bi bi-plus-square"></i> Add
+</a>
+<a asp-controller="Box" asp-action="Index" class="float-end font-14 menu btn btn-outline-dark">
+    <i class="bi bi-inboxes"></i> My Boxes
 </a>
 
 <table class="table">
@@ -27,16 +30,28 @@
             <tr>
                 <td>@collection.Name</td>
                 <td>
-                    @if (collection.Status is Shared.CollectionStatus.Published)
+                    @if (collection.Status is SharedLeit.CollectionStatus.Published)
                     {
                         @collection.PublishedDate
                     }
                 </td>
                 <td>@collection.Status</td>
                 <td>
-                    <a class="btn btn-primary" asp-controller="Card" asp-action="Index" asp-route-id="@collection.Id">Cards</a>
-                    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@collection.Id">Edit</a>
-                    <a class="btn btn-primary" asp-action="Details" asp-route-id="@collection.Id">Details</a>
+                    <a class="btn @(collection.Status is CollectionStatus.Published ? "btn-primary" : "disabled")" asp-controller="Box" asp-action="Add" asp-route-id="@collection.Id"><i class="bi bi-plus-circle"></i> Add Box</a>
+                    <a class="btn btn-primary
+" asp-controller="Box" asp-action="List" asp-route-id="@collection.Id"><i class="bi bi-inboxes"></i> Boxes</a>
+                    <a class="btn btn-primary" asp-controller="Card" asp-action="Index" asp-route-id="@collection.Id">
+                        <i class="bi bi-collection"></i>
+                        Cards
+                    </a>
+                    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@collection.Id">
+                        <i class="bi bi-pencil"></i>
+                        Edit
+                    </a>
+                    <a class="btn btn-primary" asp-action="Details" asp-route-id="@collection.Id">
+                        <i class="bi bi-file-text"></i>
+                        Details
+                    </a>
                 </td>
             </tr>
         }

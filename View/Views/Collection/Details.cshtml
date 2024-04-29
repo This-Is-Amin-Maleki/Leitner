@@ -7,14 +7,13 @@
 }
 
 <h2>Collection <b>@Model.Name</b> Details</h2>
-
+<a asp-action="Index" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+</br>
 <div>
     <dl>
-        <dt>Id:</dt>
-        <dd>@Model.Id</dd>
         <dt>Description:</dt>
         <dd>@Model.Description</dd>
-        @if (Model.Status is Shared.CollectionStatus.Published)
+        @if (Model.Status is SharedLeit.CollectionStatus.Published)
         {
             <dt>Published Date:</dt>
             <dd>@Model.PublishedDate</dd>
@@ -24,5 +23,4 @@
     </dl>
     <br />
 
-    <a asp-action="Index" class="btn btn-dark">Return</a>
 </div>

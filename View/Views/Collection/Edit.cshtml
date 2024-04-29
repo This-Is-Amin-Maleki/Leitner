@@ -4,10 +4,12 @@
 
 @{
     ViewData["Title"] = $"Edit {Model.Name} Collection";
+    var noDel = Model.Status is CollectionStatus.Published or CollectionStatus.Submit || Model.BoxCount is not 0;
 }
 
 <h2>Edit <b>@Model.Name</b> Collection</h2>
-
+<a asp-action="Index" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+<br />
 <form id="EditForm" asp-action="Edit" method="post">
     <div class="form-group">
         <label asp-for="Name"></label>
@@ -28,9 +30,14 @@
     </div>
     <br />
     <input type="hidden" asp-for="Id" />
-    <a asp-action="Index" class="btn btn-dark">Return</a>
-    <a href="#" id="DeleteButton" class="btn btn-danger">Delete</a>
-    <button type="submit" class="btn btn-success" autofocus>Save</button>
+    <a href="#" id="DeleteButton" class="btn @(noDel ? "disabled" :"btn-danger")">
+        <i class="bi bi-trash3"></i>
+        Delete
+    </a>
+    <button type="submit" class="btn btn-success" autofocus>
+        <i class="bi bi-floppy"></i>
+        Save
+    </button>
 </form>
 
 @section Scripts {
