@@ -46,5 +46,23 @@ namespace Services.Services
                 })
                 .ToListAsync();
         }
+        public async Task<List<BoxViewModel>> GetAllAsync()
+        {//use auto mapper
+            return await _dbContext.Boxes
+                .Include(x => x.Collection)
+                .Select(x => new BoxViewModel()
+                {
+                    Id = x.Id,
+                    DateAdded = x.DateAdded,
+                    DateStudied = x.DateStudied,
+                    LastSlot = x.LastSlot,
+                    Collection = new CollectionMiniViewModel()
+                    {
+                        Id = x.Collection.Id,
+                        Name = x.Collection.Name
+                    }
+                })
+                .ToListAsync();
+        }
     }
 }
