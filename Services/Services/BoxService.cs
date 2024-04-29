@@ -271,6 +271,123 @@ namespace Services.Services
             return container;
         }
 
+        public async Task UpdateAsync(ContainerStudiedViewModel model)
+        {
+            // 1 - 4 = Learning Cards
+            //   0   = Today Learning Cards
+            //  -1   = Today Rejected Cards
+            //  -2   = Known Cards
+            //  -3   = Covered cards
+            int order = model.SlotOrder;
+            //0 => 1 => 2 => 3 => 4 => -1 |=> 0
+            int nextOrder = order is 4 ? -1 : order + 1;
+            int rejectOrder = nextOrder < 1 ? order - 2 : -1 ;
+            long[] orders = [nextOrder, order, rejectOrder];
+
+            var slots = _dbContext.Slots
+                    .AsNoTracking()
+                    .Include(x => x.Containers)
+                    .ThenInclude(x => x.ContainerCards)
+                    .Where(x =>
+                        x.BoxId == model.BoxId &&
+                        orders.Contains(x.Order))
+                    .Select(x => new Slot
+                    {
+                        Id = x.Id,
+                        Order = x.Order,
+                        Containers = x.Containers.OrderBy(y=>y.DateModified).Take(1).ToList(),
+                    })
+                    .ToList();
+
+            model.Approved=model.Approved ?? [];
+            model.Rejected=model.Rejected ?? [];
+
+            if (nextOrder is < 1) // order 4 && -1
+            {
+                var tempCards = model.Approved;
+                model.Approved = model.Rejected;
+                model.Rejected = tempCards;
+            }
+
+            if (model.Rejected.Length != 0)
+            {
+
+                ////clear current slot
+                //var currentSlot = slots
+                //        .FirstOrDefault(x => x.Order == order);
+                //Container currentContainer = currentSlot.Containers.FirstOrDefault();
+                //currentContainer.SlotId = currentSlot.Id;
+                //currentContainer.DateModified = DateTime.Now;
+                //currentContainer.ContainerCards.Clear();
+
+                //_dbContext.Update(currentContainer);
+
+                //_dbContext.SaveChanges();
+                //rejects to slot -1
+                var rejectSlot = slots
+                    .FirstOrDefault(x => x.Order == rejectOrder);
+
+                Container rejectContainer = rejectSlot.Containers.FirstOrDefault();
+                AddCardsIds2Container(rejectContainer, model.Rejected, rejectContainer.Id);
+                rejectContainer.DateModified = DateTime.Now;
+                //rejectContainer.SlotId = rejectSlot.Id;   Fix SlotId  [-1,-2,-3]
+
+                _dbContext.Update(rejectContainer);
+            }
+            //_dbContext.SaveChanges();
+
+                //next slot
+                var nextSlot = slots
+                        .FirstOrDefault(x => x.Order == nextOrder);
+                //remove all containcards in container
+                var containerCards = _dbContext.ContainerCards
+                    .AsNoTracking()
+                    .Where(x => x.ContainerId == model.Id)
+                    .ToList();
+                _dbContext.ContainerCards.RemoveRange(containerCards);
+                //recreate this contain and containcards
+
+                var cards = CardsIds2ContainerCard(model.Approved);
+                Container mainContainer = new()
+                {
+                    Id = model.Id,
+                    SlotId = nextSlot.Id,
+                    DateModified = DateTime.Now,
+                    ContainerCards = cards,
+                };
+
+                _dbContext.Containers.Update(mainContainer);
+            
+            //var trackedCards = _dbContext.ChangeTracker.Entries<Card>().ToList();
+            //foreach (var cardEntry in trackedCards)
+            //{
+            //    cardEntry.Property(x => x.Answer).IsModified = false;
+            //    cardEntry.Property(x => x.Ask).IsModified = false;
+            //    cardEntry.Property(x => x.CollectionId).IsModified = false;
+            //    cardEntry.Property(x => x.Description).IsModified = false;
+            //    cardEntry.Property(x => x.HasMp3).IsModified = false;
+            //}
+
+            Box box = new()
+            {
+                Id = model.BoxId,
+                LastSlot = nextOrder,
+            };
+            _dbContext.Entry(box).Property(x => x.LastSlot).IsModified = true;
+
+            if (nextOrder is 0) //new cards is latest study level
+            {
+                var allCards = model.Approved.Concat(model.Rejected);
+                var maxCardId = allCards.Max();
+                box.LastCardId = model.LastCardId < maxCardId ? maxCardId : model.LastCardId ;
+                box.DateStudied = DateTime.Now;
+                _dbContext.Entry(box).Property(x => x.LastCardId).IsModified = true;
+                _dbContext.Entry(box).Property(x => x.DateStudied).IsModified = true;
+            }
+
+            _dbContext.SaveChanges();
+        }
+
         public async Task DeleteAsync(long id)
         {
             var box = await _dbContext.Boxes
