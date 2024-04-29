@@ -21,5 +21,30 @@ namespace Services.Services
             _dbContext = dbContext;
             _cardService = cardService;
         }
+        public async Task<List<BoxViewModel>> ReadAllAsync()
+        {//use auto mapper
+            return await _dbContext.Boxes
+                .AsNoTracking()
+                .Include(x => x.Collection)
+                .ThenInclude(x => x.Cards)
+                .ThenInclude(x => x.ContainerCards)
+                .Select(x => new BoxViewModel()
+                {
+                    Id = x.Id,
+                    DateAdded = x.DateAdded,
+                    DateStudied = x.DateStudied,
+                    CardPerDay = x.CardPerDay,
+                    LastSlot = x.LastSlot,
+                    LastCardId = x.LastCardId,
+                    Completed = x.Completed,
+                    Collection = new CollectionMiniViewModel()
+                    {
+                        Id = x.Collection.Id,
+                        Name = x.Collection.Name,
+
+                    },
+                })
+                .ToListAsync();
+        }
     }
 }
