@@ -131,6 +131,41 @@ namespace Services.Services
                 MapBoxToViewModel(box);
         }
 
+        public async Task AddAsync(BoxAddViewModel model)
+        {
+            //just 
+            Box box = new()
+            {
+                CollectionId = model.CollectionId,
+                DateAdded = DateTime.Now,
+                Id = 0,
+                LastCardId = 0,
+                LastSlot = 0,
+                CardPerDay = model.CardPerDay,
+                DateStudied = new(),
+                Slots = new List<Slot>(),
+                Completed = false,
+
+            };
+
+            for (int i = -3; i < 5; i++)
+            {
+                Slot slot = new()
+                {
+                    Order = i,
+                    Containers = new List<Models.Entities.Container>(),
+                };
+                int containersNum = GetContainersNum(i);
+                for (int j = 0; j < containersNum || j == 0; j++)
+                {
+                    slot.Containers.Add(new());
+                }
+                box.Slots.Add(slot);
+            }
+
+            await _dbContext.Boxes.AddAsync(box);
+            await _dbContext.SaveChangesAsync();
+        }
 
         private BoxViewModel CreateEmptyBoxViewModel()
         {
