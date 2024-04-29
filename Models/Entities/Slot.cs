@@ -11,6 +11,7 @@ namespace ModelsLeit.Entities
     public record Slot
     {
         public long Id { get; set; }
+        public int Order { get; set; }
         public ICollection<Container> Containers { get; set; }
 
         [ForeignKey("Box")]
