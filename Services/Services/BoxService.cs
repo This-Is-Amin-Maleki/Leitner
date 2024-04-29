@@ -388,6 +388,40 @@ namespace Services.Services
             _dbContext.SaveChanges();
         }
 
+        public async Task<ContainerStudyViewModel> StudyFailAsync(ContainerStudiedViewModel model)
+        {
+            var allCards = (model.Approved ?? []).Concat(model.Rejected ?? []);
+
+            var boxData = _dbContext.Boxes
+                .AsNoTracking()
+                .Include(x => x.Collection)
+                .Select(x => new
+                {
+                    BoxId = x.Id,
+                    CollectionName = x.Collection.Name,
+                    CardPerDay = x.CardPerDay,
+                })
+                .FirstOrDefault(x => x.BoxId == model.BoxId);
+
+            var cards =await _cardService.ReadCardsAsync(allCards);
+            //var cards = _dbContext.Cards
+            //    .AsNoTracking()
+            //    .Where(x => allCards.Contains(x.Id))
+            //    .ToList();
+
+            return new ContainerStudyViewModel
+            {
+                Approved = CardsIds2Card(model.Approved),
+                Rejected = CardsIds2Card(model.Rejected),
+                CollectionName = boxData.CollectionName,
+                CardPerDay = boxData.CardPerDay,
+                BoxId = model.BoxId,
+                SlotId = model.SlotId,
+                SlotOrder = model.SlotOrder,
+                Id = model.Id,
+            };
+        }
+
         public async Task DeleteAsync(long id)
         {
             var box = await _dbContext.Boxes
