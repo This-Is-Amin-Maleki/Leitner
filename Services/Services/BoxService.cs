@@ -107,6 +107,12 @@ namespace Services.Services
                 .ToListAsync();
         }
 
+
+        private BoxViewModel CreateEmptyBoxViewModel()
+        {
+            return new BoxViewModel();
+        }
+
         private BoxViewModel MapBoxToViewModel(Box box) => new BoxViewModel();
     }
 }
