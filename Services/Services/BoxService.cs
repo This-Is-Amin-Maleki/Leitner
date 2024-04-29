@@ -202,5 +202,94 @@ namespace Services.Services
         }
 
         private BoxViewModel MapBoxToViewModel(Box box) => new BoxViewModel();
+        private async Task<ContainerReadDto> ReadLastContainerOfSlotAsync(BoxDto model)
+        {
+            //                         new  +  rej  fin
+            // 0 => 1 => 2 => 3 => 4 =>    -1      => 0
+            //                        0+new   0+rej
+            //                               BoxDate
+            //read last container of slot
+            bool anyReqCard = false;
+            var container = model.Containers
+                .Where(x => x.SlotOrder == model.LastSlot)
+                .Select(x => new ContainerStudyViewModel()
+                {
+                    Approved = x.ContainerCards
+                        .Select(x => new CardViewModel
+                        {
+                            Answer = x.Card.Answer,
+                            Ask = x.Card.Ask,
+                            Description = x.Card.Description,
+                            HasMp3 = x.Card.HasMp3,
+                            Id = x.Card.Id,
+                        })
+                        .ToList(),
+                    Id = x.Id,
+                    BoxId = model.Id,
+                    LastCardId=model.LastCardId,
+                    SlotId = x.SlotId,
+                    SlotOrder = model.LastSlot,//x.SlotOrder,
+                    CardPerDay = model.CardPerDay,
+                    CollectionName = model.Collection.Name,
+                    Rejected = new List<CardViewModel>(),
+                })
+                .FirstOrDefault();
+
+            if (container is null)
+            {
+                if (model.LastSlot is 0)
+                {
+                    container = model.Containers
+                    .Where(x => x.SlotOrder == -1)
+                    .Select(x => new ContainerStudyViewModel()
+                    {
+                        Approved = x.ContainerCards.Select(x => new CardViewModel
+                        {
+                            Answer = x.Card.Answer,
+                            Ask = x.Card.Ask,
+                            Description = x.Card.Description,
+                            HasMp3 = x.Card.HasMp3,
+                            Id = x.Card.Id,
+                        }).ToList(),
+                        Id = x.Id,
+                        BoxId = model.Id,
+                        SlotId = x.SlotId,
+                        SlotOrder = model.LastSlot,//x.SlotOrder,
+                        CardPerDay = model.CardPerDay,
+                        CollectionName = model.Collection.Name,
+                        Rejected = new List<CardViewModel>(),
+                    })
+                    .FirstOrDefault();
+                }
+                else
+                {
+                    throw new Exception("Container Not Found (ReadLastContainerOfSlotAsync)");
+                }
+            }
+
+            if (model.LastSlot == -1)
+            {
+
+                //get new cardsArray
+                var reqCards = await _cardService.ReadCardsAsync(model.LastCardId, model.Collection.Id, model.CardPerDay);
+
+                anyReqCard = reqCards.Count is 0;
+                // move DayRejected from cardsArray to rejected list
+                container.Rejected = container.Approved;
+                // set new cardsArray to cardsArray list
+                container.Approved = reqCards ?? new();
+                //foreach (var card in reqCards)
+                //{
+                //    container.Approved.Add(card);
+                //}
+            }
+
+            return new()
+            {
+                AnyCard = container.Approved.Any(),
+                Container =container,
+                AnyReqCard = anyReqCard,
+            };
+        }
     }
 }
