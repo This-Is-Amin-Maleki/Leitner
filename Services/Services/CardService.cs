@@ -1,13 +1,13 @@
-﻿using DataAccess.Context;
+﻿using DataAccessLeit.Context;
 using Microsoft.EntityFrameworkCore;
-using Models.Entities;
-using Models.ViewModels;
-using Services.Interfaces;
-using Shared;
+using ModelsLeit.Entities;
+using ModelsLeit.ViewModels;
+using ServicesLeit.Interfaces;
+using SharedLeit;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Services.Services
+namespace ServicesLeit.Services
 {
     public class CardService : ICardService
     {

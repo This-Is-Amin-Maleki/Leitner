@@ -1,4 +1,4 @@
-﻿using DataAccess.Context;
+﻿using DataAccessLeit.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Models.DTOs;
@@ -153,7 +153,7 @@ namespace Services.Services
                 Slot slot = new()
                 {
                     Order = i,
-                    Containers = new List<Models.Entities.Container>(),
+                    Containers = new List<ModelsLeit.Entities.Container>(),
                 };
                 int containersNum = GetContainersNum(i);
                 for (int j = 0; j < containersNum || j == 0; j++)

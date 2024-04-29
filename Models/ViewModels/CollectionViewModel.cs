@@ -5,8 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+﻿using SharedLeit;
 
-namespace Models.ViewModels
+namespace ModelsLeit.ViewModels
 {
     public record CollectionViewModel
     {

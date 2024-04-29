@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Models.ViewModels;
-using Services.Services;
+using Microsoft.EntityFrameworkCore;
+using ModelsLeit.Entities;
+using ModelsLeit.ViewModels;
+using ServicesLeit.Interfaces;
+using ServicesLeit.Services;
+using SharedLeit;
 using System.Collections;
 
-namespace View.Controllers
+namespace ViewLeit.Controllers
 {
     public class CardController: Controller
     {

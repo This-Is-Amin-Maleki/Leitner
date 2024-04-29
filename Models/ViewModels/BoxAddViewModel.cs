@@ -1,4 +1,4 @@
-﻿namespace Models.ViewModels
+﻿namespace ModelsLeit.ViewModels
 {
     public record BoxAddViewModel
     {

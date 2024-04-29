@@ -1,6 +1,6 @@
-﻿using Models.Entities;
+﻿using ModelsLeit.Entities;
 
-namespace Models.ViewModels
+namespace ModelsLeit.ViewModels
 {
     public record BoxViewModel
     {

@@ -1,15 +1,15 @@
-﻿using DataAccess.Context;
+﻿using DataAccessLeit.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
-using Models.ViewModels;
-using Services.Services;
-using Shared;
+using ModelsLeit.ViewModels;
+using ServicesLeit.Services;
+using SharedLeit;
 
-namespace View.Controllers
+namespace ViewLeit.Controllers
 {
     public class CollectionController: Controller
     {
@@ -85,7 +85,7 @@ namespace View.Controllers
 
         // GET: CollectionController/Delete
         //public async Task<ActionResult> Delete(long id) =>
-        //    View(await _collectionService.ReadCollectionAsync(id));
+        //    ViewLeit(await _collectionService.ReadCollectionAsync(id));
 
         // POST: CollectionController/Delete
         [HttpPost]

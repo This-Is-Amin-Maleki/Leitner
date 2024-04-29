@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Models.Entities;
+using ModelsLeit.Entities;
 
-namespace DataAccess.Data.Configurations
+namespace DataAccessLeit.Data.Configurations
 {
     public class ContainerConfiguration : IEntityTypeConfiguration<Container>
     {

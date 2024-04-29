@@ -1,12 +1,12 @@
-﻿using DataAccess.Context;
+﻿using DataAccessLeit.Context;
 using Microsoft.EntityFrameworkCore;
-using Models.Entities;
-using Models.DTOs;
-using Services.Interfaces;
-using Shared;
-using Models.ViewModels;
+using ModelsLeit.Entities;
+using ServicesLeit.Interfaces;
+using SharedLeit;
+using ModelsLeit.ViewModels;
+using ModelsLeit.DTOs;
 
-namespace Services.Services
+namespace ServicesLeit.Services
 {
     public class CollectionService : ICollectionService
     {

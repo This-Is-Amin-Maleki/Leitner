@@ -1,14 +1,14 @@
-﻿using DataAccess.Data.Configurations;
+﻿using DataAccessLeit.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using Models.Entities;
-using Shared;
+using ModelsLeit.Entities;
+using SharedLeit;
 using System.Drawing;
 using System.Xml.Schema;
 
-namespace DataAccess.Context
+namespace DataAccessLeit.Context
 {
     public class ApplicationDbContext:DbContext
     {

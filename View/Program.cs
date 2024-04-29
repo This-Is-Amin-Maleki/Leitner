@@ -1,10 +1,10 @@
-using DataAccess.Context;
+using DataAccessLeit.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Services.Services;
+using ServicesLeit.Services;
 
-namespace View
+namespace ViewLeit
 {
     public class Program
     {

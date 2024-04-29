@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Models.ViewModels
+﻿namespace ModelsLeit.ViewModels
 {
     public record CardViewModel
     {
