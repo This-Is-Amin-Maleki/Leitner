@@ -166,6 +166,35 @@ namespace Services.Services
             await _dbContext.Boxes.AddAsync(box);
             await _dbContext.SaveChangesAsync();
         }
+        public async Task DeleteAsync(long id)
+        {
+            var box = await _dbContext.Boxes
+                //.AsNoTracking()
+                .Include(x => x.Slots)
+                .ThenInclude(x => x.Containers)
+                .ThenInclude(x => x.ContainerCards)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (box is null)
+            {
+                throw new Exception("Not Found");
+            }
+            /*
+            var Ss= box.Slots.ToList();
+            var Cs= Ss.Select(x=> x.Containers.FirstOrDefault()??new()).ToList();
+            var CCs = Cs.Select(x => x.ContainerCards.ToList().ForEach(y=>y.cou)?? new List<ContainerCard>());
+            var CCz = CCs.Select(x=> x.ForEach(y=>y.Id))
+
+            _dbContext.RemoveRange(CCs.);
+            _dbContext.SaveChanges();
+            _dbContext.RemoveRange(Cs);
+            _dbContext.SaveChanges();
+            _dbContext.RemoveRange(Ss);
+            _dbContext.SaveChanges();*/
+            _dbContext.Remove(box);
+            await _dbContext.SaveChangesAsync();
+        }
+
 
         private BoxViewModel CreateEmptyBoxViewModel()
         {
