@@ -166,6 +166,111 @@ namespace Services.Services
             await _dbContext.Boxes.AddAsync(box);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<ContainerStudyViewModel> StudyAsync(long id)
+        {
+            var boxDto = await _dbContext.Boxes
+                .AsNoTracking()
+                .Include(x => x.Collection)
+                .Select(x => new BoxDto()
+                {
+                    Id = x.Id,
+                    DateStudied = x.DateStudied,
+                    CardPerDay = x.CardPerDay,
+                    LastCardId = x.LastCardId,
+                    LastSlot = x.LastSlot,
+                    Completed = x.Completed,
+                    Collection = new()
+                    {
+                        Id = x.CollectionId,
+                        Name = x.Collection.Name,
+                        Count = x.Collection.Count,
+                    },
+                    Containers = new List<ContainersDto>(),
+                })
+                .FirstOrDefaultAsync(x =>x.Id == id);
+
+            if (boxDto is null)
+            {
+                throw new Exception("Box Not Found");
+            }
+            if (boxDto.Completed)
+            {
+                throw new Exception("Box is Completed");
+            }
+            /*if(boxDto.DateStudied > DateTime.Now.AddDays(-1) && boxDto.LastSlot is 0)
+            {
+                throw new Exception("Today's study for this flashcard deck has been completed.");
+            }*/
+
+            boxDto.Containers = await _dbContext.Slots
+                .Include(x => x.Containers)
+                .ThenInclude(x => x.ContainerCards)
+                .ThenInclude(x => x.Card)
+                .Where(x => x.BoxId == id)
+                .SelectMany(x =>
+                        x.Containers.OrderBy(y => y.DateModified).Take(1),
+                        (slot, container) =>
+                    new ContainersDto()
+                    {
+                        Id = container.Id,
+                        SlotId = slot.Id,
+                        ContainerCards = container.ContainerCards,
+                        DateModified = container.DateModified,
+                        SlotOrder = container.Slot.Order,
+                    }
+                ).ToListAsync();
+
+            ContainerReadDto read= await ReadLastContainerOfSlotAsync(boxDto);
+            ContainerStudyViewModel container = read.Container;
+            Container mainContainer = new();
+            Box box = new();
+            while (read.AnyCard is false)// || container.SlotOrder == -1 && cards are empty)
+            {
+                boxDto.LastSlot = ForwardEmptyContainer(boxDto);
+                if (boxDto.LastSlot == 0) {
+                    break;
+                }
+                read = await ReadLastContainerOfSlotAsync(boxDto);
+                container = read.Container;
+            }
+
+            box = new()
+            {
+                Id = boxDto.Id,
+                LastSlot = boxDto.LastSlot,
+            };
+            _dbContext.Attach(box);
+            _dbContext.Entry(box).Property(x => x.LastSlot).IsModified = true;
+            
+            if (read.AnyReqCard)
+            {
+                var dropedCards = boxDto.Containers.Where(x => x.SlotOrder < -1).Select(x => x.ContainerCards.Count).ToArray().Sum();
+                if(boxDto.Collection.Count == dropedCards)
+                {
+                    box.Completed = true;
+                    _dbContext.Entry(box).Property(x => x.Completed).IsModified = true;
+                }
+            }
+
+            var allCards = container.Approved.Concat(container.Rejected);
+            if (boxDto.LastSlot is 0 && allCards.Any() is false) //new cards is latest study level
+            {
+                box.DateStudied = DateTime.Now;
+                _dbContext.Entry(box).Property(x => x.DateStudied).IsModified = true;
+            }
+            //if (mainContainer.Id is not 0)
+            //{
+            //_dbContext.Update(mainContainer);
+            //_dbContext.Attach(box);
+            //_dbContext.Entry(box).Property(x => x.LastSlot).IsModified = true;
+            //await _dbContext.SaveChangesAsync();
+            //}
+
+            await _dbContext.SaveChangesAsync();
+            return container;
+        }
+
         public async Task DeleteAsync(long id)
         {
             var box = await _dbContext.Boxes
