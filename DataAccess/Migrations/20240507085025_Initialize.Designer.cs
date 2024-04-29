@@ -4,6 +4,7 @@ using DataAccessLeit.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,14 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLeit.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240507085025_Initialize")]
+    partial class Initialize
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("dbo")
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -37,9 +39,6 @@ namespace DataAccessLeit.Migrations
                     b.Property<long>("CollectionId")
                         .HasColumnType("bigint");
 
-                    b.Property<bool>("Completed")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime2");
 
@@ -56,7 +55,7 @@ namespace DataAccessLeit.Migrations
 
                     b.HasIndex("CollectionId");
 
-                    b.ToTable("Boxes", "dbo");
+                    b.ToTable("Boxes");
                 });
 
             modelBuilder.Entity("ModelsLeit.Entities.Card", b =>
@@ -89,7 +88,7 @@ namespace DataAccessLeit.Migrations
 
                     b.HasIndex("CollectionId");
 
-                    b.ToTable("Cards", "dbo");
+                    b.ToTable("Cards");
                 });
 
             modelBuilder.Entity("ModelsLeit.Entities.Collection", b =>
@@ -99,9 +98,6 @@ namespace DataAccessLeit.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -119,7 +115,7 @@ namespace DataAccessLeit.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Collections", "dbo");
+                    b.ToTable("Collections");
                 });
 
             modelBuilder.Entity("ModelsLeit.Entities.Container", b =>
@@ -140,7 +136,7 @@ namespace DataAccessLeit.Migrations
 
                     b.HasIndex("SlotId");
 
-                    b.ToTable("Containers", "dbo");
+                    b.ToTable("Containers");
                 });
 
             modelBuilder.Entity("ModelsLeit.Entities.ContainerCard", b =>
@@ -163,7 +159,7 @@ namespace DataAccessLeit.Migrations
 
                     b.HasIndex("ContainerId");
 
-                    b.ToTable("ContainerCards", "dbo");
+                    b.ToTable("ContainerCards");
                 });
 
             modelBuilder.Entity("ModelsLeit.Entities.Slot", b =>
@@ -184,7 +180,7 @@ namespace DataAccessLeit.Migrations
 
                     b.HasIndex("BoxId");
 
-                    b.ToTable("Slots", "dbo");
+                    b.ToTable("Slots");
                 });
 
             modelBuilder.Entity("ModelsLeit.Entities.Box", b =>
@@ -231,7 +227,7 @@ namespace DataAccessLeit.Migrations
                     b.HasOne("ModelsLeit.Entities.Container", "Container")
                         .WithMany("ContainerCards")
                         .HasForeignKey("ContainerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Card");
