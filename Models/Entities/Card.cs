@@ -22,7 +22,7 @@ namespace ModelsLeit.Entities
         public Collection Collection { get; set; }
 
         //[ForeignKey("Container")]
-        public ICollection<Container> Containers { get; set; }
+        public ICollection<ContainerCard> ContainerCards { get; set; }
 
     }
 }
