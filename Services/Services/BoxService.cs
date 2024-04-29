@@ -363,6 +363,10 @@ namespace Services.Services
             //    .ToList();
         }
 
+        private static int GetContainersNum(int i)
+        {
+            return (int)Math.Round(Math.Pow(2, i));
+        }
 
         private BoxViewModel CreateEmptyBoxViewModel()
         {
