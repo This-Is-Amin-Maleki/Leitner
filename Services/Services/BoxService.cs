@@ -119,6 +119,18 @@ namespace Services.Services
                 CreateEmptyBoxViewModel() :
                 MapBoxToViewModel(box);
         }
+#warning check performance
+        public async Task<BoxViewModel> GetAsync(long id)
+        {
+            var box = await _dbContext.Boxes
+                .Include(x => x.Collection)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            return box is null ?
+                CreateEmptyBoxViewModel() :
+                MapBoxToViewModel(box);
+        }
+
 
         private BoxViewModel CreateEmptyBoxViewModel()
         {
