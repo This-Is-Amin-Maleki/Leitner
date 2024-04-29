@@ -18,5 +18,73 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+}
+svg,svg *{
+    display: none;
+}
+
+body.y {
+    background:red;
+}
+
+body div main{
+    display:none;
+}
+
+.accordion-btn.collapsed {
+    display: block
+}
+
+.accordion-btn {
+    display: none
+}
+[w] {
+    font-style: italic;
+    text-decoration: underline;
+    filter: blur(3px);
+    -webkit-filter: blur(6px);
+    cursor: pointer;
+}
+[w]:hover {
+    text-decoration: wavy line-through underline;
+    filter: blur(2px);
+    -webkit-filter: blur(5px);
+    text-decoration-color: gold;
+    color: gold;
+}
+[b2] {
+    text-decoration: wavy underline;
+    text-decoration-color:#777;
+}
+[rtl]{
+    direction:rtl;
+}
+[ltr]{
+    direction:ltr;
+}
+#brandL {
+    width:27px;
+}
+#brandL a {
+    height: 35px;
+    width: 27px;
+}
+#brandC {
+    width: 60px;
+    float: right;
+    cursor: none !important;
+    margin-top: 0.5em;
+}
+#brandC:hover {
+    width: 69px;
+    margin-right: -5px;
+    margin-top: 0.25em;
+}
+#brandC a {
+    cursor: none !important;
+    fill: #6c757d;
+}
+#brandC:hover a {
+    fill: #7e69ac;
 }

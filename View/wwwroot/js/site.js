@@ -1,4 +1,16 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
+﻿$(document).ready(function () {
+    $('a').click(function (event) {
+        event.preventDefault();
+        var target = $(this).attr('target');
+        var href = $(this).attr('href');
+        if (target === '_blank') {
+            window.open(href, '_blank');
+        } else {
+            $("body div main").fadeOut(500, function () {
+                window.location.href = href;
+            });
+        }
+    });
+    $("svg, svg *").fadeIn(100);
+    $("body div main").fadeIn(500);
+});
