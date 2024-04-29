@@ -4,13 +4,11 @@
 @{
     ViewData["Title"] = $"Card {Model.Ask} Details";
 }
-
 <h2>Card <b>@Model.Ask</b> Details</h2>
-
-<div>
+<a asp-action="Index" asp-route-id="@Model.Collection.Id" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+<br />
+<div
     <dl>
-        <dt>Id:</dt>
-        <dd>@Model.Id</dd>
         <dt>Collection:</dt>
         <dd>@Model.Collection.Name</dd>
         <dt>Ask:</dt>
@@ -18,11 +16,28 @@
         <dt>Answer:</dt>
         <dd>@Model.Answer</dd>
         <dt>Description:</dt>
-        <dd>@Model.Description</dd>
-        <dt>Has Audio:</dt>
-        <dd>@Model.HasMp3</dd>
+        <dd>@Html.Raw(Model.Description)</dd>
+        <dt>Assets:</dt>
+        <dd>
+            @Html.Raw(Model.HasMp3 ? "<i class=\"bi bi-volume-down\"></i>" : "")
+        </dd>
     </dl>
     <br />
-
-    <a asp-action="Index" asp-route-id="@Model.Collection.Id" class="btn btn-dark">Return</a>
 </div>
+
+@section Scripts {
+    <style>
+        [b] {
+            text-decoration: wavy underline;
+            text-decoration-color: skyblue !important;
+        }</style>
+    <script>
+        $(document).ready(function () {
+            $('[b]').each(function () {
+                $(this).attr("w", "").removeAttr("b").click(function () {
+                    $(this).attr("b", "").removeAttr("w");
+                });
+            });
+        });
+    </script>
+}

@@ -6,7 +6,8 @@
 }
 
 <h2>@ViewData["Title"]</h2>
-
+<a asp-action="Index" asp-route-id="@ViewData["CollectionId"]" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+<br />
 <form asp-action="Create" method="post">
     <div class="form-group">
         <label asp-for="Ask"></label>
@@ -29,6 +30,6 @@
     </div>
     <input type="hidden" asp-for="Collection.Id" value="@ViewData["CollectionId"]" />
     <br />
-    <a asp-action="Index" asp-route-id="@ViewData["CollectionId"]" class="btn btn-dark">Return</a>
-    <button type="submit" class="btn btn-primary">Save</button>
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-floppy"></i> Save</button>
 </form>

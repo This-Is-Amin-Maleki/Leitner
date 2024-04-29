@@ -6,7 +6,8 @@
 }
 
 <h2>Edit <b>@Model.Ask</b> Card</h2>
-
+<a asp-action="Index" asp-route-id="@Model.Collection.Id" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+<br />
 <form id="EditForm" asp-action="Edit" method="post">
     <div class="form-group">
         <label asp-for="Ask"></label>
@@ -30,9 +31,8 @@
     <br />
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="Collection.Id" />
-    <a asp-action="Index" asp-route-id="@Model.Collection.Id" class="btn btn-dark">Return</a>
-    <a href="#" id="DeleteButton" class="btn btn-danger">Delete</a>
-    <button type="submit" class="btn btn-success" autofocus>Save</button>
+    <a href="#" id="DeleteButton" class="btn btn-danger"><i class="bi bi-trash3"></i> Delete</a>
+    <button type="submit" class="btn btn-success" autofocus><i class="bi bi-floppy"></i> Save</button>
 </form>
 
 @section Scripts {

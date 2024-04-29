@@ -4,21 +4,26 @@
 
 @{
     ViewData["Title"] = $"{ViewData["CollectionName"]} Card Index";
+    var noEdit = (bool)ViewData["noEdit"];
 }
 
 <h2>@ViewData["CollectionName"] Cards</h2>
-
-<a asp-action="Create" asp-route-id="@ViewData["CollectionId"]" class="font-14 menu btn btn-outline-info">
-    <i class="bi bi-plus-circle"></i>
-</a>
-<a asp-controller="Collection" asp-action="Index" asp-route-id="@ViewData["CollectionId"]" class="btn btn-dark">Return</a>
-
+@if (!noEdit)
+{
+    <a asp-action="Create" asp-route-id="@ViewData["CollectionId"]" class="font-14 menu btn btn-outline-info">
+    <i class="bi bi-plus-square"></i> Add
+    </a>
+    <a asp-action="Upload" asp-route-id="@ViewData["CollectionId"]" class="font-14 menu btn btn-outline-info">
+    <i class="bi bi-cloud-arrow-up"></i> Upload
+    </a>
+}
+<a asp-controller="Collection" asp-action="Index" asp-route-id="@ViewData["CollectionId"]" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+<br />
 <table class="table">
     <thead>
         <tr>
-            <th>Ask</th>
-            <th>Answer</th>
-            <th>Audio</th>
+            <th>Card</th>
+            <th class="text-center">Assets</thclass>
             <th></th>
         </tr>
     </thead>
@@ -27,11 +32,13 @@
         {
             <tr>
                 <td>@card.Ask</td>
-                <td>@card.Answer</td>
-                <td>@card.HasMp3</td>
+                <td class="text-center">@Html.Raw(card.HasMp3 ? "<i class=\"bi bi-volume-down\"></i>" :"")</td>
                 <td>
-                    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@card.Id">Edit</a>
-                    <a class="btn btn-primary" asp-action="Details" asp-route-id="@card.Id">Details</a>
+                    @if (!noEdit)
+                    {
+                        <a class="btn btn-primary" asp-action="Edit" asp-route-id="@card.Id"><i class="bi bi-pencil"></i> Edit</a>
+                    }
+                    <a class="btn btn-primary" asp-action="Details" asp-route-id="@card.Id"><i class="bi bi-file-text"></i> Details</a>
                 </td>
             </tr>
         }
