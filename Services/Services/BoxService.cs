@@ -166,6 +166,49 @@ namespace Services.Services
             await _dbContext.Boxes.AddAsync(box);
             await _dbContext.SaveChangesAsync();
         }
+        public async Task<ReviewViewModel> ReviewAsync(long id)
+        {
+            var model = await _dbContext.Boxes
+                .AsNoTracking()
+                .Include(x => x.Collection)
+                .Include(x => x.Slots)
+                .ThenInclude(x => x.Containers)
+                .ThenInclude(x => x.ContainerCards)
+                .ThenInclude(x => x.Card)
+                .Where(x => x.Id == id && x.LastCardId > 0)
+                .Select(x => new ReviewViewModel
+                {
+                    BoxId = x.Id,
+                    CollectionName = x.Collection.Name,
+                    Cards = x.Slots
+                        .Where(y => y.Order < -1)
+                        .SelectMany(slot =>
+                            slot.Containers.SelectMany(container =>
+                                container.ContainerCards.Select(containerCard => containerCard.Card)))
+                        .Select(x=>new CardViewModel
+                        {
+                            Id = x.Id,
+                            HasMp3 = x.HasMp3,
+                            Description = x.Description,
+                            Ask=x.Ask,
+                            Answer=x.Answer,
+                        })
+                        .ToList()
+
+                })
+                .FirstOrDefaultAsync();
+
+            if (model is null)
+            {
+                throw new Exception("Box Not Found");
+            }
+            if (model.Cards.Count == 0)
+            {
+                throw new Exception("No cards available for review.");
+            }
+
+            return model;
+        }
 
         public async Task<ContainerStudyViewModel> StudyAsync(long id)
         {
