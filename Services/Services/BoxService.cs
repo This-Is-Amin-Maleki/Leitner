@@ -346,6 +346,23 @@ namespace Services.Services
                 .Select(id => new ContainerCard { CardId = id })
                 .ToList();
         }
+        private Container AddCardsIds2Container(Container container, long[] cards, long containerId)
+        {
+            foreach (var item in cards)
+            {
+                container.ContainerCards.Add(new ContainerCard
+                {
+                    CardId = item,
+                    ContainerId = containerId,
+                });
+            }
+            return container;
+            ////cardsArray id array to cardsArray list
+            //return cards
+            //    .Select(id => )
+            //    .ToList();
+        }
+
 
         private BoxViewModel CreateEmptyBoxViewModel()
         {
