@@ -332,6 +332,13 @@ namespace Services.Services
             return nextOrder;
         }
         
+        private static List<CardViewModel> CardsIds2Card(long[] cards)
+        {
+            //cardsArray id array to cardsArray list
+            return cards
+                .Select(id => new CardViewModel { Id = id })
+                .ToList();
+        }
 
         private BoxViewModel CreateEmptyBoxViewModel()
         {
