@@ -107,6 +107,18 @@ namespace Services.Services
                 .ToListAsync();
         }
 
+#warning check performance
+        public async Task<BoxViewModel> ReadAsync(long id)
+        {
+            var box = await _dbContext.Boxes
+                .AsNoTracking()
+                .Include(x => x.Collection)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            return box is null ?
+                CreateEmptyBoxViewModel() :
+                MapBoxToViewModel(box);
+        }
 
         private BoxViewModel CreateEmptyBoxViewModel()
         {
