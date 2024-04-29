@@ -451,6 +451,29 @@ namespace Services.Services
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task<CardViewModel> ReadNextCardAsync(long boxId,int num)
+        {
+            //check box
+            var box = await _dbContext.Boxes
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x=>x.Id == boxId);
+
+            if(box is null)
+            {
+                throw new Exception("Box Not Found");
+            }
+
+            //get new cardsArray
+            var cards = await _cardService.ReadCardsAsync(box.LastCardId, box.CollectionId,1,(num-1));
+            var card = cards.FirstOrDefault();
+
+            if(card is null)
+            {
+                throw new Exception("No cards available for review.");
+            }
+
+            return card;
+        }
         ////////////////////////////////////////////////////////
 
         private int ForwardEmptyContainer(BoxDto model)
