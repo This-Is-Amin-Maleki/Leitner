@@ -1,0 +1,135 @@
+﻿@using ModelsLeit.Entities
+@using ModelsLeit.ViewModels
+@using SharedLeit
+@model ReviewViewModel
+
+@{
+    ViewData["Title"] = $"Review {Model.CollectionName}";
+    var i = 1;
+    var last = Model.Cards.Count;
+}
+<div id="cardInfo">
+    <h2>@ViewData["Title"]</h2>
+    <a asp-action="Index" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+    <br /><br />
+</div>
+
+<form asp-action="Index">
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-1 col-md-2 col-xl-3">
+            </div>
+            <div class="col-sm-10 col-md-8 col-xl-6">
+                <div class="card align-middle">
+  
+@foreach (var card in Model.Cards)
+{
+    <div class="card-body d-none">
+        <!--input class="d-none cards" type="checkbox" name="Cards[]" value="@card.Id" />
+        <input class="d-none rejects" type="checkbox" name="Rejected[]" value="@card.Id" /-->
+        <h2 class="card-title" @Html.Raw(
+            card.HasMp3 ?
+            //play mp3 on click (speaker icon + ask)
+            $"audio='/audio/{card.Id}.mp3' onclick='new Audio(this.getAttribute(\"audio\")).play()'><i class='bi bi-volume-off-fill'></i>{card.Ask}</h2" :
+            //normal show (ask)
+            $">{card.Ask}</h2"
+        )>
+                                
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+                @if(i!=1){
+                    <button type="button" item="@card.Id" class="btn btn-outline-primary float-start btn-v"><i class="bi bi-arrow-left-circle"></i> Previous</button>
+                }
+                <button class="btn align-middle btn-outline-dark accordion-btn collapsed float-end" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse@(i)" aria-expanded="false" aria-controls="flush-collapse@(i)">
+                    <i class="bi bi-lightbulb"></i>
+                    Answer
+                </button>
+                <div id="flush-collapse@(i)" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                    <br />
+                    <h2 class="card-title">@card.Answer</h2>
+                    <div class="accordion-body p-0">@Html.Raw(card.Description)</div>
+
+                    <br /><br />
+
+                    @if (i++ != 1)
+                    {
+                        <button type="button" item="@card.Id" class="btn btn-outline-primary float-start btn-v"><i class="bi bi-arrow-left-circle"></i> Previous</button>
+                    }
+                    <button type="button" item="@card.Id" class="btn btn-outline-success float-end btn-x"><i class="bi bi-arrow-right-circle"></i> Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var blurAll = function () {
+                $('[b]').each(function () {
+                    $(this).attr("w", "").removeAttr("b");
+                });
+            };
+            blurAll();
+            $(".btn-x").last().html("<i class=\"bi bi-x-circle\"></i> Finish");
+            $('.card-body').first().removeClass('d-none');
+            var buttonEvent = function (e) {
+                var currentParent = $(e).closest('.card-body');
+                var nextVisible = currentParent.nextAll('.card-body.d-none').first();
+                var accordionBtn = $('.accordion-btn');
+                var form = $(e).closest('form');
+                var sending = $("#sending");
+                var card = $(e).closest('.card');
+                if (nextVisible.length == 0) {
+                    form.fadeOut("fast", function () {
+                        form.submit();
+                    }).delay(5000);
+                } else {
+                    card.fadeOut("fast", function () {
+                        currentParent.addClass('d-none');
+                        accordionBtn.addClass('collapsed');
+                        nextVisible.removeClass('d-none');
+                    }).fadeIn("fast");
+                }
+            }
+            var buttonPrevious = function (e) {
+                blurAll();
+                var currentParent = $(e).closest('.card-body');
+                var prevVisible = currentParent.prevAll('.card-body.d-none').first();
+                var expandedCollapse = $(".show");
+                var prevButton = $('.btn-v.d-none');
+                var card = $(e).closest('.card');
+                if (prevVisible.length != 0) {
+                    card.fadeOut("fast",function () {
+                        currentParent.addClass('d-none');
+                        prevButton.removeClass('d-none');
+                        expandedCollapse.removeClass('show');
+                        prevVisible.removeClass('d-none');
+                    }).fadeIn("fast");
+                }
+            }
+            var buttonCollapse = function (e) {
+                $(e).closest(".accordion-item").find(".btn.btn-v").first().addClass('d-none');
+            }
+            $('[w]').click(function () {
+                $(this).attr("b", "").removeAttr("w");
+            });
+            $('.btn-v').click(function () {
+                buttonPrevious(this);
+            });
+            $('.btn-x').click(function () {
+                buttonEvent(this);
+            });
+            $('.accordion-btn').click(function () {
+                buttonCollapse(this);
+            });
+        });
+    </script>
+}

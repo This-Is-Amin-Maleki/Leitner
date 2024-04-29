@@ -1,0 +1,300 @@
+﻿@using ModelsLeit.Entities
+@using ModelsLeit.ViewModels
+@using SharedLeit
+@model ContainerStudyViewModel
+
+@{
+    ViewData["Title"] = $"Study {Model.CollectionName}";
+    int i = 1;
+    var allCards = (Model.Approved ?? new List<CardViewModel>()).Concat(Model.Rejected ?? new List<CardViewModel>());
+    var itemz = Model.Rejected.Count + Model.Approved.Count;
+    //itemz = Model.SlotOrder < 0 ? itemz : itemz * 5;      unuse for this algorithms
+}
+
+ <div id="cardCounter" class="btn-dark" style="float: right;border-radius: 100%;background: var(--bs-btn-hover-bg);width: 1.5em;height: 1.5em;line-height: 1.4em;text-align: center;font-size: 1.5em;color: var(--bs-btn-color);">0</div>
+<div id="cardInfo">
+    <h2>@ViewData["Title"]</h2>
+    <a asp-action="Index" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+    <br /><br />
+</div>
+<form asp-action="Study" method="post">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-1 col-md-2 col-xl-3">
+            </div>
+            <div class="col-sm-10 col-md-8 col-xl-6">
+                <div class="card align-middle">
+                    
+@foreach (var card in Model.Rejected)
+{
+    <div class="card-body d-none">
+        <!--input class="d-none cards" type="checkbox" name="Cards[]" value="@card.Id" />
+        <input class="d-none rejects" type="checkbox" name="Rejected[]" value="@card.Id" /-->
+        <h2 class="card-title" @Html.Raw(
+        card.HasMp3 ?
+            //play mp3 on click (speaker icon) ELSE any
+        $"audio='/audio/{card.Id}.mp3' onclick='new Audio(this.getAttribute(\"audio\")).play()'><i class='bi bi-volume-off-fill'></i" :""
+        )>@card.Ask</h2>
+
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+                @if (i != 1)
+                {
+                    <button type="button" item="@card.Id" class="btn btn-outline-primary float-start btn-b"><i class="bi bi-plus-circle"></i> Previous</button>
+                }
+                <button class="btn align-middle btn-outline-dark accordion-btn collapsed float-end" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse@(i)" aria-expanded="false" aria-controls="flush-collapse@(i)"><i class="bi bi-lightbulb"></i> 
+                    Answer
+                </button>
+                <div id="flush-collapse@(i++)" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                    <br />
+                    <h2 class="card-title">@card.Answer</h2>
+                    <div class="accordion-body p-0">@Html.Raw(card.Description)</div>
+
+                    <br /><br />
+
+                    <button type="button" item="@card.Id" class="btn btn-outline-success float-start btn-o"><i class="bi bi-question-circle"></i> Learning</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@foreach (var card in Model.Approved)
+{
+    <div class="card-body d-none">
+        <!--input class="d-none cards" type="checkbox" name="Cards[]" value="@card.Id" />
+        <input class="d-none rejects" type="checkbox" name="Rejected[]" value="@card.Id" /-->
+        <h2 class="card-title" @Html.Raw(
+            card.HasMp3 ?
+            //play mp3 on click (speaker icon + ask)
+            $"audio='/audio/{card.Id}.mp3' onclick='new Audio(this.getAttribute(\"audio\")).play()'><i class='bi bi-volume-off-fill'></i>{card.Ask}</h2" :
+            //normal show (ask)
+            $">{card.Ask}</h2"
+        )>
+
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+                <div class="d-flex justify-content-end">
+                    @if(i!=1){
+                        <button type="button" item="@card.Id" class="btn btn-outline-primary float-start btn-b"><i class="bi bi-arrow-left-circle"></i> Previous</button>
+                        <button type="button" item="@card.Id" class="btn btn-outline-danger  mx-auto btn-x"><i class="bi bi-exclamation-octagon"></i> Finish</button>
+                    }
+                    <button class="btn align-middle btn-outline-dark accordion-btn collapsed float-end" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse@(i)" aria-expanded="false" aria-controls="flush-collapse@(i)"><i class="bi bi-lightbulb"></i> Answer</button>
+                </div>
+                <div id="flush-collapse@(i++)" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                    <br />
+                    <h2 class="card-title">@card.Answer</h2>
+                    <div class="accordion-body p-0">@Html.Raw(card.Description)</div>
+
+                    <br /><br />
+                        <button type="button" item="@card.Id" class="btn btn-outline-success float-start btn-o"><i class="bi bi-question-circle"></i> Learning</button>
+                        <button type="button" item="@card.Id" class="btn btn-outline-success float-end btn-v"><i class="bi bi-check-circle"></i> Sure</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+                </div>
+            </div>
+        </div>
+    </div>
+    <select class="d-none" asp-for="Approved" asp-items="@(new SelectList(allCards, "Id", "Id"))" multiple></select>
+    <select class="d-none" asp-for="Rejected" asp-items="@(new SelectList(allCards, "Id", "Id"))" multiple></select>
+<input asp-for="@Model.Id" type="hidden" value="@Model.Id" />
+<input asp-for="BoxId" type="hidden" />
+<input asp-for="SlotOrder" type="hidden" />
+<input asp-for="SlotId" type="hidden" />
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var items = 1;
+            var counter = @itemz;
+            var count = counter;
+            var number = @(i);
+            $('.card-body').first().removeClass('d-none');
+            $('#cardCounter').text(counter);
+            var blurAll = function () {
+                $('[b]').each(function () {
+                    $(this).attr("w","").removeAttr("b");
+                });
+            };
+            var appendCard = function (obj) {
+                //apend data to list
+                var option = '<option value="' + obj.Id + '">' + obj.Id + '</option>';
+                $('#Approved').append(option);
+                $('#Rejected').append(option);
+                //apend card
+                var card = '<div class="card-body d-none"><h2 class="card-title"';
+                card += obj.HasMp3 ?
+                    "audio='/audio/" + obj.Id + ".mp3' onclick='new Audio(this.getAttribute(\"audio\")).play()'><i class='bi bi-volume-off-fill'></i>" :
+                    ">";
+                card += obj.Ask + '</h2><div class="accordion accordion-flush" id="accordionFlushExample"><div class="accordion-item"><div class="d-flex justify-content-end"><button type="button" item="' + obj.Id + '" class="btn btn-outline-primary float-start btn-b">Previous</button><button type="button" item="' + obj.Id + '" class="btn btn-outline-success mx-auto btn-x"><i class="bi bi-exclamation-octagon"></i> Finish</button ><button class="btn align-middle btn-outline-dark accordion-btn collapsed float-end" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse' + number + '" aria-expanded="false" aria-controls="flush-collapse' + number + '">Answer</button></div><div id="flush-collapse' + (number++) + '" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample"><br/><h2 class="card-title">' + obj.Answer + '</h2><div class="accordion-body p-0">' + obj.Description + '</div> <br/><br/> <button type="button" item = "' + obj.Id + '" class="btn btn-outline-success float-start btn-o"> Learning </button><button type="button" item="' + obj.Id + '" class="btn btn-outline-success float-end btn-v">Sure</button></div></div></div></div>';
+                $('.card').first().append(card);
+                readyPage();
+            };
+            var getCard = function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Box/Next/@(Model.BoxId)/'+number,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            //var obj = JSON.parse(data);
+                            if (data.Id !== 0) {
+                                appendCard(data);
+                                resolve(true);
+                            } else {
+                                console.log("erroR: " + data.description);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(status + ': ' + error);
+                        }
+                    });
+                    console.log('finAjax');
+                });
+            };
+            var formSubmit = function (form) {
+                $("div.container main").fadeOut("fast", function () {
+                    form.submit();
+                }).delay(5000);
+            };
+            var counterUpdate = function () {
+                count = counter - $('#Rejected option:selected').length @Html.Raw(Model.SlotOrder == -1 ? "" : "- $('#Approved option:selected').length");
+                if (count == 0) {
+                $('#cardCounter').fadeOut();
+                } else {
+                $('#cardCounter').text(count);
+                }
+            };
+            var checkingBox = function (e, check) {
+                var id = $(e).attr('item');
+                if (check == 1) {
+                    $('#Approved option[value="' + id + '"]').attr('selected', false);
+                    $('#Rejected option[value="' + id + '"]').attr('selected', true);
+                } else {
+                    $('#Approved option[value="' + id + '"]').attr('selected', true);
+                    $('#Rejected option[value="' + id + '"]').attr('selected', false);
+                }
+                counterUpdate();
+            };
+            var buttonFinish = async function (e) {
+                var form = $(e).closest('form');
+                formSubmit(form);
+            }
+            var buttonEvent = async function (e) {
+                var currentParent = $(e).closest('.card-body');
+                var nextVisible = currentParent.nextAll('.card-body.d-none').first();
+                var accordionBtn = $('.accordion-btn');
+                var form = $(e).closest('form');
+                var sending = $("#sending");
+                var card = $(e).closest('.card');
+                items = $('#Rejected option:selected').length;
+
+                @if (Model.SlotOrder == -1)
+                {
+                    <text>
+                        try {
+                            if (items == @(itemz)) {
+                                console.log("go");
+                                formSubmit(form);
+                            }
+                            if (nextVisible.length == 0) {
+                                console.log("=");
+                                var t = await getCard();
+                                console.log("!");
+                                console.log(t);
+                                if (t === false) {
+                                    console.log("done");
+                                    formSubmit(form);
+                                } else {
+                                    console.log(1);
+                                    currentParent = $(e).closest('.card-body');
+                                    nextVisible = currentParent.nextAll('.card-body.d-none').first();
+                                    accordionBtn = $('.accordion-btn');
+                                    card = $(e).closest('.card');
+
+                                console.log('else!');
+                                }
+                            }
+                            console.log("stay");
+                            card.fadeOut("fast", function () {
+                                currentParent.addClass('d-none');
+                                accordionBtn.addClass('collapsed');
+                                nextVisible.removeClass('d-none');
+                            }).fadeIn("fast");
+
+                        } catch (error) {
+                            console.error("Error: ", error);
+                        }
+                    </text>
+                }
+                else
+                {
+                    <text>
+                        if (nextVisible.length == 0) {
+                            formSubmit(form);
+                        } else {
+                            card.fadeOut("fast", function () {
+                                currentParent.addClass('d-none');
+                                accordionBtn.addClass('collapsed');
+                                nextVisible.removeClass('d-none');
+                            }).fadeIn("fast");
+                        }
+                    </text>
+                }
+            };
+            var buttonPrevious = function (e) {
+                var id = $(e).attr('item');
+                blurAll();
+                var currentParent = $(e).closest('.card-body');
+                var prevVisible = currentParent.prevAll('.card-body.d-none').first();
+                var expandedCollapse = $(".show");
+                var prevButton = $('.btn-b.d-none');
+                var finButton = $('.btn-x.d-none');
+                var card = $(e).closest('.card');
+                if (prevVisible.length != 0) {
+                    card.fadeOut("fast", function () {
+                        currentParent.addClass('d-none');
+                        prevButton.removeClass('d-none');
+                        finButton.removeClass('d-none');
+                        expandedCollapse.removeClass('show');
+                        prevVisible.removeClass('d-none');
+                    }).fadeIn("fast");
+                }
+                $('#Approved option[value="' + id + '"]').attr('selected', false);
+                $('#Rejected option[value="' + id + '"]').attr('selected', false);
+                counterUpdate();
+            };
+            var buttonCollapse = function (e) {
+                $(e).closest(".accordion-item").find(".btn.btn-b").addClass('d-none');
+                $(e).closest(".accordion-item").find(".btn.btn-x").addClass('d-none');
+            };
+            var readyPage = function () {
+                blurAll();
+                $('[w]').click(function () {
+                    $(this).attr("b","").removeAttr("w");
+                });
+                $('.btn-b').click(function () {
+                    buttonPrevious(this);
+                });
+                $('.btn-x').click(function () {
+                    buttonFinish(this);
+                });
+                $('.btn-o').click(function () {
+                    checkingBox(this, true);
+                    buttonEvent(this);
+                });
+                $('.btn-v').click(function () {
+                    checkingBox(this, false);
+                    buttonEvent(this);
+                });
+                $('.accordion-btn').click(function () {
+                    buttonCollapse(this);
+                });
+            }
+            readyPage();
+        });
+    </script>
+}

@@ -1,0 +1,25 @@
+﻿@using ModelsLeit.ViewModels
+@using SharedLeit
+@model BoxAddViewModel
+
+@{
+    ViewData["Title"] = $"Add {Model.Name} Box";
+}
+
+<h2>@ViewData["Title"]</h2>
+<a asp-controller="Collection" asp-action="Index" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+<br />
+<form asp-action="Add" method="post">
+    <dl>
+        <dt>Description:</dt>
+        <dd>@Model.Description</dd>
+    </dl>
+    <div class="form-group">
+        <label asp-for="CardPerDay">Card Per Day</label>
+        <input asp-for="CardPerDay" value="10" class="form-control" />
+        <span asp-validation-for="CardPerDay" class="text-danger"></span>
+    </div>
+    <input type="hidden" asp-for="CollectionId" />
+    <br />
+    <button type="submit" class="btn btn-primary"><i class="bi bi-plus-square"></i> Add</button>
+</form>

@@ -1,0 +1,86 @@
+﻿@using ModelsLeit.ViewModels
+@using SharedLeit
+@model IEnumerable<BoxViewModel>
+
+@{
+    DateTime invalidDate = new();
+    ViewData["Title"] = $"My Boxes";
+    var t = DateTime.Now.Date;
+    DateOnly tomorow = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+}
+
+<h2>@ViewData["Title"]</h2>
+<a asp-controller="Collection" asp-action="Index" class="float-end btn btn-dark"><i class="bi bi-folder"></i> Collections</a>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date Added</th>
+            <th>Last Studied</th>
+            <th>Card Per Day</th>
+            <th>Completed</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var box in Model)
+        {
+            <tr>
+                <td>@box.Collection.Name</td>
+                <td>@box.DateAdded</td>
+                <td>@(box.DateStudied != invalidDate ? box.DateStudied : "")</td>
+                <td>@box.CardPerDay</td>
+                <td>
+                    @(box.Completed?Html.Raw ("<i class=\"bi bi-check2-square\"></i>"):"")
+                </td>
+                <td>
+                    <button class="deleteButton btn btn-danger" colName="@box.Collection.Name" boxId="@box.Id"><i class="bi bi-trash3"></i> Delete</button>
+
+                    <a class="btn btn-secondary @(
+                        box.LastCardId is 0 ? "disabled" : ""
+                    )" asp-action="Review" asp-route-id="@box.Id"><i class="bi bi-eye"></i> Review</a>
+
+                    <a class="btn @(
+                        (DateOnly.FromDateTime(box.DateStudied.Date) > tomorow && box.LastSlot is 0) || box.Completed ?
+                        " disabled" : "btn-success"
+                    )" asp-action="Study" asp-route-id="@box.Id"><i class="bi bi-play-circle"></i> Start</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@Html.AntiForgeryToken()
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.deleteButton').click(function () {
+                var name = $(this).attr('colName');
+                if (confirm('Are you sure to DELETE "' + name + '" Box?')) {
+                    var parent = $(this).closest('tr');
+                    var boxId = $(this).attr('boxId');
+                    $.ajax({
+                        url: 'Box/Delete',
+                        type: 'POST',
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        data: {
+                            id: boxId
+                        },
+                        success: function (response) {
+                            if (response.trim() == "OK") {
+                                parent.remove();
+                            } else {
+                                alert('Server: ' + response);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            alert('Error: ' + error);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

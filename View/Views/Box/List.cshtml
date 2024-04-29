@@ -1,0 +1,39 @@
+﻿@using ModelsLeit.ViewModels
+@using SharedLeit
+@model IEnumerable<BoxViewModel>
+
+@{
+    DateTime invalidDate = new();
+        ViewData["Title"] = $"Boxes List of {ViewData["CollectionName"]}";
+    if (!Model.Any())
+    {
+        ViewData["Title"] += " (Empty)";
+    }
+}
+
+<h2>@ViewData["Title"]</h2>
+<a asp-controller="Collection" asp-action="Index" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date Added</th>
+            <th>Last Studied</th>
+            <th>Card Per Day</th>
+            <th>Completed</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var box in Model)
+        {
+            <tr>
+                <td>@box.DateAdded</td>
+                <td>@(box.DateStudied != invalidDate ? box.DateStudied : "")</td>
+                <td>@box.CardPerDay</td>
+                <td>
+                    @(box.Completed ? Html.Raw("<i class=\"bi bi-check2-square\"></i>") : "")
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
