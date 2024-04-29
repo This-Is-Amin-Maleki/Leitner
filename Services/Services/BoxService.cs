@@ -196,6 +196,38 @@ namespace Services.Services
         }
 
 
+        private int ForwardEmptyContainer(BoxDto model)
+        {
+            int order = model.LastSlot;
+            //0 => 1 => 2 => 3 => 4 => -1 |=> 0
+            int nextOrder = order is 4 ? -1 : order + 1;
+            
+            var currentContainer = model.Containers
+                .FirstOrDefault(x => x.SlotOrder == order);
+            
+            var nextSlotContainer = model.Containers
+                .FirstOrDefault(x => x.SlotOrder == nextOrder)??new();
+
+            if (nextSlotContainer.Id is 0)//No Continer in Slot, So get SlotId to move new container to that.
+            {
+                nextSlotContainer.SlotId = _dbContext.Slots
+                    .FirstOrDefault(x => x.BoxId == model.Id && x.Order == nextOrder).Id;
+            }
+
+            Container mainContainer = new()
+            {
+                Id = currentContainer.Id,
+                SlotId = nextSlotContainer.SlotId,
+                DateModified = DateTime.Now,
+                ContainerCards = currentContainer.ContainerCards//it's empty so it doesnt have any card!!
+            };
+
+            _dbContext.Update(mainContainer);
+            _dbContext.SaveChanges();
+            return nextOrder;
+        }
+        
+
         private BoxViewModel CreateEmptyBoxViewModel()
         {
             return new BoxViewModel();
