@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ServicesLeit.Services;
+using ViewLeit.Extensions;
 
 namespace ViewLeit
 {
@@ -11,6 +12,12 @@ namespace ViewLeit
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            //log One Of Two
+            builder.Logging.AddDebug();
+            //builder.Host.ConfigureLogging(l =>
+            //{
+            //    l.AddDebug();
+            //});
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -24,6 +31,8 @@ namespace ViewLeit
 
             builder.Services.AddScoped<CollectionService>();
             builder.Services.AddScoped<CardService>();
+            builder.Services.AddScoped<BoxService>();
+            builder.Services.AddSingleton<FileService>();//stateless Service
 
             builder.Services.ConfigureApplicationCookie(o =>
                 o.AccessDeniedPath = "/"
@@ -34,10 +43,12 @@ namespace ViewLeit
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+        
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -49,9 +60,10 @@ namespace ViewLeit
             app.UseAuthorization();
 
             app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-
+                name: "default", 
+                //pattern: "{controller=Collection}/{action=Index}/{id?}");
+                pattern: "{controller=Box}/{action=Index}/{id?}");
+            app.AutoMigration<ApplicationDbContext>();
             app.Run();
         }
     }
