@@ -6,25 +6,42 @@ using ServicesLeit.Interfaces;
 using ServicesLeit.Services;
 using SharedLeit;
 using System.Collections;
+using System.Diagnostics;
 
 namespace ViewLeit.Controllers
 {
     public class CardController: Controller
     {
         CardService _cardService;
-        public CardController(CardService cardService)
+        FileService _fileService;
+        CollectionService _collectionService;
+        public CardController(CardService cardService, FileService fileService, CollectionService collectionService)
         {
             _cardService = cardService;
+            _fileService = fileService;
+            _collectionService = collectionService;
         }
 
         // GET: CardController
         public async Task<ActionResult> Index(long id)
         {
-            (List<CardViewModel> list, string collectionName) model = await _cardService.ReadCardsAsync(id);
-
+            List<CardViewModel> model = await _cardService.ReadCardsLimitedAsync(id);
+            CollectionStatus? status;
+            if (model.Count > 0)
+            {
+                var firstCard = model.First().Collection;
+                ViewData["CollectionName"] = firstCard.Name;
+                status = firstCard.Status;
+            }
+            else
+            {
+                var collectionData= await _collectionService.GetCollectionNameAndStatusAsync(id);
+                ViewData["CollectionName"] = collectionData.Name;
+                status = collectionData.Status;
+            }
+            ViewData["noEdit"] = status is CollectionStatus.Published or CollectionStatus.Submit;
             ViewData["CollectionId"] = id;
-            ViewData["CollectionName"] = model.collectionName;
-            return View(model.list);
+            return View(model);
         }
 
         // GET: CardController/Details/5
@@ -49,7 +66,6 @@ namespace ViewLeit.Controllers
                 ModelState.AddModelError("XX", "Not Valid!");
                 return View(model);
             }
-
 #warning catch!!
             try
             { 
@@ -61,6 +77,57 @@ namespace ViewLeit.Controllers
                 ModelState.AddModelError("xx", ex.Message);
                 return View(model);
             }
+        }
+
+        // GET: CardController/Create
+        [Route("Card/Upload/{id}")]
+        public ActionResult Upload(long id)
+        {
+            ViewData["CollectionId"] = id;
+            return View();
+        }
+
+        // POST: CardController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("Card/Upload/{id}")]
+        public async Task<ActionResult> Upload(long id, IFormFile sheet)
+        {
+            ViewData["CollectionId"] = id;
+            if (sheet == null || sheet.Length == 0)
+            {
+                ViewData["Error"] = "No file uploaded!";
+                return View(id);
+            }
+
+            int processed = 0;
+            var extension = Path.GetExtension(sheet.FileName).ToLower();
+            var tempFilePath = Path.GetTempFileName() + extension;
+
+#warning catch!!
+            try
+            {
+                // Upload to temp
+                using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                {
+                    await sheet.CopyToAsync(stream);
+                }
+                // Processing data
+                List<Card> list = _fileService.ReadCardsFromExcelFile(tempFilePath,id,1000);
+                await _cardService.BulkAddCardsAsync(list);
+            }
+            catch (Exception ex)
+            {
+                ViewData["Error"] = ex.Message;
+            }
+            finally
+            {
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+            }
+            return RedirectToAction(nameof(Index), new { id });
         }
 
         // GET: CardController/Edit
@@ -81,7 +148,7 @@ namespace ViewLeit.Controllers
 #warning catch!!
             try
              {
-                await _cardService.EditCardAsync(model);
+                await _cardService.UpdateCardAsync(model);
                 return RedirectToAction(nameof(Index), new { id = model.Collection.Id });
             }
              catch (Exception ex)
@@ -93,7 +160,7 @@ namespace ViewLeit.Controllers
 
         // GET: CardController/Delete
         //public async Task<ActionResult> Delete(long id) =>
-        //    View(await _cardService.ReadCardAsync(id));
+        //    ViewLeit(await _cardService.ReadCardAsync(id));
 
         // POST: CardController/Delete
         [HttpPost]
