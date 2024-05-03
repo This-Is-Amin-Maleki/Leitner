@@ -10,7 +10,7 @@ namespace ServicesLeit.Interfaces
     {
         Task AddCardAsync(CardViewModel cardViewModel);
         Task DeleteCardAsync(CardViewModel cardViewModel);
-        Task EditCardAsync(CardViewModel cardViewModel);
+        Task UpdateCardAsync(CardViewModel cardViewModel);
         Task<CardViewModel> GetCardAsync(long id);
         Task<(List<CardViewModel>,string)> GetCardsAsync(long collectionId);
         Task<CardViewModel> ReadCardAsync(long id);
