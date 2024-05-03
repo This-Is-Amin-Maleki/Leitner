@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Upload some new Cards";
+}
+
+<h2>@ViewData["Title"]</h2>
+<a asp-action="Index" asp-route-id="@ViewData["CollectionId"]" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+<br />
+<br />
+<form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="sheet" class="form-label">Spreadsheet File:</label>
+        <span class="float-end">Just add the first 1000 rows of the file!</span>
+        <input class="form-control" type="file" id="sheet" name="sheet">
+        <span class="text-danger">@ViewData["Error"]</span>
+    </div>
+    <input type="hidden" id="id" name="id" value="@ViewData["CollectionId"]" />
+    <br />
+    <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i> Save</button>
+</form>
