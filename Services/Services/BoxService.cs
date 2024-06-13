@@ -1,9 +1,10 @@
 ﻿using DataAccessLeit.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Models.DTOs;
-using Models.Entities;
-using Models.ViewModels;
+using ModelsLeit.DTOs;
+using ModelsLeit.Entities;
+using ModelsLeit.ViewModels;
+using ServicesLeit.Services;
 using System.Data;
 
 namespace Services.Services
