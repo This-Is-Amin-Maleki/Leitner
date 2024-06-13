@@ -6,7 +6,8 @@
 @{
     ViewData["Title"] = $"Review {Model.CollectionName}";
     var i = 1;
-    var last = Model.Cards.Count;
+    var itemz = Model.Cards.Count;
+
 }
 <div id="reviewCounter" class="btn-dark">0</div>
 <div id="cardInfo">
@@ -74,10 +75,7 @@
     <script>
         $(document).ready(function () {
             
-            var counter = @itemz;
-            var count = counter;
-
-
+            var count = @itemz;
             var blurAll = function () {
                 $('[b]').each(function () {
                     $(this).attr("w", "").removeAttr("b");
@@ -87,12 +85,12 @@
             $(".btn-x").last().html("<i class=\"bi bi-x-circle\"></i> Finish");
             $('.card-body').first().removeClass('d-none');
 
-            var counterUpdate = function () {
-                count = counter - $('#Rejected option:selected').length @Html.Raw(Model.SlotOrder == -1 ? "" : "- $('#Approved option:selected').length");
-                if (count == 0) {
-                    $('#cardCounter').fadeOut();
+            var counterUpdate = function (prev) {
+                count += (prev ? +1 : -1);
+                if (count < 0) {
+                    $('#reviewCounter').fadeOut();
                 } else {
-                    $('#cardCounter').text(count);
+                    $('#reviewCounter').text(count);
                 }
             };
             var buttonEvent = function (e) {
@@ -103,6 +101,7 @@
                 var sending = $("#sending");
                 var card = $(e).closest('.card');
                 if (nextVisible.length == 0) {
+                    $('#cardInfo').fadeOut();
                     form.fadeOut("fast", function () {
                         form.submit();
                     }).delay(5000);
@@ -113,6 +112,8 @@
                         nextVisible.removeClass('d-none');
                     }).fadeIn("fast");
                 }
+                //count--;
+                counterUpdate();
             }
             var buttonPrevious = function (e) {
                 blurAll();
@@ -129,6 +130,8 @@
                         prevVisible.removeClass('d-none');
                     }).fadeIn("fast");
                 }
+                //count++;
+                counterUpdate(true);
             }
             var buttonCollapse = function (e) {
                 $(e).closest(".accordion-item").find(".btn.btn-v").first().addClass('d-none');
@@ -145,6 +148,7 @@
             $('.accordion-btn').click(function () {
                 buttonCollapse(this);
             });
+            counterUpdate();
         });
     </script>
 }
