@@ -96,3 +96,12 @@ body div main{
     padding: 0 .2em;
     border-radius: 10%;
 }
+#reviewCounter,#cardCounter{
+    height: 1.5em;
+    line-height: 1.4em;
+    text-align: center;
+    font-size: 1.5em;
+    float: right;
+    color: var(--bs-btn-color);
+    background: var(--bs-btn-hover-bg);
+}

@@ -8,6 +8,7 @@
     var i = 1;
     var last = Model.Cards.Count;
 }
+<div id="reviewCounter" class="btn-dark">0</div>
 <div id="cardInfo">
     <h2>@ViewData["Title"]</h2>
     <a asp-action="Index" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
@@ -72,6 +73,11 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+            
+            var counter = @itemz;
+            var count = counter;
+
+
             var blurAll = function () {
                 $('[b]').each(function () {
                     $(this).attr("w", "").removeAttr("b");
@@ -80,6 +86,15 @@
             blurAll();
             $(".btn-x").last().html("<i class=\"bi bi-x-circle\"></i> Finish");
             $('.card-body').first().removeClass('d-none');
+
+            var counterUpdate = function () {
+                count = counter - $('#Rejected option:selected').length @Html.Raw(Model.SlotOrder == -1 ? "" : "- $('#Approved option:selected').length");
+                if (count == 0) {
+                    $('#cardCounter').fadeOut();
+                } else {
+                    $('#cardCounter').text(count);
+                }
+            };
             var buttonEvent = function (e) {
                 var currentParent = $(e).closest('.card-body');
                 var nextVisible = currentParent.nextAll('.card-body.d-none').first();
