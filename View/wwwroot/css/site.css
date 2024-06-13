@@ -88,3 +88,11 @@ body div main{
 #brandC:hover a {
     fill: #7e69ac;
 }
+#cardCounter {
+    width: 1.5em;
+    border-radius: 100%;
+}
+#reviewCounter {
+    padding: 0 .2em;
+    border-radius: 10%;
+}
