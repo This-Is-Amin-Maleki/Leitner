@@ -75,7 +75,7 @@
     <script>
         $(document).ready(function () {
             
-            var count = @itemz;
+            var count = @itemz+1;
             var blurAll = function () {
                 $('[b]').each(function () {
                     $(this).attr("w", "").removeAttr("b");
@@ -87,7 +87,7 @@
 
             var counterUpdate = function (prev) {
                 count += (prev ? +1 : -1);
-                if (count < 0) {
+                if (count == 0) {
                     $('#reviewCounter').fadeOut();
                 } else {
                     $('#reviewCounter').text(count);
