@@ -1,7 +1,6 @@
 using DataAccessLeit.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Services.Services;
 using ServicesLeit.Services;
 using ViewLeit.Extensions;
@@ -33,7 +32,7 @@ namespace ViewLeit
             builder.Services.AddScoped<CollectionService>();
             builder.Services.AddScoped<CardService>();
             builder.Services.AddScoped<BoxService>();
-            builder.Services.AddSingleton<FileService>();//stateless Service
+            builder.Services.AddTransient<FileService>();//stateless Service
 
             builder.Services.ConfigureApplicationCookie(o =>
                 o.AccessDeniedPath = "/"
