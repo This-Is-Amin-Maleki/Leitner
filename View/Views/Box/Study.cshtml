@@ -15,6 +15,10 @@
 <div id="cardInfo">
     <h2>@ViewData["Title"]</h2>
     <a asp-action="Index" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+    @if (Model.SlotOrder == -1)
+    {
+        <button type="button" class="float-end btn btn-outline-danger mx-2 btn-x disabled"><i class="bi bi-exclamation-octagon"></i> Finish</button>
+    }
     <br /><br />
 </div>
 <form asp-action="Study" method="post">
@@ -25,9 +29,6 @@
     </div>
     <div class="container">
         <div class="row">
-            <div class="col-sm-1 col-md-2 col-xl-3">
-            </div>
-            <div class="col-sm-10 col-md-8 col-xl-6">
             <div class="col-sm-1 col-md-2 col-xl-3"></div>
             <div class="col-sm-10 col-md-8 col-xl-6">                
                 <div class="card align-middle">
@@ -79,13 +80,10 @@
 
         <div class="accordion accordion-flush" id="accordionFlushExample">
             <div class="accordion-item">
-                <div class="d-flex justify-content-end">
-                    @if(i!=1){
-                        <button type="button" item="@card.Id" class="btn btn-outline-primary float-start btn-b"><i class="bi bi-arrow-left-circle"></i> Previous</button>
-                        <button type="button" item="@card.Id" class="btn btn-outline-danger  mx-auto btn-x"><i class="bi bi-exclamation-octagon"></i> Finish</button>
-                    }
-                    <button class="btn align-middle btn-outline-dark accordion-btn collapsed float-end" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse@(i)" aria-expanded="false" aria-controls="flush-collapse@(i)"><i class="bi bi-lightbulb"></i> Answer</button>
-                </div>
+                @if(i!=1){
+                    <button type="button" item="@card.Id" class="btn btn-outline-primary float-start btn-b"><i class="bi bi-arrow-left-circle"></i> Previous</button>
+                }
+                <button class="btn align-middle btn-outline-dark accordion-btn collapsed float-end" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse@(i)" aria-expanded="false" aria-controls="flush-collapse@(i)"><i class="bi bi-lightbulb"></i> Answer</button>
                 <div id="flush-collapse@(i++)" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
                     <br />
                     <h2 class="card-title">@card.Answer</h2>
@@ -103,8 +101,8 @@
             </div>
         </div>
     </div>
-    <select class="d-none" asp-for="Approved" asp-items="@(new SelectList(allCards, "Id", "Id"))" multiple></select>
-    <select class="d-none" asp-for="Rejected" asp-items="@(new SelectList(allCards, "Id", "Id"))" multiple></select>
+    <select class="d-none!" asp-for="Approved" asp-items="@(new SelectList(allCards, "Id", "Id"))" multiple></select>
+    <select class="d-none!" asp-for="Rejected" asp-items="@(new SelectList(allCards, "Id", "Id"))" multiple></select>
 <input asp-for="@Model.Id" type="hidden" value="@Model.Id" />
 <input asp-for="BoxId" type="hidden" />
 <input asp-for="SlotOrder" type="hidden" />
@@ -135,7 +133,7 @@
                 card += obj.HasMp3 ?
                     "audio='/audio/" + obj.Id + ".mp3' onclick='new Audio(this.getAttribute(\"audio\")).play()'><i class='bi bi-volume-off-fill'></i>" :
                     ">";
-                card += obj.Ask + '</h2><div class="accordion accordion-flush" id="accordionFlushExample"><div class="accordion-item"><div class="d-flex justify-content-end"><button type="button" item="' + obj.Id + '" class="btn btn-outline-primary float-start btn-b">Previous</button><button type="button" item="' + obj.Id + '" class="btn btn-outline-success mx-auto btn-x"><i class="bi bi-exclamation-octagon"></i> Finish</button ><button class="btn align-middle btn-outline-dark accordion-btn collapsed float-end" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse' + number + '" aria-expanded="false" aria-controls="flush-collapse' + number + '">Answer</button></div><div id="flush-collapse' + (number++) + '" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample"><br/><h2 class="card-title">' + obj.Answer + '</h2><div class="accordion-body p-0">' + obj.Description + '</div> <br/><br/> <button type="button" item = "' + obj.Id + '" class="btn btn-outline-success float-start btn-o"> Learning </button><button type="button" item="' + obj.Id + '" class="btn btn-outline-success float-end btn-v">Sure</button></div></div></div></div>';
+                card += obj.Ask + '</h2><div class="accordion accordion-flush" id="accordionFlushExample"><div class="accordion-item"><button type="button" item="' + obj.Id + '" class="btn btn-outline-primary float-start btn-b">Previous</button><button class="btn align-middle btn-outline-dark accordion-btn collapsed float-end" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse' + number + '" aria-expanded="false" aria-controls="flush-collapse' + number + '">Answer</button><div id="flush-collapse' + (number++) + '" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample"><br/><h2 class="card-title">' + obj.Answer + '</h2><div class="accordion-body p-0">' + obj.Description + '</div> <br/><br/> <button type="button" item = "' + obj.Id + '" class="btn btn-outline-success float-start btn-o"> Learning </button><button type="button" item="' + obj.Id + '" class="btn btn-outline-success float-end btn-v">Sure</button></div></div></div></div>';
                 $('.card').first().append(card);
                 readyPage();
             };
@@ -186,29 +184,26 @@
                 counterUpdate();
             };
             var buttonFinish = async function (e) {
-                var form = $(e).closest('form');
+                //just send before this card!! ON prev
+                var form = $('form').first();
                 formSubmit(form);
             }
             var buttonEvent = async function (e) {
                 var currentParent = $(e).closest('.card-body');
                 var nextVisible = currentParent.nextAll('.card-body.d-none').first();
+                var prevVisible = currentParent.prevAll('.card-body.d-none').first();
                 var accordionBtn = $('.accordion-btn');
                 var form = $(e).closest('form');
                 var sending = $("#sending");
                 var card = $(e).closest('.card');
+                var finButton = $('.btn-x');
                 items = $('#Rejected option:selected').length;
-
-                @if (Model.SlotOrder == -1)
-                {
-                    <text>
                 card.fadeOut("fast", 
                     @if (Model.SlotOrder == -1)
                         {
                         <text>
                         async function () {
                         try {
-                            if (items == @(itemz)) {
-                                console.log("go");
                         if (items == @(itemz)) {
                             console.log("go");
                             formSubmit(form);
@@ -223,22 +218,6 @@
                             if (t === false) {
                                 console.log("done");
                                 formSubmit(form);
-                            }
-                            if (nextVisible.length == 0) {
-                                console.log("=");
-                                var t = await getCard();
-                                console.log("!");
-                                console.log(t);
-                                if (t === false) {
-                                    console.log("done");
-                                    formSubmit(form);
-                                } else {
-                                    console.log(1);
-                                    currentParent = $(e).closest('.card-body');
-                                    nextVisible = currentParent.nextAll('.card-body.d-none').first();
-                                    accordionBtn = $('.accordion-btn');
-                                    card = $(e).closest('.card');
-
                             } else {
                                 console.log(1);
                                 $('#cardSpinner').fadeOut("fast");
@@ -247,71 +226,73 @@
                                 accordionBtn = $('.accordion-btn');
                                 card = $(e).closest('.card');
                                 console.log('else!');
-                                }
                             }
-                            console.log("stay");
-                            card.fadeOut("fast", function () {
-                                currentParent.addClass('d-none');
-                                accordionBtn.addClass('collapsed');
-                                nextVisible.removeClass('d-none');
-                            }).fadeIn("fast");
-
-                        } catch (error) {
-                            console.error("Error: ", error);
                         }
+                        finButton.removeClass('disabled');
+                        console.log("stay");
+                        currentParent.addClass('d-none');
+                        accordionBtn.addClass('collapsed');
+                        nextVisible.removeClass('d-none');
+                        card.delay(100).fadeIn("fast");
+
+                    } catch (error) {
+                        console.error("Error: ", error);
+                    }
                     </text>
-                }
-                else
-                {
-                    <text>
+                    }
+                        else
+                        {
+                        <text>
+                        function () {
                         if (nextVisible.length == 0) {
                             formSubmit(form);
                         } else {
-                            card.fadeOut("fast", function () {
-                                currentParent.addClass('d-none');
-                                accordionBtn.addClass('collapsed');
-                                nextVisible.removeClass('d-none');
-                            }).fadeIn("fast");
+                            currentParent.addClass('d-none');
+                            accordionBtn.addClass('collapsed');
+                            nextVisible.removeClass('d-none');
+                            card.delay(100).fadeIn("fast");
                         }
                     </text>
-                }
+                    }
+                });
             };
             var buttonPrevious = function (e) {
-                var id = $(e).attr('item');
-                blurAll();
-                var currentParent = $(e).closest('.card-body');
-                var prevVisible = currentParent.prevAll('.card-body.d-none').first();
-                var expandedCollapse = $(".show");
-                var prevButton = $('.btn-b.d-none');
-                var finButton = $('.btn-x.d-none');
                 var card = $(e).closest('.card');
-                if (prevVisible.length != 0) {
-                    card.fadeOut("fast", function () {
+                card.fadeOut("fast", function () {
+                    var id = $(e).attr('item');
+                    blurAll();
+                    var currentParent = $(e).closest('.card-body');
+                    var prevVisible = currentParent.prevAll('.card-body.d-none').first();
+                    var expandedCollapse = $(".show");
+                    var prevButton = $('.btn-b.d-none');
+                    var finButton = $('.btn-x');
+                    if (prevVisible.length != 0) {
                         currentParent.addClass('d-none');
                         prevButton.removeClass('d-none');
-                        finButton.removeClass('d-none');
                         expandedCollapse.removeClass('show');
                         prevVisible.removeClass('d-none');
-                    }).fadeIn("fast");
-                }
-                $('#Approved option[value="' + id + '"]').attr('selected', false);
-                $('#Rejected option[value="' + id + '"]').attr('selected', false);
-                counterUpdate();
+                        card.delay(100).fadeIn("fast");
+                        if (prevVisible.find('.btn-b').length == 0) {
+                            finButton.addClass('disabled');
+                        }
+                    }
+                    $('#Approved option[value="' + id + '"]').attr('selected', false);
+                    $('#Rejected option[value="' + id + '"]').attr('selected', false);
+                    counterUpdate();
+                });
             };
             var buttonCollapse = function (e) {
                 $(e).closest(".accordion-item").find(".btn.btn-b").addClass('d-none');
-                $(e).closest(".accordion-item").find(".btn.btn-x").addClass('d-none');
+                @*$(e).closest(".accordion-item").find(".btn.btn-x").addClass('d-none');*@
             };
             var readyPage = function () {
                 blurAll();
+                $('[w],.btn-b,.btn-o,.btn-v,.accordion-btn').unbind();
                 $('[w]').click(function () {
                     $(this).attr("b","").removeAttr("w");
                 });
                 $('.btn-b').click(function () {
                     buttonPrevious(this);
-                });
-                $('.btn-x').click(function () {
-                    buttonFinish(this);
                 });
                 $('.btn-o').click(function () {
                     checkingBox(this, true);
@@ -325,6 +306,9 @@
                     buttonCollapse(this);
                 });
             }
+            $('.btn-x').click(function () {
+                buttonFinish(this);
+            });
             readyPage();
         });
     </script>
