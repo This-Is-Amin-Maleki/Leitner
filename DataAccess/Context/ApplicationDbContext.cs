@@ -1,5 +1,6 @@
 ﻿using DataAccessLeit.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -10,10 +11,10 @@ using System.Xml.Schema;
 
 namespace DataAccessLeit.Context
 {
-    public class ApplicationDbContext:DbContext
+    public class ApplicationDbContext:IdentityDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options) 
+        : base(options)
         { }
         public DbSet<Collection> Collections { get; set; }
         public DbSet<Card> Cards { get; set; }
@@ -21,6 +22,8 @@ namespace DataAccessLeit.Context
         public DbSet<Slot> Slots { get; set; }
         public DbSet<Container> Containers { get; set; }
         public DbSet<ContainerCard> ContainerCards { get; set; }
+        public DbSet<ApplicationUser> Users { get; set; }
+
         /*
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
