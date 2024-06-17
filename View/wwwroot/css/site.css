@@ -86,7 +86,7 @@ body div main{
     fill: #6c757d;
 }
 #brandC:hover a {
-    fill: #7e69ac;
+    fill: #7051a5;
 }
 #cardCounter {
     width: 1.5em;
@@ -104,4 +104,11 @@ body div main{
     float: right;
     color: var(--bs-btn-color);
     background: var(--bs-btn-hover-bg);
+}
+#cardSpinner {
+    display: none;
+    color: #7051a5;
+}
+.spinner-grow {
+    animation-direction: alternate !important;
 }
