@@ -28,27 +28,4 @@ namespace ModelsLeit.DTOs
         public CollectionDto Collection { get; set; }
         public ICollection<ContainersDto> Containers { get; set; }
     }
-
-    public record ContainersDto
-    {
-        public long Id { get; set; }
-        public long SlotId { get; set; }
-        public int SlotOrder { get; set; }
-        public DateTime DateModified { get; set; }
-        public ICollection<ContainerCard> ContainerCards { get; set; }
-    }
-
-    public record CollectionDto
-    {
-        public long Id { get; set; }
-        public string? Name { get; set; }
-        public int Count { get; set; }
-    }
-
-    public record ContainerReadDto
-    {
-        public ContainerStudyViewModel Container { get; set; }
-        public bool AnyCard { get; set; }
-        public bool AnyReqCard { get; set; }
-    }
 }
