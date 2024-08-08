@@ -7,6 +7,9 @@ using ModelsLeit.ViewModels;
 using Microsoft.Extensions.Logging;
 using ModelsLeit.DTOs;
 using Services.Services;
+using ModelsLeit.DTOs.User;
+using ModelsLeit.DTOs.Collection;
+using ModelsLeit.DTOs.Box;
 
 namespace ServicesLeit.Services
 {
@@ -21,12 +24,12 @@ namespace ServicesLeit.Services
             _dbContext = dbContext;
         }
 
-        public async Task<List<CollectionViewModel>> ReadCollectionsAsync()
+        public async Task<List<CollectionDto>> ReadCollectionsAsync()
         {//use auto mapper
             return await _dbContext.Collections
                 .FromSqlRaw("SELECT Id, Name, LEFT(Description, 200) AS Description, PublishedDate, Status FROM Collections")
                 .AsNoTracking()
-                .Select(x => new CollectionViewModel()
+                .Select(x => new CollectionDto()
                 {
                     Id = x.Id,
                     Name = x.Name,
@@ -36,11 +39,11 @@ namespace ServicesLeit.Services
                 })
                 .ToListAsync();
         }
-        public async Task<List<CollectionViewModel>> GetCollectionsAsync()
+        public async Task<List<CollectionDto>> GetCollectionsAsync()
         {//use auto mapper
             return await _dbContext.Collections
                 .FromSqlRaw("SELECT Id, Name, LEFT(Description, 200) AS Description, PublishedDate, Status FROM Collections")
-                .Select(x => new CollectionViewModel()
+                .Select(x => new CollectionDto()
                 {
                     Id = x.Id,
                     Name = x.Name,
@@ -51,12 +54,12 @@ namespace ServicesLeit.Services
                 .ToListAsync();
         }
 #warning check performance
-        public async Task<CollectionViewModel> ReadCollectionAsync(long id)
+        public async Task<CollectionDto> ReadCollectionAsync(long id)
         {
             var collection = await _dbContext.Collections
                 .AsNoTracking()
                 .Include(x => x.Boxes)
-                .Select(x => new CollectionViewModel
+                .Select(x => new CollectionDto
                 {
                     BoxCount = x.Boxes.Count,
                     Description = x.Description,
@@ -72,7 +75,7 @@ namespace ServicesLeit.Services
                 collection;
         }
 #warning check performance
-        public async Task<CollectionViewModel> GetCollectionAsync(long id)
+        public async Task<CollectionDto> GetCollectionAsync(long id)
         {
             var collection = await _dbContext.Collections
                 .FindAsync(id);
@@ -98,12 +101,12 @@ namespace ServicesLeit.Services
                 new CollectionMiniDto() :
                 model;
         }
-        public async Task<BoxAddViewModel?> CheckExistCollectionAsync(long id)//pre add to box form
+        public async Task<BoxAddDto?> CheckExistCollectionAsync(long id)//pre add to box form
         {
             var model = await _dbContext.Collections
                 .AsNoTracking()
                 .Where(x => x.Id == id && x.Status == CollectionStatus.Published)
-                .Select(x => new BoxAddViewModel()
+                .Select(x => new BoxAddDto()
                 {
                     Name = x.Name,
                     CollectionId = x.Id,
@@ -113,7 +116,7 @@ namespace ServicesLeit.Services
 
             return model;
         }
-        public async Task AddCollectionAsync(CollectionViewModel collectionViewModel)
+        public async Task AddCollectionAsync(CollectionAddDto collectionViewModel)
         {
             var collection = MapViewModelToCollection(collectionViewModel);
 
@@ -137,7 +140,7 @@ namespace ServicesLeit.Services
 
             }
         }
-        public async Task EditCollectionAsync(CollectionViewModel collectionViewModel)
+        public async Task EditCollectionAsync(CollectionDto collectionViewModel)
         {
             var oldCollection = await _dbContext.Collections
                 .AsNoTracking()
@@ -166,7 +169,7 @@ namespace ServicesLeit.Services
 
             }
         }
-        public async Task DeleteCollectionAsync(CollectionViewModel collectionViewModel)
+        public async Task DeleteCollectionAsync(CollectionDto collectionViewModel)
         {
             var collection = MapViewModelToCollection(collectionViewModel);
 
@@ -204,18 +207,18 @@ namespace ServicesLeit.Services
             }
         }
         ////////////////////////////////////////////////////////
-        private CollectionViewModel CreateEmptyCollectionViewModel()
+        private CollectionDto CreateEmptyCollectionViewModel()
         {
-            return new CollectionViewModel();
+            return new CollectionDto();
         }
-        private BoxAddViewModel CreateEmptyBoxAddViewModel()
+        private BoxAddDto CreateEmptyBoxAddViewModel()
         {
-            return new BoxAddViewModel();
+            return new BoxAddDto();
         }
 
-        private CollectionViewModel MapCollectionViewModel(Collection collection)
+        private CollectionDto MapCollectionViewModel(Collection collection)
         {
-            return new CollectionViewModel()
+            return new CollectionDto()
             {
                 Id = collection.Id,
                 Description = collection.Description,
@@ -225,9 +228,9 @@ namespace ServicesLeit.Services
             };
         }
 
-        private BoxAddViewModel MapCollectionToBoxAdd(Collection collection)
+        private BoxAddDto MapCollectionToBoxAdd(Collection collection)
         {
-            return new BoxAddViewModel()
+            return new BoxAddDto()
             {
                 CollectionId = collection.Id,
                 CardPerDay = 10,
@@ -236,7 +239,17 @@ namespace ServicesLeit.Services
             };
         }
 
-        private Collection MapViewModelToCollection(CollectionViewModel collectionViewModel)
+        private Collection MapViewModelToCollection(CollectionDto collectionViewModel)
+        {
+            return new Collection()
+            {
+                Id = collectionViewModel.Id,
+                Description = collectionViewModel.Description.Trim(),
+                Name = collectionViewModel.Name.Trim(),
+                Status = collectionViewModel.Status,
+            };
+        }
+        private Collection MapViewModelToCollection(CollectionAddDto collectionViewModel)
         {
             return new Collection()
             {

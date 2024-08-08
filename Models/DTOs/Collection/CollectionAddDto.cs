@@ -1,11 +1,12 @@
 ﻿using SharedLeit;
 
-namespace ModelsLeit.ViewModels
+namespace ModelsLeit.DTOs.Collection
 {
-    public record CollectionViewModel
+    public record CollectionAddDto
     {
         public long? Id { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
+        public int Count { get; set; }
         public string Description { get; set; }
         public DateTime PublishedDate { get; set; }
         public CollectionStatus Status { get; set; }

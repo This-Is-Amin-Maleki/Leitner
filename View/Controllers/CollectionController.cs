@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
+using ModelsLeit.DTOs.Collection;
+using ModelsLeit.DTOs.User;
 using ModelsLeit.ViewModels;
 using ServicesLeit.Services;
 using SharedLeit;
@@ -34,7 +36,7 @@ namespace ViewLeit.Controllers
         // POST: CollectionController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CollectionViewModel model)
+        public async Task<ActionResult> Create(CollectionAddDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -62,7 +64,7 @@ namespace ViewLeit.Controllers
         // POST: CollectionController/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(CollectionViewModel model)
+        public async Task<ActionResult> Edit(CollectionDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -90,7 +92,7 @@ namespace ViewLeit.Controllers
         // POST: CollectionController/Delete
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(CollectionViewModel model)
+        public async Task<ActionResult> Delete(CollectionDto model)
         {
             if (!ModelState.IsValid)
             {

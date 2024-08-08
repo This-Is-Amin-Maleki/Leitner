@@ -1,8 +1,8 @@
 ﻿using SharedLeit;
 
-namespace ModelsLeit.ViewModels
+namespace ModelsLeit.DTOs.Collection
 {
-    public record CollectionMiniViewModel
+    public record CollectionMiniDto
     {
         public long Id { get; set; }
         public string? Name { get; set; }
