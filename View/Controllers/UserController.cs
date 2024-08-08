@@ -158,6 +158,41 @@ namespace View.Controllers
             return View("Index");
         }
         
+        [HttpPost]// p
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResendEmail/*Comfirm*/(ResendEmailViewModel model)
+        {
+            LoginResultViewModel outModel = new()
+            {
+                Id = "ResendEmail",
+                Title = "Confirmation Email Resent",
+                Message = "Please check your email to confirm your account.",
+            };
+            var result = await _userService.EmailTokenGeneratorAsync(model.Email);
+            if (result is null)
+            {
+                //  email not valid!!
+                outModel.Title = "Confirmation Email Resending Failed";
+                outModel.Message = "An error has occurred while processing your request. Please try again later.";
+                return PartialView("Partial/User/_PartialResultDialog", outModel);
+            }
+
+            //sendMail
+            var confirmLink = Url.Action("ConfirmEmail", "UserName", protocol: HttpContext.Request.Scheme,
+            values: new EmailTokenViewModel
+            {
+                Identifier = result.Identifier,
+                Token = result.Token
+            });
+            var sitenNme = _configuration.GetValue("SiteName", _httpContext.HttpContext!.Request.Host.ToString());
+            var confirmText = _configuration.GetValue("ResendConfirmRegisterEmail", "Hi Dear User,<br> Please confirm your model by clicking on below link:<br><center><a href=\"{0}\">{0}</a></center>");
+
+#warning x_Need Email Sender
+            // var emailContent = await _emailSender.SendEmailAsync(model.Email, $"Confirm Password Reset - {sitenNme}", string.Format(confirmText, confirmLink));
+
+            return PartialView("Partial/User/_PartialResultDialog", outModel);
+        }
+
 
     }
 }
