@@ -16,7 +16,7 @@ namespace DataAccessLeit.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("SqlServer:User", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PublishedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -32,7 +32,7 @@ namespace DataAccessLeit.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("SqlServer:User", "1, 1"),
                     DateAdded = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateStudied = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastSlot = table.Column<int>(type: "int", nullable: false),
@@ -56,7 +56,7 @@ namespace DataAccessLeit.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("SqlServer:User", "1, 1"),
                     Ask = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Answer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -79,7 +79,7 @@ namespace DataAccessLeit.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("SqlServer:User", "1, 1"),
                     Order = table.Column<int>(type: "int", nullable: false),
                     BoxId = table.Column<long>(type: "bigint", nullable: false)
                 },
@@ -99,7 +99,7 @@ namespace DataAccessLeit.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("SqlServer:User", "1, 1"),
                     DateModified = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SlotId = table.Column<long>(type: "bigint", nullable: false)
                 },
@@ -119,7 +119,7 @@ namespace DataAccessLeit.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("SqlServer:User", "1, 1"),
                     ContainerId = table.Column<long>(type: "bigint", nullable: false),
                     CardId = table.Column<long>(type: "bigint", nullable: false)
                 },

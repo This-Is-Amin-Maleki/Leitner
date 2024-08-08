@@ -19,6 +19,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Shared\Partial\NewFolder\**" />
+    <Compile Remove="Views\User\NewFolder\**" />
+    <Content Remove="Views\Shared\Partial\NewFolder\**" />
+    <Content Remove="Views\User\NewFolder\**" />
+    <EmbeddedResource Remove="Views\Shared\Partial\NewFolder\**" />
+    <EmbeddedResource Remove="Views\User\NewFolder\**" />
+    <None Remove="Views\Shared\Partial\NewFolder\**" />
+    <None Remove="Views\User\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\AccountController2-User.cs" />
+    <Compile Remove="Controllers\AccountController2.cs" />
+    <Compile Remove="Controllers\User2Controller.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\js\site.js" />
   </ItemGroup>
 

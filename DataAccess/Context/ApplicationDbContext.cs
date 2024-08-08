@@ -11,7 +11,7 @@ using System.Xml.Schema;
 
 namespace DataAccessLeit.Context
 {
-    public class ApplicationDbContext:IdentityDbContext
+    public class ApplicationDbContext: IdentityDbContext<ApplicationUser, UserRole, long>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -22,14 +22,21 @@ namespace DataAccessLeit.Context
         public DbSet<Slot> Slots { get; set; }
         public DbSet<Container> Containers { get; set; }
         public DbSet<ContainerCard> ContainerCards { get; set; }
-        public DbSet<ApplicationUser> Users { get; set; }
+
+        public object AsNoTracking()
+        {
+            throw new NotImplementedException();
+        }
+
+        //public DbSet<ApplicationUser> Users { get; set; }
 
         /*
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseSqlServer("Database = Leitner;Data Source=ARTEMISIA;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
-        }
-        */
+            options.UseSqlServer("Data Source=31.25.90.164\\sqlserver2019;Database = aminmal1_leiti;User ID=aminmal1_leitUsr;Password=Alba2374;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"
+                /*"Database = Leitner;Data Source=ARTEMISIA;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"* /);
+        }*/
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
