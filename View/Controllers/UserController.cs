@@ -5,9 +5,7 @@ using ModelsLeit.DTOs.User;
 using SharedLeit;
 using ViewLeit.Extensions;
 using Services.Services;
-using ModelsLeit.ViewModels;
 using System.Web.WebPages;
-using Microsoft.IdentityModel.Tokens;
 using ModelsLeit.ViewModels.User;
 
 namespace View.Controllers
@@ -97,5 +95,50 @@ namespace View.Controllers
 
             return PartialView("Partial/User/_PartialLoginForm", model);
         }
+
+        [HttpPost]// p
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(UserRegisterViewModel model)
+        {
+            UserRegisterViewModel registerationData = new()
+            {
+                Email = model.Email,
+                Password = model.Password,
+                UserName = model.UserName,
+                Type = UserType.User,
+            };
+
+            UserRegisterDto result = await _userService.RegisterAsync(registerationData);
+            if(result.Result is not RegisterResult.Success)
+            {
+                var error = result.Result.RegisterResultError();
+                ModelState.AddModelError(error.key, error.message);
+                return PartialView("Partial/User/_PartialRegisterForm", model);
+            }
+
+            if(result.Email is not null)
+            {
+                EmailTokenViewModel confirmModel = new()
+                {
+                    Identifier = result.Email,
+                    Token = result.EmailToken,
+                };
+                var confirmLink = Url.Action("ConfirmEmail", "UserName", confirmModel, HttpContext.Request.Scheme);
+                var siteDomain = _httpContext.HttpContext!.Request.Host.ToString();
+                var sitenNme = _configuration.GetValue("SiteName", siteDomain);
+                var confirmText = _configuration.GetValue("ConfirmRegisterEmail", "Hi Dear User<br> Please confirm your model by clicking on below link:<br><center><a href=\"{0}\">{0}</a></center>");
+#warning x_Need Email Sender
+                // var emailContent = await _emailSender.SendEmailAsync(model.Email, $"Confirm Password Reset - {sitenNme}", string.Format(confirmText, confirmLink));
+            }
+
+            LoginResultViewModel outModel = new()
+            {
+                Id = "Register",
+                Title = "Registration Email Sent",
+                Message = "Registration successful! Please check your email to confirm your account.",
+            };
+            return PartialView("Partial/User/_PartialResultDialog", outModel);
+        }
+
     }
 }
