@@ -1,9 +1,10 @@
-﻿using ModelsLeit.Entities;
+﻿using ModelsLeit.DTOs.Card;
+using ModelsLeit.Entities;
 using System.Reflection;
 
-namespace ModelsLeit.ViewModels
+namespace ModelsLeit.DTOs.Container
 {
-    public record ContainerStudyViewModel
+    public record ContainerStudyDto
     {
         public long Id { get; set; }
         public string CollectionName { get; set; }
@@ -12,9 +13,9 @@ namespace ModelsLeit.ViewModels
         public long LastCardId { get; set; }
         public int SlotOrder { get; set; }
         public long BoxId { get; set; }
-        public ICollection<CardViewModel> Approved { get; set; }
+        public ICollection<CardDto> Approved { get; set; }
         //    public long Id { get; set; }
-        public ICollection<CardViewModel>? Rejected { get; set; }
+        public ICollection<CardDto> Rejected { get; set; }
         //    public long Id { get; set; }
     }
 }

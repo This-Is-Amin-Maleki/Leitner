@@ -1,9 +1,9 @@
 ﻿using ModelsLeit.Entities;
 using System.Reflection;
 
-namespace ModelsLeit.ViewModels
+namespace ModelsLeit.DTOs.Container
 {
-    public record ContainerStudiedViewModel
+    public record ContainerStudiedDto
     {
         public long Id { get; set; }
         public long SlotId { get; set; }
