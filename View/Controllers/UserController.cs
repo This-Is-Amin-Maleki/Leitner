@@ -234,5 +234,42 @@ namespace View.Controllers
             return PartialView("Partial/User/_PartialResultDialog", outModel);
         }
 
+        [HttpGet] //index
+        public async Task<IActionResult> ResetPassword(UserConfirmViewModel model)
+        {
+            model.Mode = UserCheckMode.EmailOnly;
+            TryValidateModel(model);
+
+            if (ModelState.IsValid)
+            {
+                TempData["Message"] = "Invalid token. Please try again or request a new one.";
+                return View("Index");
+            }
+            UserResetPasswordViewModel checkData = new()
+            {
+                Identifier = model.Identifier,
+                Token = model.Token,
+            };
+
+            var check = await _userService.ResetPasswordCheckTokenAsync(checkData);
+            if (!check)
+            {
+                TempData["Message"] = "Invalid token. Please try again or request a new one!";
+                return View("Index");
+            }
+
+            HomePageViewModel outModel = new()
+            {
+                PasswordReset = new UserResetPasswordViewModel()
+                {
+                    Identifier = model.Identifier,
+                    Token = model.Token,
+                },
+                Type = UserFormType.PasswordReset,
+            };
+            return View("Index", outModel);
+        }
+
+
     }
 }
