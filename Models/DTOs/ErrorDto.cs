@@ -1,6 +1,6 @@
-namespace ModelsLeit.ViewModels
+namespace ModelsLeit.DTOs
 {
-    public class ErrorViewModel
+    public class ErrorDto
     {
         public string? RequestId { get; set; }
 
