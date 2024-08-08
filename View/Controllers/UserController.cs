@@ -194,5 +194,45 @@ namespace View.Controllers
         }
 
 
+
+        [HttpPost]// p
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Forgot(ResetPasswordRequestViewModel model)
+        {
+            LoginResultViewModel outModel = new()
+            {
+                Id = "ForgotSent",
+                Title = "Password Reset Email Sending Failed",
+                Message = "An error has occurred while processing your request. Please try again later.",
+            };
+            if (!ModelState.IsValid)
+            {
+                return PartialView("Partial/User/_PartialResultDialog", outModel);
+            }
+            model.Mode = UserCheckMode.EmailOnly;
+            var token = await _userService.ResetPasswordTokenGeneratorAsync(model);
+            if (token is null)
+            {
+                outModel.Message = "An error has occurred while processing your request! Please try again later.";
+                return PartialView("Partial/User/_PartialResultDialog", outModel);
+            }
+
+            EmailTokenViewModel confirmModel = new()
+            {
+                Identifier = model.Identifier,
+                Token = token,
+            };
+            var confirmLink = Url.Action("ConfirmEmail", "UserName", confirmModel, HttpContext.Request.Scheme);
+            var siteDomain = _httpContext.HttpContext!.Request.Host.ToString();
+            var sitenNme = _configuration.GetValue("SiteName", siteDomain);
+            var confirmText = _configuration.GetValue("ConfirmRegisterEmail", "Hi Dear User<br> Please confirm your model by clicking on below link:<br><center><a href=\"{0}\">{0}</a></center>");
+#warning x_Need Email Sender
+            // var emailContent = await _emailSender.SendEmailAsync(model.Email, $"Confirm Password Reset - {sitenNme}", string.Format(confirmText, confirmLink));
+
+            outModel.Title = "Password Reset Email Sent";
+            outModel.Message = "Password reset instructions have been sent to your email. Please check your inbox to proceed with resetting your password.";
+            return PartialView("Partial/User/_PartialResultDialog", outModel);
+        }
+
     }
 }
