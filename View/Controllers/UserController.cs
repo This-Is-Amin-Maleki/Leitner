@@ -270,6 +270,35 @@ namespace View.Controllers
             return View("Index", outModel);
         }
 
+        [HttpPost]// p
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(UserResetPasswordViewModel model)
+        {
+            LoginResultViewModel outModel = new()
+            {
+                Id = "ForgotSent",
+                Title = "Password Reset Failed",
+                Message = "There was an issue resetting your password. Please try again or contact our support team if the problem persists.",
+            };
+
+            if (!ModelState.IsValid)
+            {
+                return PartialView("Partial/User/_PartialResultDialog", outModel);
+            }
+
+            model.Mode = UserCheckMode.EmailOnly;
+            var result = await _userService.ResetPasswordConfirmAsync(model);
+
+            if (!result)
+            {
+                outModel.Message = "There was an issue resetting your password! Please try again or contact our support team if the problem persists.";
+                return PartialView("Partial/User/_PartialResultDialog", outModel);
+            }
+
+            outModel.Title = "Password Reset Successful";
+            outModel.Message = "Your password has been successfully reset. You can now log in using your new password. Please ensure to keep your password secure and do not share it with anyone.";
+            return PartialView("Partial/User/_PartialResultDialog", outModel);
+        }
 
     }
 }
