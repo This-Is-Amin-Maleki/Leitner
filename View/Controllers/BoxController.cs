@@ -1,15 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR.Protocol;
-using ModelsLeit.Entities;
-using ModelsLeit.ViewModels;
+using ModelsLeit.DTOs.Card;
+using ModelsLeit.DTOs.Box;
+using ModelsLeit.DTOs.Collection;
 using Newtonsoft.Json;
 using Services.Services;
 using ServicesLeit.Services;
-using System.Collections;
-using System.Data;
-using System.Web.Helpers;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using ModelsLeit.DTOs.Container;
 
 namespace ViewLeit.Controllers
 {
@@ -26,14 +22,14 @@ namespace ViewLeit.Controllers
         // GET: BoxController
         public async Task<ActionResult> Index()
         {
-            List<BoxViewModel> model = await _boxService.ReadAllAsync();
+            List<BoxMiniDto> model = await _boxService.ReadAllAsync();
             return View(model);
         }
 
         // GET: BoxController/List/id
         public async Task<ActionResult> List(long id)
         {
-            List<BoxViewModel> model = await _boxService.ReadByCollectionAsync(id);
+            List<BoxMiniDto> model = await _boxService.ReadByCollectionAsync(id);
             if (model.Count is 0)
             {
                 var collection = await _collectionService.GetCollectionNameAndStatusAsync(id);
@@ -65,7 +61,7 @@ namespace ViewLeit.Controllers
         // POST: BoxController/Add
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Add(BoxAddViewModel model)
+        public async Task<ActionResult> Add(BoxAddDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -143,8 +139,8 @@ namespace ViewLeit.Controllers
 
         // POST: BoxController/Add
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Study(ContainerStudiedViewModel model)
+        //[ValidateAntiForgeryToken]
+        public async Task<ActionResult> Study(ContainerStudiedDto model)
         {
 
             /*
@@ -161,7 +157,7 @@ namespace ViewLeit.Controllers
                     model.Rejected.Add(new Card() { Id = idc });
                 }
             }*/
-            //ContainerStudyViewModel j = JsonConvert.DeserializeObject<ContainerStudyViewModel>(json);
+            //ContainerStudyDto j = JsonConvert.DeserializeObject<ContainerStudyDto>(json);
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("XX", "Not Valid!");
@@ -185,7 +181,7 @@ namespace ViewLeit.Controllers
         public async Task<ActionResult> Next(long id,int num)
         {
             
-            CardViewModel card = new();
+            CardDto card = new();
             try
             {
                 card = await _boxService.ReadNextCardAsync(id,num);
@@ -200,7 +196,7 @@ namespace ViewLeit.Controllers
         }
         ///////////////////////////////////////////
 
-        private ActionResult RejectViewForStudy(ContainerStudiedViewModel model) =>
+        private ActionResult RejectViewForStudy(ContainerStudiedDto model) =>
             View(_boxService.StudyFailAsync(model));
         
     }

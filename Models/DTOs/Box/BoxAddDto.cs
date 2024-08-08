@@ -1,6 +1,6 @@
-﻿namespace ModelsLeit.ViewModels
+﻿namespace ModelsLeit.DTOs.Box
 {
-    public record BoxAddViewModel
+    public record BoxAddDto
     {
         public string? Name {  get; set; }
         public string? Description { get; set; }

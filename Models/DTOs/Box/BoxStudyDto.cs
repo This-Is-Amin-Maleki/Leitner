@@ -1,6 +1,6 @@
-﻿namespace ModelsLeit.ViewModels
+﻿namespace ModelsLeit.DTOs.Box   
 {
-    public record BoxStudyViewModel
+    public record BoxStudyDto
     {
         public long Id { get; set; }
         public int CardPerDay { get; set; }

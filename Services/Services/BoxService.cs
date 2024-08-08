@@ -2,8 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ModelsLeit.DTOs;
+using ModelsLeit.DTOs.Box;
+using ModelsLeit.DTOs.Card;
+using ModelsLeit.DTOs.Collection;
+using ModelsLeit.DTOs.Container;
+using ModelsLeit.DTOs.User;
 using ModelsLeit.Entities;
-using ModelsLeit.ViewModels;
 using ServicesLeit.Services;
 using System.Data;
 
@@ -22,14 +26,14 @@ namespace Services.Services
             _dbContext = dbContext;
             _cardService = cardService;
         }
-        public async Task<List<BoxViewModel>> ReadAllAsync()
+        public async Task<List<BoxMiniDto>> ReadAllAsync()
         {//use auto mapper
             return await _dbContext.Boxes
                 .AsNoTracking()
                 .Include(x => x.Collection)
                 .ThenInclude(x => x.Cards)
                 .ThenInclude(x => x.ContainerCards)
-                .Select(x => new BoxViewModel()
+                .Select(x => new BoxMiniDto()
                 {
                     Id = x.Id,
                     DateAdded = x.DateAdded,
@@ -38,7 +42,7 @@ namespace Services.Services
                     LastSlot = x.LastSlot,
                     LastCardId = x.LastCardId,
                     Completed = x.Completed,
-                    Collection = new CollectionMiniViewModel()
+                    Collection = new CollectionMiniDto()
                     {
                         Id = x.Collection.Id,
                         Name = x.Collection.Name,
@@ -47,17 +51,17 @@ namespace Services.Services
                 })
                 .ToListAsync();
         }
-        public async Task<List<BoxViewModel>> GetAllAsync()
+        public async Task<List<BoxMiniDto>> GetAllAsync()
         {//use auto mapper
             return await _dbContext.Boxes
                 .Include(x => x.Collection)
-                .Select(x => new BoxViewModel()
+                .Select(x => new BoxMiniDto()
                 {
                     Id = x.Id,
                     DateAdded = x.DateAdded,
                     DateStudied = x.DateStudied,
                     LastSlot = x.LastSlot,
-                    Collection = new CollectionMiniViewModel()
+                    Collection = new CollectionMiniDto()
                     {
                         Id = x.Collection.Id,
                         Name = x.Collection.Name
@@ -65,13 +69,13 @@ namespace Services.Services
                 })
                 .ToListAsync();
         }
-        public async Task<List<BoxViewModel>> ReadByCollectionAsync(long id)
+        public async Task<List<BoxMiniDto>> ReadByCollectionAsync(long id)
         {//use auto mapper
             return await _dbContext.Boxes
                 .AsNoTracking()
                 .Include(x => x.Collection)
                 .Where(x => x.CollectionId == id)
-                .Select(x => new BoxViewModel()
+                .Select(x => new BoxMiniDto()
                 {
                     Id = x.Id,
                     DateAdded = x.DateAdded,
@@ -80,7 +84,7 @@ namespace Services.Services
                     LastCardId = x.LastCardId,
                     CardPerDay = x.CardPerDay,
                     Completed = x.Completed,
-                    Collection = new CollectionMiniViewModel()
+                    Collection = new CollectionMiniDto()
                     {
                         Id = x.Collection.Id,
                         Name = x.Collection.Name,
@@ -88,18 +92,18 @@ namespace Services.Services
                 })
                 .ToListAsync();
         }
-        public async Task<List<BoxViewModel>> GetByCollectionAsync(long id)
+        public async Task<List<BoxMiniDto>> GetByCollectionAsync(long id)
         {//use auto mapper
             return await _dbContext.Boxes
                 .Include(x => x.Collection)
                 .Where(x => x.CollectionId == id)
-                .Select(x => new BoxViewModel()
+                .Select(x => new BoxMiniDto()
                 {
                     Id = x.Id,
                     DateAdded = x.DateAdded,
                     DateStudied = x.DateStudied,
                     LastSlot = x.LastSlot,
-                    Collection = new CollectionMiniViewModel()
+                    Collection = new CollectionMiniDto()
                     {
                         Id = x.Collection.Id,
                         Name = x.Collection.Name
@@ -109,7 +113,7 @@ namespace Services.Services
         }
 
 #warning check performance
-        public async Task<BoxViewModel> ReadAsync(long id)
+        public async Task<BoxMiniDto> ReadAsync(long id)
         {
             var box = await _dbContext.Boxes
                 .AsNoTracking()
@@ -121,7 +125,7 @@ namespace Services.Services
                 MapBoxToViewModel(box);
         }
 #warning check performance
-        public async Task<BoxViewModel> GetAsync(long id)
+        public async Task<BoxMiniDto> GetAsync(long id)
         {
             var box = await _dbContext.Boxes
                 .Include(x => x.Collection)
@@ -132,7 +136,7 @@ namespace Services.Services
                 MapBoxToViewModel(box);
         }
 
-        public async Task AddAsync(BoxAddViewModel model)
+        public async Task AddAsync(BoxAddDto model)
         {
             //just 
             Box box = new()
@@ -154,7 +158,7 @@ namespace Services.Services
                 Slot slot = new()
                 {
                     Order = i,
-                    Containers = new List<ModelsLeit.Entities.Container>(),
+                    Containers = new List<Container>(),
                 };
                 int containersNum = GetContainersNum(i);
                 for (int j = 0; j < containersNum || j == 0; j++)
@@ -167,7 +171,7 @@ namespace Services.Services
             await _dbContext.Boxes.AddAsync(box);
             await _dbContext.SaveChangesAsync();
         }
-        public async Task<ReviewViewModel> ReviewAsync(long id)
+        public async Task<BoxReviewDto> ReviewAsync(long id)
         {
             var model = await _dbContext.Boxes
                 .AsNoTracking()
@@ -177,7 +181,7 @@ namespace Services.Services
                 .ThenInclude(x => x.ContainerCards)
                 .ThenInclude(x => x.Card)
                 .Where(x => x.Id == id && x.LastCardId > 0)
-                .Select(x => new ReviewViewModel
+                .Select(x => new BoxReviewDto
                 {
                     BoxId = x.Id,
                     CollectionName = x.Collection.Name,
@@ -186,7 +190,7 @@ namespace Services.Services
                         .SelectMany(slot =>
                             slot.Containers.SelectMany(container =>
                                 container.ContainerCards.Select(containerCard => containerCard.Card)))
-                        .Select(x=>new CardViewModel
+                        .Select(x=>new CardDto
                         {
                             Id = x.Id,
                             HasMp3 = x.HasMp3,
@@ -211,7 +215,7 @@ namespace Services.Services
             return model;
         }
 
-        public async Task<ContainerStudyViewModel> StudyAsync(long id)
+        public async Task<ContainerStudyDto> StudyAsync(long id)
         {
             var boxDto = await _dbContext.Boxes
                 .AsNoTracking()
@@ -232,7 +236,7 @@ namespace Services.Services
                     },
                     Containers = new List<ContainersDto>(),
                 })
-                .FirstOrDefaultAsync(x =>x.Id == id);
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (boxDto is null)
             {
@@ -266,7 +270,7 @@ namespace Services.Services
                 ).ToListAsync();
 
             ContainerReadDto read= await ReadLastContainerOfSlotAsync(boxDto);
-            ContainerStudyViewModel container = read.Container;
+            ContainerStudyDto container = read.Container;
             Container mainContainer = new();
             Box box = new();
             while (read.AnyCard is false)// || container.SlotOrder == -1 && cards are empty)
@@ -315,7 +319,7 @@ namespace Services.Services
             return container;
         }
 
-        public async Task UpdateAsync(ContainerStudiedViewModel model)
+        public async Task UpdateAsync(ContainerStudiedDto model)
         {
             // 1 - 4 = Learning Cards
             //   0   = Today Learning Cards
@@ -432,7 +436,7 @@ namespace Services.Services
             _dbContext.SaveChanges();
         }
 
-        public async Task<ContainerStudyViewModel> StudyFailAsync(ContainerStudiedViewModel model)
+        public async Task<ContainerStudyDto> StudyFailAsync(ContainerStudiedDto model)
         {
             var allCards = (model.Approved ?? []).Concat(model.Rejected ?? []);
 
@@ -453,7 +457,7 @@ namespace Services.Services
             //    .Where(x => allCards.Contains(x.Id))
             //    .ToList();
 
-            return new ContainerStudyViewModel
+            return new ContainerStudyDto
             {
                 Approved = CardsIds2Card(model.Approved),
                 Rejected = CardsIds2Card(model.Rejected),
@@ -495,7 +499,7 @@ namespace Services.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<CardViewModel> ReadNextCardAsync(long boxId,int num)
+        public async Task<CardDto> ReadNextCardAsync(long boxId,int num)
         {
             //check box
             var box = await _dbContext.Boxes
@@ -551,11 +555,11 @@ namespace Services.Services
             return nextOrder;
         }
         
-        private static List<CardViewModel> CardsIds2Card(long[] cards)
+        private static List<CardDto> CardsIds2Card(long[] cards)
         {
             //cardsArray id array to cardsArray list
             return cards
-                .Select(id => new CardViewModel { Id = id })
+                .Select(id => new CardDto { Id = id })
                 .ToList();
         }
         private static List<ContainerCard> CardsIds2ContainerCard(long[] cards)
@@ -587,12 +591,12 @@ namespace Services.Services
             return (int)Math.Round(Math.Pow(2, i));
         }
 
-        private BoxViewModel CreateEmptyBoxViewModel()
+        private BoxMiniDto CreateEmptyBoxViewModel()
         {
-            return new BoxViewModel();
+            return new BoxMiniDto();
         }
 
-        private BoxViewModel MapBoxToViewModel(Box box) => new BoxViewModel();
+        private BoxMiniDto MapBoxToViewModel(Box box) => new BoxMiniDto();
         private async Task<ContainerReadDto> ReadLastContainerOfSlotAsync(BoxDto model)
         {
             //                         new  +  rej  fin
@@ -603,10 +607,10 @@ namespace Services.Services
             bool anyReqCard = false;
             var container = model.Containers
                 .Where(x => x.SlotOrder == model.LastSlot)
-                .Select(x => new ContainerStudyViewModel()
+                .Select(x => new ContainerStudyDto()
                 {
                     Approved = x.ContainerCards
-                        .Select(x => new CardViewModel
+                        .Select(x => new CardDto
                         {
                             Answer = x.Card.Answer,
                             Ask = x.Card.Ask,
@@ -622,7 +626,7 @@ namespace Services.Services
                     SlotOrder = model.LastSlot,//x.SlotOrder,
                     CardPerDay = model.CardPerDay,
                     CollectionName = model.Collection.Name,
-                    Rejected = new List<CardViewModel>(),
+                    Rejected = new List<CardDto>(),
                 })
                 .FirstOrDefault();
 
@@ -632,9 +636,9 @@ namespace Services.Services
                 {
                     container = model.Containers
                     .Where(x => x.SlotOrder == -1)
-                    .Select(x => new ContainerStudyViewModel()
+                    .Select(x => new ContainerStudyDto()
                     {
-                        Approved = x.ContainerCards.Select(x => new CardViewModel
+                        Approved = x.ContainerCards.Select(x => new CardDto
                         {
                             Answer = x.Card.Answer,
                             Ask = x.Card.Ask,
@@ -648,7 +652,7 @@ namespace Services.Services
                         SlotOrder = model.LastSlot,//x.SlotOrder,
                         CardPerDay = model.CardPerDay,
                         CollectionName = model.Collection.Name,
-                        Rejected = new List<CardViewModel>(),
+                        Rejected = new List<CardDto>(),
                     })
                     .FirstOrDefault();
                 }

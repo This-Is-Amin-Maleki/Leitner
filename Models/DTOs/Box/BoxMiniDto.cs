@@ -1,8 +1,9 @@
-﻿using ModelsLeit.Entities;
+﻿using ModelsLeit.DTOs.Collection;
+using ModelsLeit.Entities;
 
-namespace ModelsLeit.ViewModels
+namespace ModelsLeit.DTOs.Box
 {
-    public record BoxViewModel
+    public record BoxMiniDto
     {
         public long Id { get; set; }
         public int CardPerDay { get; set; }
@@ -14,7 +15,7 @@ namespace ModelsLeit.ViewModels
         public long LastCardId { get; set; }
         public bool Completed { get; set; }
 
-        public CollectionMiniViewModel Collection { get; set; }
+        public CollectionMiniDto Collection { get; set; }
         public ICollection<Slot> Slots { get; set; }
     }
 }

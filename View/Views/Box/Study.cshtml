@@ -1,12 +1,12 @@
-﻿@using ModelsLeit.Entities
-@using ModelsLeit.ViewModels
+﻿@using ModelsLeit.DTOs.Box
+@using ModelsLeit.DTOs.Container
 @using SharedLeit
-@model ContainerStudyViewModel
+@model ContainerStudyDto
 
 @{
     ViewData["Title"] = $"Study {Model.CollectionName}";
     int i = 1;
-    var allCards = (Model.Approved ?? new List<CardViewModel>()).Concat(Model.Rejected ?? new List<CardViewModel>());
+    var allCards = (Model.Approved).Concat(Model.Rejected);
     var itemz = Model.Rejected.Count + Model.Approved.Count;
     //itemz = Model.SlotOrder < 0 ? itemz : itemz * 5;      unuse for this algorithms
 }
