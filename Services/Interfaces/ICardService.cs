@@ -1,4 +1,5 @@
-﻿using ModelsLeit.ViewModels;
+﻿using ModelsLeit.DTOs.Card;
+using ModelsLeit.ViewModels;
 using System;
 using System.Linq;
 using System.Text;
@@ -8,12 +9,12 @@ namespace ServicesLeit.Interfaces
 {
     public interface ICardService
     {
-        Task AddCardAsync(CardViewModel cardViewModel);
-        Task DeleteCardAsync(CardViewModel cardViewModel);
-        Task UpdateCardAsync(CardViewModel cardViewModel);
-        Task<CardViewModel> GetCardAsync(long id);
-        Task<(List<CardViewModel>,string)> GetCardsAsync(long collectionId);
-        Task<CardViewModel> ReadCardAsync(long id);
-        Task<(List<CardViewModel>,string)> ReadCardsAsync(long collectionId);
+        Task AddCardAsync(CardDto cardViewModel);
+        Task DeleteCardAsync(CardDto cardViewModel);
+        Task UpdateCardAsync(CardDto cardViewModel);
+        Task<CardDto> GetCardAsync(long id);
+        Task<(List<CardDto>,string)> GetCardsAsync(long collectionId);
+        Task<CardDto> ReadCardAsync(long id);
+        Task<(List<CardDto>,string)> ReadCardsAsync(long collectionId);
     }
 }

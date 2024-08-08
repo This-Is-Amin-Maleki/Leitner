@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using ModelsLeit.DTOs.Card;
 using ModelsLeit.Entities;
-using ModelsLeit.ViewModels;
-using ServicesLeit.Interfaces;
 using ServicesLeit.Services;
 using SharedLeit;
-using System.Collections;
-using System.Diagnostics;
 
 namespace ViewLeit.Controllers
 {
@@ -25,7 +21,7 @@ namespace ViewLeit.Controllers
         // GET: CardController
         public async Task<ActionResult> Index(long id)
         {
-            List<CardViewModel> model = await _cardService.ReadCardsLimitedAsync(id);
+            List<CardDto> model = await _cardService.ReadCardsLimitedAsync(id);
             CollectionStatus? status;
             if (model.Count > 0)
             {
@@ -59,7 +55,7 @@ namespace ViewLeit.Controllers
         // POST: CardController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CardViewModel model)
+        public async Task<ActionResult> Create(CardDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -137,7 +133,7 @@ namespace ViewLeit.Controllers
         // POST: CardController/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(CardViewModel model)
+        public async Task<ActionResult> Edit(CardDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -165,7 +161,7 @@ namespace ViewLeit.Controllers
         // POST: CardController/Delete
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(CardViewModel model)
+        public async Task<ActionResult> Delete(CardDto model)
         {
             if (!ModelState.IsValid)
             {

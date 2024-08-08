@@ -10,6 +10,9 @@ using EFCore.BulkExtensions;
 using System.Xml;
 using Microsoft.Extensions.Logging;
 using Services.Services;
+using ModelsLeit.DTOs.Card;
+using ModelsLeit.DTOs.User;
+using ModelsLeit.DTOs.Collection;
 
 namespace ServicesLeit.Services
 {
@@ -24,20 +27,20 @@ namespace ServicesLeit.Services
             _dbContext = dbContext;
             _collection = collection;
         }
-        public async Task<List<CardViewModel>> ReadCardsLimitedAsync(long collectionId)
+        public async Task<List<CardDto>> ReadCardsLimitedAsync(long collectionId)
         {//use auto mapper
 #warning if invalid card send 2 save reyurn without collection
             string collectionName = "";
-            List<CardViewModel> list = await _dbContext.Cards
+            List<CardDto> list = await _dbContext.Cards
                 .AsNoTracking()
                 .Include(x => x.Collection)
                 .Where(x => x.CollectionId == collectionId)
-                .Select(x => new CardViewModel()
+                .Select(x => new CardDto()
                 {
                     Id = x.Id,
                     Ask = x.Ask,
                     HasMp3 = x.HasMp3,
-                    Collection = new CollectionMiniViewModel()
+                    Collection = new CollectionMiniDto()
                     {
                         Id = x.Collection.Id,
                         Name = x.Collection.Name,
@@ -48,22 +51,22 @@ namespace ServicesLeit.Services
             return list;
         }
 
-        public async Task<(List<CardViewModel>, string)> ReadCardsAsync(long collectionId)
+        public async Task<(List<CardDto>, string)> ReadCardsAsync(long collectionId)
         {//use auto mapper
 #warning if invalid card send 2 save reyurn without collection
             string collectionName = "";
-            List<CardViewModel> list = await _dbContext.Cards
+            List<CardDto> list = await _dbContext.Cards
                 .AsNoTracking()
                 .Include(x => x.Collection)
                 .Where(x => x.CollectionId == collectionId)
-                .Select(x => new CardViewModel()
+                .Select(x => new CardDto()
                 {
                     Id = x.Id,
                     Ask = x.Ask,
                     Answer = x.Answer,
                     Description = x.Description,
                     HasMp3 = x.HasMp3,
-                    Collection = new CollectionMiniViewModel()
+                    Collection = new CollectionMiniDto()
                     {
                         Id = x.Collection.Id,
                         Name = x.Collection.Name,
@@ -85,13 +88,13 @@ namespace ServicesLeit.Services
             }
             return (list, collectionName);
         }
-        public async Task<(List<CardViewModel>, string)> GetCardsAsync(long collectionId)
+        public async Task<(List<CardDto>, string)> GetCardsAsync(long collectionId)
         {//use auto mapper
             string collectionName = "";
-            List<CardViewModel> list = await _dbContext.Cards
+            List<CardDto> list = await _dbContext.Cards
                 .Include(x => x.Collection)
                 .Where(x => x.CollectionId == collectionId)
-                .Select(x => new CardViewModel()
+                .Select(x => new CardDto()
                 {
                     Id = x.Id,
                     Ask = x.Ask,
@@ -116,7 +119,7 @@ namespace ServicesLeit.Services
             return (list, collectionName);
         }
 #warning check performance
-        public async Task<CardViewModel> ReadCardAsync(long id)
+        public async Task<CardDto> ReadCardAsync(long id)
         {
             var card = await _dbContext.Cards
                 .AsNoTracking()
@@ -128,7 +131,7 @@ namespace ServicesLeit.Services
                 MapCardToViewModel(card);
         }
 #warning check performance
-        public async Task<CardViewModel> GetCardAsync(long id)
+        public async Task<CardDto> GetCardAsync(long id)
         {
             var card = await _dbContext.Cards
                 .Include(x => x.Collection)
@@ -138,7 +141,7 @@ namespace ServicesLeit.Services
                 CreateEmptyCardViewModel() :
                 MapCardToViewModel(card);
         }
-        public async Task AddCardAsync(CardViewModel model)
+        public async Task AddCardAsync(CardDto model)
         {
             await _collection.CheckStatusAsync(model.Collection.Id, "Can not add any cards to the @ collection!");
             var card = MapViewModelToCard(model);
@@ -182,7 +185,7 @@ namespace ServicesLeit.Services
             }
             return done;
         }
-        public async Task UpdateCardAsync(CardViewModel model)
+        public async Task UpdateCardAsync(CardDto model)
         {
             await _collection.CheckStatusAsync(model.Collection.Id, "Can not update any card of the @ collection!");
             var card = MapViewModelToCard(model);
@@ -205,7 +208,7 @@ namespace ServicesLeit.Services
 
             }
         }
-        public async Task DeleteCardAsync(CardViewModel model)
+        public async Task DeleteCardAsync(CardDto model)
         {
             await _collection.CheckStatusAsync(model.Collection.Id, "Can not delete any card of the @ collection!");
             var card = MapViewModelToCard(model);
@@ -231,13 +234,13 @@ namespace ServicesLeit.Services
             }
         }
 
-        public async Task<List<CardViewModel>> ReadCardsAsync(long lastCardId, long collectionId, int count, int skip = 0)
+        public async Task<List<CardDto>> ReadCardsAsync(long lastCardId, long collectionId, int count, int skip = 0)
         {
             //get new cardsArray
             return await _dbContext.Cards
                 .AsNoTracking()
                 .Where(x => x.Id > lastCardId && x.CollectionId == collectionId)
-                .Select(x => new CardViewModel
+                .Select(x => new CardDto
                 {
                     Id = x.Id,
                     Answer = x.Answer,
@@ -258,21 +261,21 @@ namespace ServicesLeit.Services
         }
 
         ////////////////////////////////////////////////////////
-        private CardViewModel CreateEmptyCardViewModel()
+        private CardDto CreateEmptyCardViewModel()
         {
-            return new CardViewModel();
+            return new CardDto();
         }
 
-        private CardViewModel MapCardToViewModel(Card card)
+        private CardDto MapCardToViewModel(Card card)
         {
-            return new CardViewModel()
+            return new CardDto()
             {
                 Id = card.Id,
                 Ask = card.Ask,
                 Answer = card.Answer,
                 Description = card.Description,
                 HasMp3 = card.HasMp3,
-                Collection = new CollectionMiniViewModel()
+                Collection = new CollectionMiniDto()
                 {
                     Id = card.Collection.Id,
                     Name = card.Collection.Name,
@@ -280,16 +283,16 @@ namespace ServicesLeit.Services
             };
         }
 
-        private Card MapViewModelToCard(CardViewModel cardViewModel)
+        private Card MapViewModelToCard(CardDto model)
         {
             return new Card()
             {
-                Id = cardViewModel.Id,
-                Ask = cardViewModel.Ask,
-                Answer = cardViewModel.Answer,
-                Description = cardViewModel.Description,
-                HasMp3 = cardViewModel.HasMp3,
-                CollectionId = cardViewModel.Collection.Id,
+                Id = model.Id,
+                Ask = model.Ask,
+                Answer = model.Answer,
+                Description = model.Description,
+                HasMp3 = model.HasMp3,
+                CollectionId = model.Collection.Id,
             };
         }
     }
