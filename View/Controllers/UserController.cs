@@ -300,5 +300,30 @@ namespace View.Controllers
             return PartialView("Partial/User/_PartialResultDialog", outModel);
         }
 
+        [HttpPost]// p
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TwoFactor(string model)
+        {
+            var loginModel = new PreLoginViewModel();
+            if (!ModelState.IsValid)
+            {
+                return PartialView("Partial/User/_PartialLoginForm", loginModel);
+            }
+
+            var result = await _userService.TwoFactorCheckAsync(model);
+
+            if (result is LoginResult.Success)
+            {
+                return RedirectToAction("Index", "Box");
+            }
+
+            var error = result.LoginResultError();
+
+            ModelState.AddModelError(error.key, error.message);
+
+            return PartialView("Partial/User/_PartialLoginForm", loginModel);
+#warning check modelState is OK!!
+        }
+
     }
 }
