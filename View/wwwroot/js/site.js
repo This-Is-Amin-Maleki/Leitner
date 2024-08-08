@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    $('a').click(function (event) {
+    $('a[href]:not([href^="#"])').click(function (event) {
         event.preventDefault();
         var target = $(this).attr('target');
         var href = $(this).attr('href');

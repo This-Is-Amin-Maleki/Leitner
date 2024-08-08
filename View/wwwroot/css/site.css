@@ -1,9 +1,33 @@
 html {
   font-size: 14px;
 }
-
+/*
+:root {
+    --bs-primary: #0d6efd
+    --bs-primary-rgb: 13,110,253;
+    --bs-primary-text-emphasis: #052c65;
+    --bs-primary-bg-subtle: #cfe2ff;
+    --bs-primary-border-subtle: #9ec5fe;
+}
+.link-primary:focus, .link-primary:hover {
+    color: RGBA(10,88,202,var(--bs-link-opacity,1)) !important;
+    -webkit-text-decoration-color: RGBA(10,88,202,var(--bs-link-underline-opacity,1)) !important;
+    text-decoration-color: RGBA(10,88,202,var(--bs-link-underline-opacity,1)) !important;
+}
+.btn-primary2{
+    --bs-btn-bg: #0d6efd;
+    --bs-btn-border-color: #0d6efd;
+    --bs-btn-hover-bg: #0b5ed7;
+    --bs-btn-hover-border-color: #0a58ca;
+    --bs-btn-focus-shadow-rgb: 49,132,253;
+    --bs-btn-active-bg: #0a58ca;
+    --bs-btn-active-border-color: #0a53be;
+    --bs-btn-disabled-bg: #0d6efd;
+    --bs-btn-disabled-border-color: #0d6efd;
+}
+*/
 @media (min-width: 768px) {
-  html {
+    html {
     font-size: 16px;
   }
 }
@@ -109,6 +133,33 @@ body div main{
     display: none;
     color: #7051a5;
 }
+#supForm #cardSpinner{
+   min-height:200px;
+}
 .spinner-grow {
     animation-direction: alternate !important;
+}
+@media (min-width: 960px) {
+    .pageSizeDetail {
+        max-height: 100%;
+        overflow: hidden scroll;
+    }
+
+    .fixedPage {
+        height: calc(100vh - 150px)
+    }
+}
+#overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+    display: none;
+}
+.h-27 {
+    height:2.7em;
 }
