@@ -140,5 +140,24 @@ namespace View.Controllers
             return PartialView("Partial/User/_PartialResultDialog", outModel);
         }
 
+        [HttpGet] //index
+        public async Task<IActionResult> ConfirmEmail(EmailTokenViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["Message"] = "An error has occurred!";
+                return View("Index");
+            }
+
+            var result = await _userService.EmailConfirmAsync(model);
+
+            TempData["Message"] = result.IsEmpty() ?
+                "Invalid token. Please try again or request a new one." :
+                result ?? "Email confirmed successfully. Now you can log in to your account.";
+
+            return View("Index");
+        }
+        
+
     }
 }
