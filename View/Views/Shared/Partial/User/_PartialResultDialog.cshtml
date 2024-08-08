@@ -1,0 +1,18 @@
+﻿@using ModelsLeit.ViewModels.User
+@model LoginResultViewModel;
+<div id="@Model.Id" class="someForm">
+    <br>
+    <h3 class="float-start mb-5 w-100">@Model.Title</h3>
+    <p class="text-center small mb-3">@Model.Message</p>
+        @if (Model.Destination is "")
+        {
+            <a href="#" onclick="window.location.reload()" class="btn btn-outline-primary float-end" type="button">
+                @Model.Button
+            </a>
+        }else{
+            <a href="#@Model.Destination" class="change btn btn-outline-primary float-end" type="button">
+                @Model.Button
+            </a>
+        }
+    <br>
+</div>

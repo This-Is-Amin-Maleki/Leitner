@@ -1,0 +1,61 @@
+﻿@using ModelsLeit.ViewModels.User
+
+@model PreLoginViewModel
+<form id="Login" iq="Login" method="post" class="someForm">
+    <br>
+    <h3 class="float-start mb-5">Login</h3>
+    <div class="float-end text-danger small d-grid">
+        <div asp-validation-summary="All" class="float-end"></div>@*<span asp-validation-for="Identifier" class="small text-danger float-end"></span>
+        <span asp-validation-for="Password" class="small text-danger float-end"></span>*@
+    </div>
+    
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-at"></i></span>
+        <input asp-for="Identifier" type="text" class="form-control" placeholder="Username or E-mail">
+    </div>
+    <div class="input-group mb-2">
+        <span class="input-group-text"><i class="bi bi-asterisk"></i></span>
+        <input asp-for="Password" type="password" class="form-control" placeholder="Password">
+    </div>
+    <p class="text-center small mb-3">This site is protected by reCAPTCHA and the Google<a class=" text-decoration-none link-primary" href="https://policies.google.com/privacy?hl=fa"> Privacy Policy</a> and <a class=" text-decoration-none link-primary" href="https://policies.google.com/terms?hl=fa"> Terms of Service</a> apply.</p>
+    <div class="mb-3">
+        <a href="#Forgot" class="change text-decoration-none link-primary">Forgot Password?</a>
+        <a href="#ResendEmail" class="@((ViewData["NotConfirmed"] is 1)?"":"d-none ")change text-decoration-none link-primary float-end">Didn't get the confirmation?</a>
+    </div>
+    <a class="btn btn-primary go">Login</a>
+    <span class="float-end mt-3">
+        Don't have an account?
+        <a href="#Register" class="change text-decoration-none link-primary">Sign up</a>
+    </span>
+    <br>@Html.AntiForgeryToken()
+</form>
+
+
+@*
+<form id="Login" iq="Login" method="post" class="someForm">
+    <br>
+    <h3 class="float-start mb-5 w-90">Login</h3>
+    <div asp-validation-summary="ModelOnly" class="float-end text-danger small"></div>
+    <span class="form-message small text-danger float-end"></span>
+    <span asp-validation-for="Identifier" class="small text-danger float-end"></span>
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-at"></i></span>
+        <input asp-for="Identifier" type="text" class="form-control" placeholder="Username or E-mail">
+    </div>
+    <span asp-validation-for="Password" class="small text-danger float-end"></span>
+    <div class="input-group mb-2">
+        <span class="input-group-text"><i class="bi bi-asterisk"></i></span>
+        <input asp-for="Password" type="password" class="form-control" placeholder="Password">
+    </div>
+    <p class="text-center small mb-3">This site is protected by reCAPTCHA and the Google<a class=" text-decoration-none link-primary" href="https://policies.google.com/privacy?hl=fa"> Privacy Policy</a> and <a class=" text-decoration-none link-primary" href="https://policies.google.com/terms?hl=fa"> Terms of Service</a> apply.</p>
+    <div class="mb-3">
+        <a href="#Forgot" class="change text-decoration-none link-primary">Forgot Password?</a>
+        <a href="#ResendEmail" class="@((ViewData["NotConfirmed"] is 1)?"":"d-none ")change text-decoration-none link-primary float-end">Didn't get the confirmation?</a>
+    </div>
+    <a class="btn btn-primary go">Login</a>
+    <span class="float-end mt-3">
+        Don't have an account?
+        <a href="#Register" class="change text-decoration-none link-primary">Sign up</a>
+    </span>
+    <br>@Html.AntiForgeryToken()
+</form>*@

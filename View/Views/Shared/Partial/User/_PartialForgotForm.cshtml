@@ -1,0 +1,20 @@
+﻿@using ModelsLeit.ViewModels.User
+@model ResetPasswordRequestViewModel
+<form id="Forgot" iq="Forgot" method="post" class="someForm">
+    <br><br><br><br>
+    <h3 class="float-start">Reset Password</h3>
+    <div class="float-end text-danger small d-grid h-27 w-100 ps-5">
+        <div asp-validation-summary="All" class="float-end"></div>
+        @*<span asp-validation-for="Identifier" class="small text-danger float-end"></span>*@
+    </div>
+    <div class="input-group mb-2">
+        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+        <input asp-for="Identifier" type="text" class="small form-control" placeholder="E-mail">
+    </div>
+    <p class="text-center small mb-3">This site is protected by reCAPTCHA and the Google<a class=" text-decoration-none link-primary" href="https://policies.google.com/privacy?hl=fa"> Privacy Policy</a> and <a class=" text-decoration-none link-primary" href="https://policies.google.com/terms?hl=fa"> Terms of Service</a> apply.</p>
+    <a class="btn btn-primary float-start go">Send Password Reset Link</a>
+    <a href="#Login" class="change btn btn-outline-primary float-end" type="button">Back to Login</a>
+    <br>
+    <br>
+    <br>
+</form>

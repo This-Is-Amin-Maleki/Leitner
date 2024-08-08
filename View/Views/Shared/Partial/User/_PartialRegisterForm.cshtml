@@ -1,0 +1,31 @@
+﻿@using ModelsLeit.ViewModels.User
+@model UserRegisterViewModel
+
+<form id="Register" iq="Register" class="someForm">@* asp-action="Register" method="post"> *@
+    <h3 class="float-start mb-5">Sign up</h3>
+    <div class="float-end text-danger small d-grid">
+        <div asp-validation-summary="All" class="float-end"></div>@*
+        <span asp-validation-for="UserName" class="float-end"></span>
+        <span asp-validation-for="Email" class="float-end"></span>
+        <span asp-validation-for="Password" class="small text-danger float-end"></span>*@
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-at"></i></span>
+        <input asp-for="UserName" type="text" class="form-control" placeholder="Username">
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+        <input asp-for="Email" type="text" class="form-control" placeholder="E-mail">
+    </div>
+    <div class="input-group mb-2">
+        <span class="input-group-text"><i class="bi bi-asterisk"></i></span>
+        <input asp-for="Password" type="password" class="form-control" placeholder="Password">
+    </div>
+    <p class="text-center small mb-3">This site is protected by reCAPTCHA and the Google<a class=" text-decoration-none link-primary" href="https://policies.google.com/privacy?hl=fa"> Privacy Policy</a> and <a class=" text-decoration-none link-primary" href="https://policies.google.com/terms?hl=fa"> Terms of Service</a> apply.</p>
+    <a class="btn btn-primary go">Sign up</a>
+    <span class="float-end mt-3">
+        Have an account?
+        <a href="#Login" class="change text-decoration-none link-primary">Log in</a>
+    </span>
+    <br>@Html.AntiForgeryToken()
+</form>

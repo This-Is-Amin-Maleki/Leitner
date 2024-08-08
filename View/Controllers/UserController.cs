@@ -48,5 +48,54 @@ namespace View.Controllers
             _userService = userService;
         }
         public IActionResult Index() => View();
+
+        [HttpPost]// p
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(PreLoginViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return PartialView("Partial/User/_PartialLoginForm", model);
+            }
+            //send lockOutTime To View
+            TempData["LockedOutTime"] = 0;
+
+            model.Mode = UserCheckMode.EmailAndUserName;
+            var preLoginData = await _userService.PreLoginAsync(model);
+            var result = await _userService.LoginAsync(preLoginData);
+
+            if ((int)result >= 9 )
+            {
+                LoginResultViewModel outModel = new()
+                {
+                    Id = "Login",
+                    Title = "Login Failed",                    
+                    Message = "An error has occurred while processing your request. Please try again later.",
+                    Button = "Reload",
+                    Destination  = ""
+                };
+                return PartialView("Partial/User/_PartialResultDialog", outModel);
+            }
+
+            if (result is LoginResult.Success)
+            {
+                var output= Content(Url.Action("Index", "Box"));
+                return output;
+            }
+
+            if (result is LoginResult.TwoFactorRequire)
+            {
+                return PartialView("Partial/User/_PartialTwoFactorForm", model);
+            }
+            var error = result.LoginResultError(preLoginData.User.LockoutEnd);
+            ModelState.AddModelError(error.key, error.message);
+
+            if(error.key is "NotConfirmed")
+            {
+                ViewData["NotConfirmed"] = 1;
+            }
+
+            return PartialView("Partial/User/_PartialLoginForm", model);
+        }
     }
 }
