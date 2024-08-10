@@ -150,7 +150,7 @@ namespace Services.Services
                 DateStudied = new(),
                 Slots = new List<Slot>(),
                 Completed = false,
-
+                UserId = model.UserId
             };
 
             for (int i = -3; i < 5; i++)
