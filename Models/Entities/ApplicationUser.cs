@@ -17,6 +17,7 @@ namespace ModelsLeit.Entities
         public string Bio { get; set; }
 
         public List<Collection> Collections { get; set; }
+        public List<Card> Cards { get; set; }
         public List<Box> Boxes { get; set; }
     }
 }

@@ -28,6 +28,12 @@ namespace DataAccessLeit.Data.Configurations
                 .HasForeignKey(x => x.UserId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict); //  <= this will prevent that error
+
+            builder.HasMany(x => x.Cards)
+                .WithOne(x => x.User)
+                .HasForeignKey(x => x.UserId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict); //  <= this will prevent that error
         }
     }
 }

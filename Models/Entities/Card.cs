@@ -24,5 +24,9 @@ namespace ModelsLeit.Entities
         //[ForeignKey("Container")]
         public ICollection<ContainerCard> ContainerCards { get; set; }
 
+        [ForeignKey("ApplicationUser")]
+        public long UserId { get; set; }
+        public ApplicationUser User { get; set; }
+
     }
 }
