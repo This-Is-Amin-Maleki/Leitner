@@ -3,11 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using ModelsLeit.Entities;
 using ServicesLeit.Interfaces;
 using SharedLeit;
-using ModelsLeit.ViewModels;
 using Microsoft.Extensions.Logging;
-using ModelsLeit.DTOs;
 using Services.Services;
-using ModelsLeit.DTOs.User;
 using ModelsLeit.DTOs.Collection;
 using ModelsLeit.DTOs.Box;
 
@@ -27,7 +24,6 @@ namespace ServicesLeit.Services
         public async Task<List<CollectionDto>> ReadCollectionsAsync()
         {//use auto mapper
             return await _dbContext.Collections
-                .FromSqlRaw("SELECT Id, Name, LEFT(Description, 200) AS Description, PublishedDate, Status FROM Collections")
                 .AsNoTracking()
                 .Select(x => new CollectionDto()
                 {
@@ -36,6 +32,7 @@ namespace ServicesLeit.Services
                     Description = x.Description,
                     PublishedDate = x.PublishedDate,
                     Status = x.Status,
+                    CardsQ = x.Cards.Count
                 })
                 .ToListAsync();
         }
