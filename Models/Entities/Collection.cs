@@ -19,5 +19,8 @@ namespace ModelsLeit.Entities
 
         public ICollection<Card> Cards { get; set; }
         public ICollection<Box> Boxes { get; set; }
+
+        public long UserId { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

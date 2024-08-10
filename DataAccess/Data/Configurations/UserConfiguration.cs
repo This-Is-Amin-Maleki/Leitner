@@ -22,6 +22,12 @@ namespace DataAccessLeit.Data.Configurations
                 .HasForeignKey(x => x.UserId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade); //  <= this will delete all boxes
+
+            builder.HasMany(x => x.Collections)
+                .WithOne(x => x.User)
+                .HasForeignKey(x => x.UserId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict); //  <= this will prevent that error
         }
     }
 }
