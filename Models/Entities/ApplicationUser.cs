@@ -16,5 +16,6 @@ namespace ModelsLeit.Entities
         public string Name { get; set; }
         public string Bio { get; set; }
 
+        public List<Box> Boxes { get; set; }
     }
 }

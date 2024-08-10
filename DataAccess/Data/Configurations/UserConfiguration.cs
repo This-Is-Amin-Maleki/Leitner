@@ -17,6 +17,11 @@ namespace DataAccessLeit.Data.Configurations
 
             builder.Property(e => e.Bio).HasMaxLength(500);
 
+            builder.HasMany(x => x.Boxes)
+                .WithOne(x => x.User)
+                .HasForeignKey(x => x.UserId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade); //  <= this will delete all boxes
         }
     }
 }

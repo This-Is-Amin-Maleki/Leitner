@@ -30,5 +30,9 @@ namespace ModelsLeit.Entities
         public Collection Collection { get; set; }
 
         public ICollection<Slot> Slots { get; set; }
+
+        //[ForeignKey("ApplicationUser")]
+        public long UserId { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }
