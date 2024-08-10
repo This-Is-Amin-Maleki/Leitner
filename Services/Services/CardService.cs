@@ -167,22 +167,15 @@ namespace ServicesLeit.Services
             await _collection.CheckStatusAsync(model.First().CollectionId, "Can not add any cards to the @ collection!");
             int counter = 0;
             int done = 0;
-            try
+            foreach (Card card in model)
             {
-                foreach (Card card in model)
+                await _dbContext.Cards.AddAsync(card);
+                if ((++counter) % 10 is 0)
                 {
-                    await _dbContext.Cards.AddAsync(card);
-                    if ((++counter) % 10 is 0)
-                    {
-                        done += await _dbContext.SaveChangesAsync();
-                    }
+                    done += await _dbContext.SaveChangesAsync();
                 }
-                done += await _dbContext.SaveChangesAsync();
             }
-            catch (Exception ex)
-            {
-
-            }
+            done += await _dbContext.SaveChangesAsync();
             return done;
         }
         public async Task UpdateCardAsync(CardDto model)
@@ -293,6 +286,7 @@ namespace ServicesLeit.Services
                 Description = model.Description,
                 HasMp3 = model.HasMp3,
                 CollectionId = model.Collection.Id,
+                UserId = model.UserId,
             };
         }
     }
