@@ -45,7 +45,6 @@ namespace View.Controllers
             _roleManager = roleManager;
             _userService = userService;
         }
-        public IActionResult Index() => View();
 
         [HttpPost]// p
         [ValidateAntiForgeryToken]
