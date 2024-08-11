@@ -61,9 +61,10 @@ namespace Services.Services
                 Email = model.Email,
                 PhoneNumber = model.Phone,
                 UserName = model.UserName,
+                Name = model.Name,
+                Bio=string.Empty,
             };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
+                var result = _userManager.CreateAsync(user, model.Password).GetAwaiter().GetResult();
             if (!result.Succeeded)
             {
                 output.Result = RegisterResult.Fail;

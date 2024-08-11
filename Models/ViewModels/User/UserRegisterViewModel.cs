@@ -9,6 +9,10 @@ namespace ModelsLeit.ViewModels.User
         [Required]
         [Length(5, 25)]
         public string UserName { get; set; }
+
+        [Required]
+        [Length(5, 100)]
+        public string Name { get; set; }
         [Required]
         [EmailAddress]
         public string Email { get; set; }
