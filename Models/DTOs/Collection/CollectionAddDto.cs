@@ -5,6 +5,7 @@ namespace ModelsLeit.DTOs.Collection
     public record CollectionAddDto
     {
         public long? Id { get; set; }
+        public long UserId { get; set; }
         public string? Name { get; set; }
         public int Count { get; set; }
         public string Description { get; set; }
