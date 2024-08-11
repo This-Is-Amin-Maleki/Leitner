@@ -13,8 +13,7 @@ using System.Data;
 
 namespace Services.Services
 {
-    public class BoxService
-    //: IBoxService
+    public class BoxService: IBoxService
     {
         private readonly ILogger<BoxService> _logger;
 
@@ -686,5 +685,7 @@ namespace Services.Services
                 AnyReqCard = anyReqCard,
             };
         }
+
+        /////
     }
 }
