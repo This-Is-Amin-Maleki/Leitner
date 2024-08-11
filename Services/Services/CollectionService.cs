@@ -126,16 +126,8 @@ namespace ServicesLeit.Services
                     .Count();
             }
             
-#warning catch!!
-            try
-            {
                 await _dbContext.Collections.AddAsync(collection);
                 await _dbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-
-            }
         }
         public async Task EditCollectionAsync(CollectionDto collectionViewModel)
         {
