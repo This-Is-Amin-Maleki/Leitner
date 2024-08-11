@@ -8,6 +8,7 @@ using ModelsLeit.Entities;
 using IronXL;
 using System.Data;
 using Microsoft.Extensions.Logging;
+using ServicesLeit.Interfaces;
 
 namespace ServicesLeit.Services
 {
