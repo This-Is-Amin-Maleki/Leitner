@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using ModelsLeit.DTOs.User;
 using ModelsLeit.Entities;
 using ModelsLeit.ViewModels.User;
+using ServicesLeit.Interfaces;
 using SharedLeit;
 using System.Data;
 using System.Security.Claims;
@@ -14,7 +15,7 @@ using System.Text.Encodings.Web;
 
 namespace Services.Services
 {
-    public class UserService
+    public class UserService: IUserService
     //: IBoxService
     {
         private readonly ILogger<UserService> _logger;
