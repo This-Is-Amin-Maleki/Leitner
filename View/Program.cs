@@ -80,7 +80,7 @@ namespace ViewLeit
             app.MapControllerRoute(
                 name: "default", 
                 //pattern: "{controller=Collection}/{action=Index}/{id?}");
-                pattern: "{controller=User}/{action=Index}/{id?}");
+                pattern: "{controller=Page}/{action=Index}/{id?}");
             app.AutoMigration<ApplicationDbContext>();
             app.Run();
         }
