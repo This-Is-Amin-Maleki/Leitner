@@ -105,6 +105,7 @@ namespace View.Controllers
                 Password = model.Password,
                 UserName = model.UserName,
                 Type = UserType.User,
+                Name = model.UserName,
             };
 
             UserRegisterDto result = await _userService.RegisterAsync(registerationData);
