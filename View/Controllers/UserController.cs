@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using ModelsLeit.Entities;
 using ModelsLeit.DTOs.User;
 using SharedLeit;
@@ -10,6 +11,7 @@ using ModelsLeit.ViewModels.User;
 
 namespace View.Controllers
 {
+    [AllowAnonymous]
     public class UserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
