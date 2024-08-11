@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ServicesLeit.Services
 {
-    public class FileService
+    public class FileService : IFileService
     {
         private readonly ILogger<FileService> _logger;
         public FileService(ILogger<FileService> logger)
