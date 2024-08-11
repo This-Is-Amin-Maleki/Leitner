@@ -10,9 +10,11 @@ using ModelsLeit.DTOs.User;
 using ModelsLeit.ViewModels;
 using ServicesLeit.Services;
 using SharedLeit;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ViewLeit.Controllers
 {
+    [Authorize]
     public class CollectionController: Controller
     {
         CollectionService _collectionService;
