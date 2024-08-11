@@ -6,9 +6,11 @@ using Newtonsoft.Json;
 using Services.Services;
 using ServicesLeit.Services;
 using ModelsLeit.DTOs.Container;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ViewLeit.Controllers
 {
+    [Authorize]
     public class BoxController : Controller
     {
         BoxService _boxService;
