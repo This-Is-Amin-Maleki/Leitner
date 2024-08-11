@@ -5,9 +5,11 @@ using Services.Services;
 using ViewLeit.Extensions;
 using ServicesLeit.Services;
 using ModelsLeit.ViewModels.User;
+using Microsoft.AspNetCore.Authorization;
 
 namespace View.Controllers
 {
+    [AllowAnonymous]
     public class PageController : Controller
     {
         /*
