@@ -3,9 +3,11 @@ using ModelsLeit.DTOs.Card;
 using ModelsLeit.Entities;
 using ServicesLeit.Services;
 using SharedLeit;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ViewLeit.Controllers
 {
+    [Authorize]
     public class CardController: Controller
     {
         CardService _cardService;
