@@ -1,0 +1,197 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ModelsLeit.ViewModels.User
+@using SharedLeit
+@model HomePageViewModel
+
+@{
+    ViewData["Title"] = "Leitner";
+    var userSigned = User.Identity.IsAuthenticated;
+}
+
+<div class="container-fluid">
+    <div class="row fixedPage">
+        <div class="col-12 pageSizeDetail@(userSigned ? string.Empty : " col-sm-12 col-md-5 col-lg-7 col-xl-8 ")">
+            <div class="container-fluid">
+                @if (!(Model.Collections.Any()))
+                {
+                    <br />
+                    <br />
+                    <blockquote class="blockquote">
+                        <p class="mb-0">"Learning something new every day enhances the power of the mind."</p><br>
+                        <footer class="float-end blockquote-footer">Albert Einstein</footer>
+                    </blockquote>
+                    <br />
+                    <br />
+                    @if (userSigned)
+                    {
+                        <center><a class="btn btn-outline-success" asp-controller="Collection" asp-action="Create">Create your Collection</a></center>
+                    }
+                    else
+                    {
+                        <center><button class="btn btn-outline-success" disabled>Create your Collection</button></center>
+                    }
+                    <br />
+                    <br />
+                }
+                <div class="row row-cols-1 g-4@(userSigned ? " row-cols-lg-2 row-cols-xl-3" :  " row-cols-lg-1 row-cols-xl-2")">
+                @foreach (var collection in Model.Collections)
+                {
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body d-flex flex-column">
+                                <h5>@collection.Name</h5>
+                                <p>
+                                    <small class="text-body-secondary float-start">User</small>
+                                    <small class="text-body-secondary float-end">@collection.CardsQ Cards</small>
+                                    <br />
+                                    @collection.Description
+                                </p>
+                                @Html.Raw(
+                                            collection.CardsQ == 0 // price is Zero
+                                            ?
+                                            "<div class=\"mt-auto d-flex justify-content-" +
+                                             (userSigned ?
+                                                 "end\"><a href=\"Box/Add/" + collection.Id + "\" class=\"btn btn-outline-danger\"><i class=\"bi bi-plus-circle\"></i> Free</a>" :
+                                                "start\"><span class=\"text-danger\">Free</span>") +
+                                             "</div>"
+
+                                            :
+                                            "<div class=\"mt-auto d-flex justify-content-between\">" +
+                                            $"<span>{collection.CardsQ}$</span>" +
+                                             (userSigned ? "<a href=\"Box/Add/" + +collection.Id + "\" class=\"btn btn-outline-primary\"><i class=\"bi bi-cart3\"></i> Buy</a>" : string.Empty) +
+                                            "</div>"
+                                            )
+                            </div>
+                        </div>
+                    </div>
+                }
+                </div>
+            </div>
+        </div>
+
+        @if (userSigned is false)
+        {
+            <div class="col-1 col-sm-2 d-md-none d-lg-none d-xl-none"></div>
+            <div id="supForm" class="col-10 col-sm-8 col-md-7 col-lg-5 col-xl-4 pt-0 mt-0 pt-lg-5 pt-lx-5">
+
+                <span>
+                    @await Html.PartialAsync("Partial/User/_PartialLoginForm", Model.Login)
+                </span><span>
+                    @await Html.PartialAsync("Partial/User/_PartialForgotForm", Model.Forgot)
+                </span><span>
+                    @await Html.PartialAsync("Partial/User/_PartialRegisterForm", Model.Register)
+                </span><span>
+                    @await Html.PartialAsync("Partial/User/_PartialResetPasswordForm", Model.PasswordReset)
+                </span><span>
+                    @await Html.PartialAsync("Partial/User/_PartialResendEmailForm", Model.ResendEmail)
+                </span>
+
+                <div id="cardSpinner" class="align-items-center justify-content-center h-100">
+                    <div class="spinner-grow" role="status">
+                        <span class="visually-hidden">Please Wait!</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+        
+    </div>
+</div>
+@*
+    <input name="__RequestVerificationToken" type="hidden" value="CfDJ8GuJe7bQOfZGlbPnFKZXxXF1nWuvTgYTtMuKrEJJ6Luvlqf8ZvOegT6IKlaUVmk_QzBvL8d7M4KUNpgaUbKMPH7NVYHOaSk8Z0e_-osr-f51mp2KspsZCb7_SGeL1HgmNf3vagjdcc8PLb89jrpD2KQ">
+*@
+
+
+@section Scripts {
+    @if (!userSigned)
+    {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            var formGo = function (e, fun) {
+                var form = e;
+                var action = form.attr('iq');
+                $.ajax({
+                    url: 'user/' + action,
+                    type: 'POST',
+                    data: form.serialize(),
+                    success: function (status) {
+                        console.log(status);
+                        if (status.startsWith('/')) {
+                            $('body').fadeOut('fast', function () {
+                                window.location.href = status;
+                            });
+                        } else {
+                            var formParent = form.parent();
+                            formParent.html(status);
+                        fun();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(status);
+                        form.find('.form-message').html('Error while authenticating user credentials!');
+                        console.log(status + ' : ' + error);
+                        console.log(xhr);
+                    }
+                });
+            }
+            var changeForm = function () {
+                var hash = window.location.hash;
+                var hashName = hash.substring(1);
+                var check = @(Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetNames(typeof(UserFormType))))).includes(hashName);
+                if (!check) {
+                    hash = "#Login";
+                    hashName = "Login";
+                }
+                $('#Type').val(hashName);
+                $('#overlay').show();
+                $('#supForm').fadeOut("fast", function () {
+                    $('.someForm').addClass('d-none');
+                    var form = $(hash + '.someForm');
+                    form.removeClass('d-none');
+                    $('#supForm').fadeIn("fast", function () {
+                        $('#overlay').hide();
+                    });
+                });
+            }
+            changeForm();
+            $(window).on('hashchange', function () {
+                changeForm();
+            });
+            $(document).on('click', 'a.change', function () {
+                changeForm();
+            });
+            $(document).on('click', 'a.go', function (e) {
+                var form = $(this).closest('form');
+                if ($(form).valid()) {
+                    $(form).fadeOut("fast", function () {
+                        $('#cardSpinner').fadeIn("fast").css('display', 'flex');
+                        formGo(form, function () {
+                            $('#cardSpinner').fadeOut("fast", function () {
+                                $(form).fadeIn("fast");
+                            })
+                        });
+                    });
+                }
+            });
+            @if (TempData["Message"] is not null or "")
+            {
+                <text>
+                    alert(@TempData["Message"]);
+                </text>
+            }
+            @if (Model is not null && (int)Model.Type > 0 )
+            {
+                <text>
+                    location.hash = '@(Model.Type)';
+                </text>
+            }
+        });
+    </script>
+}
+}
