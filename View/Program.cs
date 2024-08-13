@@ -2,7 +2,7 @@ using DataAccessLeit.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ModelsLeit.Entities;
-using Services.Services;
+using ServicesLeit.Services;
 using ServicesLeit.Services;
 using System.Diagnostics;
 using ViewLeit.Extensions;

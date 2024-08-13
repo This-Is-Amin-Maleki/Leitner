@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using ModelsLeit.Entities;
-using Services.Services;
+using ServicesLeit.Services;
 using ViewLeit.Extensions;
 using ServicesLeit.Services;
 using ModelsLeit.ViewModels.User;

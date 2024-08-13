@@ -1,16 +1,12 @@
-﻿using DataAccessLeit.Context;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
+﻿using Microsoft.AspNetCore.Mvc;
 using ModelsLeit.DTOs.Collection;
-using ModelsLeit.DTOs.User;
-using ModelsLeit.ViewModels;
 using ServicesLeit.Services;
-using SharedLeit;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using ModelsLeit.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using SharedLeit;
 
 namespace ViewLeit.Controllers
 {

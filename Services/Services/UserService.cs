@@ -13,7 +13,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 
-namespace Services.Services
+namespace ServicesLeit.Services
 {
     public class UserService: IUserService
     //: IBoxService

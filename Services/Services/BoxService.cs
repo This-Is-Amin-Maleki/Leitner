@@ -1,18 +1,15 @@
 ﻿using DataAccessLeit.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ModelsLeit.DTOs;
 using ModelsLeit.DTOs.Box;
 using ModelsLeit.DTOs.Card;
 using ModelsLeit.DTOs.Collection;
 using ModelsLeit.DTOs.Container;
-using ModelsLeit.DTOs.User;
 using ModelsLeit.Entities;
 using ServicesLeit.Interfaces;
-using ServicesLeit.Services;
 using System.Data;
 
-namespace Services.Services
+namespace ServicesLeit.Services
 {
     public class BoxService: IBoxService
     {

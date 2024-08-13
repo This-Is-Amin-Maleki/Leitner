@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SharedLeit;
+using System.ComponentModel.DataAnnotations;
 
 namespace ModelsLeit.ViewModels.User
 {
