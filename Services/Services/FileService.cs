@@ -19,6 +19,14 @@ namespace ServicesLeit.Services
         {
             _logger = logger;
         }
+        public async Task WriteToFileAsync(string filePath, string data)
+        {
+            if (!File.Exists(filePath))
+            {
+                File.CreateText(filePath);
+            }
+            await File.AppendAllTextAsync(filePath, data+"\r\n");
+        }
         public List<Card> ReadCardsFromExcelFile(string filePath,long collectionId,int max)
         {
             WorkBook workBook = WorkBook.Load(filePath);
