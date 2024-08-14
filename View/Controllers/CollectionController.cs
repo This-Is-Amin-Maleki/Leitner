@@ -34,7 +34,7 @@ namespace ViewLeit.Controllers
         // POST: CollectionController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CollectionAddDto model)
+        public async Task<ActionResult> Create(CollectionCreationDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -62,7 +62,7 @@ namespace ViewLeit.Controllers
         // POST: CollectionController/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(CollectionDto model)
+        public async Task<ActionResult> Edit(CollectionEditDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -90,7 +90,7 @@ namespace ViewLeit.Controllers
         // POST: CollectionController/Delete
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(CollectionDto model)
+        public async Task<ActionResult> Delete(CollectionEditDto model)
         {
             if (!ModelState.IsValid)
             {
