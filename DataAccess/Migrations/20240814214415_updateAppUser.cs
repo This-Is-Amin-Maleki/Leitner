@@ -6,18 +6,42 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataAccessLeit.Migrations
 {
     /// <inheritdoc />
-    public partial class AddApplicationUserAndUserRole : Migration
+    public partial class updateAppUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<long>(
+                name: "UserId",
+                schema: "dbo",
+                table: "Collections",
+                type: "bigint",
+                nullable: false,
+                defaultValue: 0L);
+
+            migrationBuilder.AddColumn<long>(
+                name: "UserId",
+                schema: "dbo",
+                table: "Cards",
+                type: "bigint",
+                nullable: false,
+                defaultValue: 0L);
+
+            migrationBuilder.AddColumn<long>(
+                name: "UserId",
+                schema: "dbo",
+                table: "Boxes",
+                type: "bigint",
+                nullable: false,
+                defaultValue: 0L);
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:User", "1, 1"),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserType = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -34,8 +58,10 @@ namespace DataAccessLeit.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:User", "1, 1"),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Active = table.Column<bool>(type: "bit", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Bio = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -62,7 +88,7 @@ namespace DataAccessLeit.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:User", "1, 1"),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     RoleId = table.Column<long>(type: "bigint", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -85,7 +111,7 @@ namespace DataAccessLeit.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:User", "1, 1"),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -250,6 +276,21 @@ namespace DataAccessLeit.Migrations
             migrationBuilder.DropTable(
                 name: "AspNetUsers",
                 schema: "dbo");
+
+            migrationBuilder.DropColumn(
+                name: "UserId",
+                schema: "dbo",
+                table: "Collections");
+
+            migrationBuilder.DropColumn(
+                name: "UserId",
+                schema: "dbo",
+                table: "Cards");
+
+            migrationBuilder.DropColumn(
+                name: "UserId",
+                schema: "dbo",
+                table: "Boxes");
         }
     }
 }

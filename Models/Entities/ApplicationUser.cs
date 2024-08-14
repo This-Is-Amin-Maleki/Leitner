@@ -8,16 +8,14 @@ using System.Threading.Tasks;
 
 namespace ModelsLeit.Entities
 {
-    public class ApplicationUser:IdentityUser<long>
+    public class ApplicationUser : IdentityUser<long>
     {
         public bool Active {  get; set; }
         [Required]
         [Length(5,100)]
         public string Name { get; set; }
-        public string Bio { get; set; }
 
-        public List<Collection> Collections { get; set; }
-        public List<Card> Cards { get; set; }
-        public List<Box> Boxes { get; set; }
+        [MaxLength(500)]
+        public string Bio { get; set; }
     }
 }

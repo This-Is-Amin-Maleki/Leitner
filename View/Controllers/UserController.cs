@@ -6,8 +6,8 @@ using ModelsLeit.DTOs.User;
 using SharedLeit;
 using ViewLeit.Extensions;
 using ServicesLeit.Services;
-using System.Web.WebPages;
 using ModelsLeit.ViewModels.User;
+using Microsoft.IdentityModel.Tokens;
 
 namespace View.Controllers
 {
@@ -153,7 +153,7 @@ namespace View.Controllers
 
             var result = await _userService.EmailConfirmAsync(model);
 
-            TempData["Message"] = result.IsEmpty() ?
+            TempData["Message"] = result.IsNullOrEmpty() ?
                 "Invalid token. Please try again or request a new one." :
                 result ?? "Email confirmed successfully. Now you can log in to your account.";
 

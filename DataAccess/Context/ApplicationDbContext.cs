@@ -47,7 +47,6 @@ namespace DataAccessLeit.Context
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(BoxConfiguration).Assembly);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContainerConfiguration).Assembly);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContainerCardConfiguration).Assembly);
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserConfiguration).Assembly);
 
             base.OnModelCreating(modelBuilder);
         }

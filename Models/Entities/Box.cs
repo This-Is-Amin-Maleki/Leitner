@@ -1,6 +1,7 @@
 ﻿using SharedLeit;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -31,8 +32,7 @@ namespace ModelsLeit.Entities
 
         public ICollection<Slot> Slots { get; set; }
 
-        //[ForeignKey("ApplicationUser")]
+        [Required]
         public long UserId { get; set; }
-        public ApplicationUser User { get; set; }
     }
 }

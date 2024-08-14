@@ -11,7 +11,6 @@ namespace ViewLeit
 {
     public class Program
     {
-        string Password { get; set; }
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);

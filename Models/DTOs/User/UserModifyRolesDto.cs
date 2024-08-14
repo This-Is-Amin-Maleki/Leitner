@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using SharedLeit;
+﻿using SharedLeit;
 
 namespace ModelsLeit.DTOs.User
 {
@@ -8,6 +7,5 @@ namespace ModelsLeit.DTOs.User
         public long Id { get; set; }
         public List<UserType> Type { get; set; }
 
-        public List<SelectListItem>? Types { get; set; }
     }
 }

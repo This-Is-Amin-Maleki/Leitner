@@ -9,5 +9,6 @@ namespace ModelsLeit.DTOs.User
         public string? Phone { get; set; }
         public string? EmailToken { get; set; }
         public string? PhoneToken { get; set; }
+        public UserType Role { get; set; }
     }
 }

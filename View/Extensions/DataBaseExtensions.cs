@@ -47,7 +47,6 @@ namespace ViewLeit.Extensions
             {
                 user = new ApplicationUser
                 {
-                    Id = 1,
                     UserName = email,
                     Email = email,
                     EmailConfirmed = true,
@@ -72,12 +71,10 @@ namespace ViewLeit.Extensions
             var countRoles = await roleManager.Roles.CountAsync();
             if (countRoles is 0)
             {
-                long i = 0;
                 foreach (var role in Enum.GetValues(typeof(UserType)))
                 {
                     UserRole userRole = new()
                     {
-                        Id = ++i,
                         Name = role.ToString(),
                         UserType = (UserType)role,
                     };

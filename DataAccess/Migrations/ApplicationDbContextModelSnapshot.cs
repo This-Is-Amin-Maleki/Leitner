@@ -18,7 +18,7 @@ namespace DataAccessLeit.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("dbo")
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -242,8 +242,6 @@ namespace DataAccessLeit.Migrations
 
                     b.HasIndex("CollectionId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Boxes", "dbo");
                 });
 
@@ -280,8 +278,6 @@ namespace DataAccessLeit.Migrations
 
                     b.HasIndex("CollectionId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Cards", "dbo");
                 });
 
@@ -314,8 +310,6 @@ namespace DataAccessLeit.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Collections", "dbo");
                 });
@@ -477,15 +471,7 @@ namespace DataAccessLeit.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ModelsLeit.Entities.ApplicationUser", "User")
-                        .WithMany("Boxes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Collection");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ModelsLeit.Entities.Card", b =>
@@ -496,26 +482,7 @@ namespace DataAccessLeit.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ModelsLeit.Entities.ApplicationUser", "User")
-                        .WithMany("Cards")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Collection");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ModelsLeit.Entities.Collection", b =>
-                {
-                    b.HasOne("ModelsLeit.Entities.ApplicationUser", "User")
-                        .WithMany("Collections")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ModelsLeit.Entities.Container", b =>
@@ -557,15 +524,6 @@ namespace DataAccessLeit.Migrations
                         .IsRequired();
 
                     b.Navigation("Box");
-                });
-
-            modelBuilder.Entity("ModelsLeit.Entities.ApplicationUser", b =>
-                {
-                    b.Navigation("Boxes");
-
-                    b.Navigation("Cards");
-
-                    b.Navigation("Collections");
                 });
 
             modelBuilder.Entity("ModelsLeit.Entities.Box", b =>
