@@ -12,7 +12,7 @@ namespace ServicesLeit.Interfaces
 {
     public interface ICollectionService
     {
-        Task AddCollectionAsync(CollectionAddDto collectionViewModel);
+        Task AddCollectionAsync(CollectionCreationDto collectionViewModel);
         Task DeleteCollectionAsync(CollectionDto collectionViewModel);
         Task EditCollectionAsync(CollectionDto collectionViewModel);
         Task<CollectionDto> GetCollectionAsync(long id);

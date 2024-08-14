@@ -1,7 +1,7 @@
 ﻿@using ModelsLeit.DTOs.Collection
 @using SharedLeit
 
-@model CollectionDto
+@model CollectionCreationDto
 
 @{
     ViewData["Title"] = "Create a new Collection";
@@ -20,13 +20,6 @@
         <label asp-for="Description"></label>
         <textarea asp-for="Description" class="form-control"></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Status"></label>
-        <select asp-for="Status" class="form-control" asp-items="@Html.GetEnumSelectList<CollectionStatus>()">
-            <option disabled selected>Please Select Once</option>
-        </select>
-        <span asp-validation-for="Status" class="text-danger"></span>
     </div>
     <input type="hidden" asp-for="Id" />
     <br />

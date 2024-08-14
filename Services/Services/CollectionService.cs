@@ -113,7 +113,7 @@ namespace ServicesLeit.Services
 
             return model;
         }
-        public async Task AddCollectionAsync(CollectionAddDto collectionViewModel)
+        public async Task AddCollectionAsync(CollectionCreationDto collectionViewModel)
         {
             var collection = MapViewModelToCollection(collectionViewModel);
 
@@ -125,7 +125,7 @@ namespace ServicesLeit.Services
                     .Where(x=>x.CollectionId == collection.Id)
                     .Count();
             }
-            
+
                 await _dbContext.Collections.AddAsync(collection);
                 await _dbContext.SaveChangesAsync();
         }

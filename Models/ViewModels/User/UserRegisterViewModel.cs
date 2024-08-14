@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using SharedLeit;
+﻿using SharedLeit;
 using System.ComponentModel.DataAnnotations;
 
 namespace ModelsLeit.ViewModels.User
@@ -23,6 +22,5 @@ namespace ModelsLeit.ViewModels.User
         public bool Active { get; set; }
         [Required]
         public UserType Type { get; set; }
-        public List<SelectListItem>? Types { get; set; }
     }
 }
