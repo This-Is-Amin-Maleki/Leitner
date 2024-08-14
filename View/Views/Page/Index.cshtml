@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using ModelsLeit.ViewModels.User
 @using SharedLeit
+@using Newtonsoft.Json
 @model HomePageViewModel
 
 @{
@@ -143,7 +144,7 @@
             var changeForm = function () {
                 var hash = window.location.hash;
                 var hashName = hash.substring(1);
-                var check = @(Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetNames(typeof(UserFormType))))).includes(hashName);
+                var check = @(Html.Raw(json)).includes(hashName);
                 if (!check) {
                     hash = "#Login";
                     hashName = "Login";
