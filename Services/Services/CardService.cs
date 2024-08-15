@@ -34,7 +34,7 @@ namespace ServicesLeit.Services
             List<CardDto> list = await _dbContext.Cards
                 .AsNoTracking()
                 .Include(x => x.Collection)
-                .Where(x => x.CollectionId == collectionId && x.UserId == userId) 
+                .Where(x => x.CollectionId == collectionId && x.UserId == userId)
                 .Select(x => new CardDto()
                 {
                     Id = x.Id,
@@ -95,7 +95,7 @@ namespace ServicesLeit.Services
                     }
                 })
                 .ToListAsync();
-                collectionName = (list.Count > 0) ? list.First().Collection.Name! : await GetCollectionName(collectionId);
+            collectionName = (list.Count > 0) ? list.First().Collection.Name! : await GetCollectionName(collectionId);
             return (list, collectionName);
         }
 #warning check performance
