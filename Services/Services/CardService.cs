@@ -143,21 +143,29 @@ namespace ServicesLeit.Services
             await _collection.CheckStatusAsync(model.First().CollectionId, "Can not add any cards to the @ collection!");
             await _dbContext.BulkInsertAsync(model);
         }
-        public async Task<int> AddCardsAsync(List<Card> model)
+        public async Task UpdateCardLimitedAsync(CardDto model)
         {
-            await _collection.CheckStatusAsync(model.First().CollectionId, "Can not add any cards to the @ collection!");
-            int counter = 0;
-            int done = 0;
-            foreach (Card card in model)
+            await _collection.CheckStatusAsync(model.Collection.Id, "Can not update any card of the @ collection!");
+            var card = MapViewModelToCard(model);
+
+            var oldCard = await _dbContext.Cards
+                .FirstAsync(x => x.Id == model.Id && x.UserId == model.UserId);
+
+            if (oldCard is null)
             {
-                await _dbContext.Cards.AddAsync(card);
-                if ((++counter) % 10 is 0)
-                {
-                    done += await _dbContext.SaveChangesAsync();
-                }
+                throw new Exception("Not Found");
             }
-            done += await _dbContext.SaveChangesAsync();
-            return done;
+
+#warning catch!!
+            try
+            {
+                _dbContext.Cards.Update(card);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
         public async Task UpdateCardAsync(CardDto model)
         {
