@@ -156,7 +156,7 @@ namespace ServicesLeit.Services
             await _dbContext.Boxes.AddAsync(box);
             await _dbContext.SaveChangesAsync();
         }
-        public async Task<BoxReviewDto> ReviewAsync(long id)
+        public async Task<BoxReviewDto> ReviewAsync(long id, long userId)
         {
             var model = await _dbContext.Boxes
                 .AsNoTracking()
@@ -165,7 +165,7 @@ namespace ServicesLeit.Services
                 .ThenInclude(x => x.Containers)
                 .ThenInclude(x => x.ContainerCards)
                 .ThenInclude(x => x.Card)
-                .Where(x => x.Id == id && x.LastCardId > 0)
+                .Where(x => x.Id == id && x.UserId == userId && x.LastCardId > 0)
                 .Select(x => new BoxReviewDto
                 {
                     BoxId = x.Id,
@@ -175,13 +175,13 @@ namespace ServicesLeit.Services
                         .SelectMany(slot =>
                             slot.Containers.SelectMany(container =>
                                 container.ContainerCards.Select(containerCard => containerCard.Card)))
-                        .Select(x=>new CardDto
+                        .Select(x => new CardDto
                         {
                             Id = x.Id,
                             HasMp3 = x.HasMp3,
                             Description = x.Description,
-                            Ask=x.Ask,
-                            Answer=x.Answer,
+                            Ask = x.Ask,
+                            Answer = x.Answer,
                         })
                         .ToList()
 
