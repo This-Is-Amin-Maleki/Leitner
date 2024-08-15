@@ -62,9 +62,10 @@ namespace ServicesLeit.Services
                 PhoneNumber = model.Phone,
                 UserName = model.UserName,
                 Name = model.Name,
-                Bio=string.Empty,
+                Bio = string.Empty,
             };
-                var result = _userManager.CreateAsync(user, model.Password).GetAwaiter().GetResult();
+
+            var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
                 output.Result = RegisterResult.Fail;
@@ -98,14 +99,13 @@ namespace ServicesLeit.Services
         }
         public async Task<List<UserListDto>> ReadAllAsync(bool active)
         {
-            //use auto mapper
             return await _userManager.Users
                 .Where(x => x.Active == active)
                 .Select(x => new UserListDto
                 {
-                     Id = x.Id,
-                     Name = x.UserName,
-                     Email = x.Email,
+                    Id = x.Id,
+                    Name = x.UserName,
+                    Email = x.Email,
                 })
                 .ToListAsync();
         }
@@ -121,8 +121,8 @@ namespace ServicesLeit.Services
                     Name = x.UserName,
                     Email = x.Email,
                     Phone = x.PhoneNumber,
-                    TwoFactorEnabled =x.TwoFactorEnabled,
-                    LockoutEnabled  = x.LockoutEnabled,
+                    TwoFactorEnabled = x.TwoFactorEnabled,
+                    LockoutEnabled = x.LockoutEnabled,
                     AccessFailedCount = x.AccessFailedCount,
                     Active = x.Active,
                 })
@@ -163,7 +163,6 @@ namespace ServicesLeit.Services
                 output.PhoneToken = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.Phone);
             }
 
-            if (model.Password.IsNullOrEmpty() && model.NewPassword.IsNullOrEmpty())
             {
                 await _userManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
                 if (result.Succeeded)
