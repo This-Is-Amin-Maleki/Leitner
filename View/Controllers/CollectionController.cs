@@ -13,9 +13,13 @@ namespace ViewLeit.Controllers
     [Authorize]
     public class CollectionController: Controller
     {
-        CollectionService _collectionService;
-        public CollectionController(CollectionService collectionService)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly CollectionService _collectionService;
+        public CollectionController(
+            UserManager<ApplicationUser> userManager,
+            CollectionService collectionService)
         {
+            _userManager = userManager;
             _collectionService = collectionService;
         }
 
