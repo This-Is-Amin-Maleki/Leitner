@@ -108,13 +108,26 @@ namespace ServicesLeit.Services
                 CreateEmptyCollectionViewModel() :
                 collection;
         }
+        public async Task<CollectionDto> ReadUserCollectionAsync(long id, long userId)
         {
             var collection = await _dbContext.Collections
-                .FindAsync(id);
+                .AsNoTracking()
+                .Include(x => x.Boxes)
+                .Where(x => x.UserId == userId && x.Id == id)
+                .Select(x => new CollectionDto
+                {
+                    BoxCount = x.Boxes.Count,
+                    Description = x.Description,
+                    Id = x.Id,
+                    Name = x.Name,
+                    PublishedDate = x.PublishedDate,
+                    Status = x.Status,
+                })
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             return collection is null ?
                 CreateEmptyCollectionViewModel() :
-                MapCollectionViewModel(collection);
+                collection;
         }
         {
             var model = await _dbContext.Collections
