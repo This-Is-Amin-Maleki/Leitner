@@ -43,7 +43,7 @@ namespace ViewLeit.Controllers
             List<BoxMiniDto> model = await _boxService.ReadByCollectionAsync(id);
             if (model.Count is 0)
             {
-                var collection = await _collectionService.GetCollectionNameAndStatusAsync(id);
+                var collection = await _collectionService.ReadCollectionNameAndStatusAsync(id);
                 if (collection is null)
                 {
                     return RedirectToAction(nameof(CollectionController.Index), "Collection");
@@ -79,6 +79,7 @@ namespace ViewLeit.Controllers
                 ModelState.AddModelError("XX", "Not Valid!");
                 return View(model);
             }
+
             var collection = await _collectionService.CheckExistCollectionAsync(model.CollectionId);
             if(collection is null)
             {
@@ -86,7 +87,7 @@ namespace ViewLeit.Controllers
                 return RedirectToAction(nameof(CollectionController.Index),"Collection");
             }
             collection.CardPerDay= model.CardPerDay;
-
+            collection.UserId = long.Parse(_userManager.GetUserId(User)!);
 #warning catch!!
             try
             { 
@@ -105,7 +106,9 @@ namespace ViewLeit.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(long id)
         {
-                await _boxService.DeleteAsync(id);
+            var userId = long.Parse(_userManager.GetUserId(User)!);
+
+            await _boxService.DeleteAsync(id, userId);
             try
             {
                 return Content("OK");
@@ -121,7 +124,8 @@ namespace ViewLeit.Controllers
         {
             try
             {
-            var model = await _boxService.ReviewAsync(id);
+                var userId = long.Parse(_userManager.GetUserId(User)!);
+                var model = await _boxService.ReviewAsync(id, userId);
                 return View(model);
             }
             catch (Exception ex)
@@ -135,7 +139,8 @@ namespace ViewLeit.Controllers
         {
             try
             {
-                var model = await _boxService.StudyAsync(id);
+                var userId = long.Parse(_userManager.GetUserId(User)!);
+                var model = await _boxService.StudyAsync(id, userId);
                 if(/*model is null || */model.Approved.Count is 0 && model.Rejected.Count is 0)
                 {
                     return RedirectToAction(nameof(Index));
