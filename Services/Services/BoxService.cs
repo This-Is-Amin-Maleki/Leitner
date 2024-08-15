@@ -457,14 +457,14 @@ namespace ServicesLeit.Services
             };
         }
 
-        public async Task DeleteAsync(long id)
+        public async Task DeleteAsync(long id, long userId)
         {
             var box = await _dbContext.Boxes
                 //.AsNoTracking()
                 .Include(x => x.Slots)
                 .ThenInclude(x => x.Containers)
                 .ThenInclude(x => x.ContainerCards)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
 
             if (box is null)
             {
