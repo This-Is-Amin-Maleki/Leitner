@@ -100,21 +100,21 @@ namespace ServicesLeit.Services
         }
 
 #warning check performance
-        public async Task<CardDto> ReadCardAsync(long id)
+        public async Task<CardDto> ReadCardLimitedAsync(long id, long userId)
         {
             var card = await _dbContext.Cards
                 .AsNoTracking()
                 .Include(x => x.Collection)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
 
             return card is null ?
                 CreateEmptyCardViewModel() :
                 MapCardToViewModel(card);
         }
-#warning check performance
-        public async Task<CardDto> GetCardAsync(long id)
+        public async Task<CardDto> ReadCardAsync(long id)
         {
             var card = await _dbContext.Cards
+                .AsNoTracking()
                 .Include(x => x.Collection)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
