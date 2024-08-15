@@ -178,23 +178,24 @@ namespace ServicesLeit.Services
                 await _dbContext.Collections.AddAsync(collection);
                 await _dbContext.SaveChangesAsync();
         }
-        public async Task EditCollectionAsync(CollectionDto collectionViewModel)
+        public async Task EditCollectionLimitedAsync(CollectionEditDto model)
         {
             var oldCollection = await _dbContext.Collections
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x=>x.Id==collectionViewModel.Id);
+                .FirstOrDefaultAsync(x => x.Id == model.Id && x.UserId == model.UserId);
 
             if (oldCollection is null)
             {
                 throw new Exception("Not Found");
             }
-            var collection = MapViewModelToCollection(collectionViewModel);
+            var collection = MapViewModelToCollection(model);
 
             //add published date Time
             collection.PublishedDate =
                 collection.Status is CollectionStatus.Published &&
                 oldCollection.Status != CollectionStatus.Published
                 ? DateTime.UtcNow : oldCollection.PublishedDate;
+            collection.UserId = oldCollection.UserId;
 
 #warning catch!!
             try
@@ -202,7 +203,71 @@ namespace ServicesLeit.Services
                 _dbContext.Collections.Update(collection);
                 await _dbContext.SaveChangesAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
+            {
+
+            }
+        }
+        public async Task EditCollectionAsync(CollectionDto model)
+        {
+            var oldCollection = await _dbContext.Collections
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == model.Id);
+
+            if (oldCollection is null)
+            {
+                throw new Exception("Not Found");
+            }
+            var collection = MapViewModelToCollection(model);
+
+            //add published date Time
+            collection.PublishedDate =
+                collection.Status is CollectionStatus.Published &&
+                oldCollection.Status != CollectionStatus.Published
+                ? DateTime.UtcNow : oldCollection.PublishedDate;
+            collection.UserId = oldCollection.UserId;
+
+#warning catch!!
+            try
+            {
+                _dbContext.Collections.Update(collection);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        public async Task DeleteCollectionLimitedAsync(CollectionEditDto model)
+        {
+            CollectionStatus[] forbidStatuses = { CollectionStatus.Published, CollectionStatus.Submit };
+
+            CollectionStatus[] allowedStatuses =
+                ((CollectionStatus[]) Enum.GetValues(typeof(CollectionStatus)))
+                .Except(forbidStatuses)
+                .ToArray();
+
+            var collection = MapViewModelToCollection(model);
+
+            var hasCollection = await _dbContext.Collections
+                .AsNoTracking()
+                .AnyAsync(x => 
+                    x.Id == model.Id &&
+                    x.UserId == model.UserId &&
+                    allowedStatuses.Contains(x.Status));
+
+            if (hasCollection is false)
+            {
+                throw new Exception("Not Found");
+            }
+
+#warning catch!!
+            try
+            {
+                _dbContext.Collections.Remove(collection);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
             {
 
             }
