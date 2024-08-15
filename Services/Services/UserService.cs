@@ -97,10 +97,25 @@ namespace ServicesLeit.Services
             }
             return output;
         }
-        public async Task<List<UserListDto>> ReadAllAsync(bool active)
+
+        public async Task<List<UserListDto>> ReadAllAsync(bool? active = null, UserType? type = null)
         {
+            if (type is null)
+            {
+                var usersInRole = await _userManager.GetUsersInRoleAsync(nameof(type));
+                //use auto mapper
+                return usersInRole
+                    .Where(x => (active != null && x.Active == active))
+                    .Select(x => new UserListDto
+                    {
+                        Id = x.Id,
+                        Name = x.UserName,
+                        Email = x.Email,
+                    })
+                    .ToList();
+            }
             return await _userManager.Users
-                .Where(x => x.Active == active)
+                .Where(x => (active != null && x.Active == active))
                 .Select(x => new UserListDto
                 {
                     Id = x.Id,
