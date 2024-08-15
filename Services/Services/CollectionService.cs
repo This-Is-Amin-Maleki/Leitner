@@ -129,6 +129,7 @@ namespace ServicesLeit.Services
                 CreateEmptyCollectionViewModel() :
                 collection;
         }
+        public async Task<CollectionMiniDto> ReadCollectionNameAndStatusAsync(long id)
         {
             var model = await _dbContext.Collections
                 .AsNoTracking()
@@ -155,6 +156,7 @@ namespace ServicesLeit.Services
                     Name = x.Name,
                     CollectionId = x.Id,
                     Description = x.Description,
+                    UserId = x.UserId,
                 })
                 .FirstOrDefaultAsync();
 
