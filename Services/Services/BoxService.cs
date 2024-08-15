@@ -121,30 +121,6 @@ namespace ServicesLeit.Services
                 .ToListAsync();
         }
 
-#warning check performance
-        public async Task<BoxMiniDto> ReadAsync(long id)
-        {
-            var box = await _dbContext.Boxes
-                .AsNoTracking()
-                .Include(x => x.Collection)
-                .FirstOrDefaultAsync(x => x.Id == id);
-
-            return box is null ?
-                CreateEmptyBoxViewModel() :
-                MapBoxToViewModel(box);
-        }
-#warning check performance
-        public async Task<BoxMiniDto> GetAsync(long id)
-        {
-            var box = await _dbContext.Boxes
-                .Include(x => x.Collection)
-                .FirstOrDefaultAsync(x => x.Id == id);
-
-            return box is null ?
-                CreateEmptyBoxViewModel() :
-                MapBoxToViewModel(box);
-        }
-
         public async Task AddAsync(BoxAddDto model)
         {
             //just 
