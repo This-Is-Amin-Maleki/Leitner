@@ -274,11 +274,20 @@ namespace ServicesLeit.Services
         }
         public async Task DeleteCollectionAsync(CollectionDto collectionViewModel)
         {
+            CollectionStatus[] forbidStatuses = { CollectionStatus.Published, CollectionStatus.Submit };
+
+            CollectionStatus[] allowedStatuses =
+                ((CollectionStatus[])Enum.GetValues(typeof(CollectionStatus)))
+                .Except(forbidStatuses)
+                .ToArray();
+
             var collection = MapViewModelToCollection(collectionViewModel);
 
             var hasCollection = await _dbContext.Collections
                 .AsNoTracking()
-                .AnyAsync(x => x.Id == collectionViewModel.Id);
+                .AnyAsync(x =>
+                    x.Id == collectionViewModel.Id &&
+                    allowedStatuses.Contains(x.Status));
 
             if (hasCollection is false)
             {
