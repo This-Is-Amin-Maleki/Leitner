@@ -24,13 +24,21 @@ namespace ViewLeit.Controllers
         }
 
         // GET: CollectionController
-        public async Task<ActionResult> Index() =>
-            View(await _collectionService.ReadCollectionsAsync());
+        public async Task<ActionResult> Index()
+        {
+            var userId = long.Parse(_userManager.GetUserId(User)!);
+            var output = /*User.IsInRole(nameof(UserType.Admin)) ?
+                await _collectionService.ReadCollectionsAsync() :*/
+                await _collectionService.ReadUserCollectionsAsync(userId);
+            return View(output);
+        }
 
         // GET: CollectionController/Details/5
-        public async Task<ActionResult> Details(long id) =>
-            View(await _collectionService.ReadCollectionAsync(id));
-
+        public async Task<ActionResult> Details(long id)
+        {
+            var userId = long.Parse(_userManager.GetUserId(User)!);
+            return View(await _collectionService.ReadUserCollectionAsync(id, userId));
+        }
 
         // GET: CollectionController/Create
         public ActionResult Create() => View();
@@ -45,7 +53,7 @@ namespace ViewLeit.Controllers
                 ModelState.AddModelError("XX", "Not Valid!");
                 return View(model);
             }
-
+            model.UserId =long.Parse(_userManager.GetUserId(User)!);
 #warning catch!!
             try
             { 
@@ -60,8 +68,13 @@ namespace ViewLeit.Controllers
         }
 
         // GET: CollectionController/Edit
-        public async Task<ActionResult> Edit(long id) => 
-            View(await _collectionService.ReadCollectionAsync(id));
+        public async Task<ActionResult> Edit(long id)
+        {
+            var userId = long.Parse(_userManager.GetUserId(User)!);
+
+            return View(await _collectionService.ReadUserCollectionAsync(id, userId));
+        }
+            
 
         // POST: CollectionController/Edit
         [HttpPost]
@@ -73,11 +86,12 @@ namespace ViewLeit.Controllers
                 ModelState.AddModelError("XX", "Not Valid!");
                 return View(model);
             }
+            model.UserId = long.Parse(_userManager.GetUserId(User)!);
 
 #warning catch!!
             try
-             {
-                await _collectionService.EditCollectionAsync(model);
+            {
+                await _collectionService.EditCollectionLimitedAsync(model);
                 return RedirectToAction(nameof(Index));
              }
              catch (Exception ex)
@@ -101,10 +115,12 @@ namespace ViewLeit.Controllers
                 ModelState.AddModelError("XX", "Not Valid!");
                 return View(model);
             }
+            model.UserId = long.Parse(_userManager.GetUserId(User)!);
+
 
             try
             {
-                await _collectionService.DeleteCollectionAsync(model);
+                await _collectionService.DeleteCollectionLimitedAsync(model);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
