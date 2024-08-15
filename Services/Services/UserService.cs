@@ -129,7 +129,7 @@ namespace ServicesLeit.Services
                 .FirstAsync(x => x.Id == id);
         }
 
-        public async Task<UserModifyDto?> ModifyAsync(UserModifyViewModel model)
+        public async Task<UserModifyDto?> ModifyLimitedAsync(UserModifyLimitedViewModel model)
         {
             UserModifyDto? output = null;
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
@@ -139,10 +139,9 @@ namespace ServicesLeit.Services
             }
 
             ApplicationUser userModified = user;
-            userModified.Active = model.Active ?? user.Active;
+            userModified.Name = model.Name ?? user.Name;
+            userModified.Bio = model.Bio ?? user.Bio;
             userModified.Email = model.Email ?? user.Email;
-            userModified.PhoneNumber = model.Phone ?? user.PhoneNumber;
-            userModified.UserName = model.UserName ?? user.UserName;
 
             var result = await _userManager.UpdateAsync(userModified);
             if (result.Succeeded)
@@ -163,6 +162,8 @@ namespace ServicesLeit.Services
                 output.PhoneToken = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.Phone);
             }
 
+            if (model.Password.IsNullOrEmpty() &&
+                model.NewPassword.IsNullOrEmpty())
             {
                 await _userManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
                 if (result.Succeeded)
@@ -171,6 +172,41 @@ namespace ServicesLeit.Services
                 }
             }
             return output;
+        }
+        public async Task<bool> ModifyAsync(UserModifyViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.Id.ToString());
+            if (user is null)
+            {
+                return false;
+            }
+
+            ApplicationUser userModified = new()
+            {
+                Bio = model.Bio ?? user.Bio,
+                Name = model.Name ?? user.Name,
+                TwoFactorEnabled = model.TwoFactorAuthentication ?? user.TwoFactorEnabled,
+                Active = model.Active ?? user.Active,
+                Email = model.Email ?? user.Email,
+                PhoneNumber = model.Phone ?? user.PhoneNumber,
+                UserName = model.UserName ?? user.UserName,
+                EmailConfirmed = model.EmailConfirmed ?? user.EmailConfirmed,
+                PhoneNumberConfirmed = model.PhoneConfirmed ?? user.PhoneNumberConfirmed,
+                LockoutEnabled = model.LockoutEnabled ?? user.LockoutEnabled,
+                LockoutEnd = model.LockoutEnd ?? user.LockoutEnd,
+            };
+
+            var result = await _userManager.UpdateAsync(userModified);
+            if (result.Succeeded)
+            {
+                UserModifyRoleDto roleModifier = new()
+                {
+                    Id = model.Id,
+                    Type = model.Type,
+                };
+                ModifyRoleAsync(roleModifier);
+            }
+            return true;
         }
 
         public async Task<bool> ModifyRoleAsync(UserModifyRoleDto model)
