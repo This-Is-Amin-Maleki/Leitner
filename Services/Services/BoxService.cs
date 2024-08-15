@@ -316,7 +316,7 @@ namespace ServicesLeit.Services
             int order = model.SlotOrder;
             //0 => 1 => 2 => 3 => 4 => -1 |=> 0
             int nextOrder = order is 4 ? -1 : order + 1;
-            int rejectOrder = nextOrder < 1 ? order - 2 : -1 ;
+            int rejectOrder = nextOrder < 1 ? order - 2 : -1;
             long[] orders = [nextOrder, order, rejectOrder];
 
             var slots = _dbContext.Slots
@@ -330,12 +330,12 @@ namespace ServicesLeit.Services
                     {
                         Id = x.Id,
                         Order = x.Order,
-                        Containers = x.Containers.OrderBy(y=>y.DateModified).Take(1).ToList(),
+                        Containers = x.Containers.OrderBy(y => y.DateModified).Take(1).ToList(),
                     })
                     .ToList();
 
-            model.Approved=model.Approved ?? [];
-            model.Rejected=model.Rejected ?? [];
+            model.Approved = model.Approved ?? [];
+            model.Rejected = model.Rejected ?? [];
 
             if (nextOrder is < 1) // order 4 && -1
             {
@@ -371,28 +371,28 @@ namespace ServicesLeit.Services
             }
             //_dbContext.SaveChanges();
 
-                //next slot
-                var nextSlot = slots
-                        .FirstOrDefault(x => x.Order == nextOrder);
-                //remove all containcards in container
-                var containerCards = _dbContext.ContainerCards
-                    .AsNoTracking()
-                    .Where(x => x.ContainerId == model.Id)
-                    .ToList();
-                _dbContext.ContainerCards.RemoveRange(containerCards);
-                //recreate this contain and containcards
+            //next slot
+            var nextSlot = slots
+                    .FirstOrDefault(x => x.Order == nextOrder);
+            //remove all containcards in container
+            var containerCards = _dbContext.ContainerCards
+                .AsNoTracking()
+                .Where(x => x.ContainerId == model.Id)
+                .ToList();
+            _dbContext.ContainerCards.RemoveRange(containerCards);
+            //recreate this contain and containcards
 
-                var cards = CardsIds2ContainerCard(model.Approved);
-                Container mainContainer = new()
-                {
-                    Id = model.Id,
-                    SlotId = nextSlot.Id,
-                    DateModified = DateTime.Now,
-                    ContainerCards = cards,
-                };
+            var cards = CardsIds2ContainerCard(model.Approved);
+            Container mainContainer = new()
+            {
+                Id = model.Id,
+                SlotId = nextSlot.Id,
+                DateModified = DateTime.Now,
+                ContainerCards = cards,
+            };
 
-                _dbContext.Containers.Update(mainContainer);
-            
+            _dbContext.Containers.Update(mainContainer);
+
             //var trackedCards = _dbContext.ChangeTracker.Entries<Card>().ToList();
             //foreach (var cardEntry in trackedCards)
             //{
@@ -414,7 +414,7 @@ namespace ServicesLeit.Services
             {
                 var allCards = model.Approved.Concat(model.Rejected);
                 var maxCardId = allCards.Max();
-                box.LastCardId = model.LastCardId < maxCardId ? maxCardId : model.LastCardId ;
+                box.LastCardId = model.LastCardId < maxCardId ? maxCardId : model.LastCardId;
                 box.DateStudied = DateTime.Now;
                 _dbContext.Entry(box).Property(x => x.LastCardId).IsModified = true;
                 _dbContext.Entry(box).Property(x => x.DateStudied).IsModified = true;
@@ -438,7 +438,7 @@ namespace ServicesLeit.Services
                 })
                 .FirstOrDefault(x => x.BoxId == model.BoxId);
 
-            var cards =await _cardService.ReadCardsAsync(allCards);
+            var cards = await _cardService.ReadCardsAsync(allCards);
             //var cards = _dbContext.Cards
             //    .AsNoTracking()
             //    .Where(x => allCards.Contains(x.Id))
