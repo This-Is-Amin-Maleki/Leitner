@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using ModelsLeit.DTOs.User;
 using ModelsLeit.Entities;
 using ModelsLeit.ViewModels.User;
+using ServicesLeit.Interfaces;
 using SharedLeit;
 using System.Data;
 using System.Security.Claims;
@@ -14,7 +15,7 @@ using System.Text.Encodings.Web;
 
 namespace ServicesLeit.Services
 {
-    public class UserService// : IUserService
+    public class UserService : IUserService
     {
         private readonly ILogger<UserService> _logger;
         private readonly ApplicationDbContext _dbContext;
@@ -282,7 +283,7 @@ namespace ServicesLeit.Services
         public async Task<EmailTokenViewModel?> PhoneTokenGeneratorAsync(string phone)
         {
             EmailTokenViewModel? model = null;
-            var user = await _userManager.Users.FirstOrDefaultAsync(x=> x.PhoneNumber == phone);
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == phone);
             if (user is null)
             {
                 return model;
@@ -338,7 +339,7 @@ namespace ServicesLeit.Services
         }
         public async Task<bool> PhoneConfirmAsync(EmailTokenViewModel model)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(x=> x.PhoneNumber == model.Identifier);
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == model.Identifier);
             if (user is null)
             {
                 return false;
@@ -408,7 +409,7 @@ namespace ServicesLeit.Services
         {
             await _signInManager.SignOutAsync();
         }
-        
+
         public async Task<LoginResult> LoginTwoFactorAsync(PreLoginViewModel model)
         {
             ApplicationUser? user = await UserGetAsync(model.Identifier, model.Mode);
@@ -487,7 +488,7 @@ namespace ServicesLeit.Services
 
             if (result.RequiresTwoFactor)
             {
-                    return LoginResult.TwoFactorRequire;
+                return LoginResult.TwoFactorRequire;
             }
 
             if (!result.Succeeded)
@@ -498,7 +499,7 @@ namespace ServicesLeit.Services
             await _signInManager.SignInAsync(model.User, false);
             return LoginResult.Success;
         }
-        
+
 
         /// <summary>
         /// 
@@ -556,7 +557,7 @@ namespace ServicesLeit.Services
         public async Task<bool> TwoFactorDeactivatorAsync(ClaimsPrincipal principal)
         {
             var user = await _userManager.GetUserAsync(principal);
-            if(user is null)
+            if (user is null)
             {
                 return false;
             }
@@ -575,7 +576,7 @@ namespace ServicesLeit.Services
 
             return true;
         }
-        
+
         public async Task<LoginResult> TwoFactorCheckAsync(string token)
         {
             var resultTwoFactor = await _signInManager.TwoFactorAuthenticatorSignInAsync(token, false, false);
@@ -586,7 +587,7 @@ namespace ServicesLeit.Services
             return LoginResult.Success;
         }
 
-       
+
         ///////////////////////////////////
         private async Task<ApplicationUser?> UserGetAsync(string identifier, UserCheckMode mode)
         {
