@@ -15,8 +15,6 @@ namespace ServicesLeit.Interfaces
         Task AddCollectionAsync(CollectionCreationDto collectionViewModel);
         Task DeleteCollectionAsync(CollectionDto collectionViewModel);
         Task EditCollectionAsync(CollectionDto collectionViewModel);
-        Task<CollectionDto> GetCollectionAsync(long id);
-        Task<List<CollectionDto>> GetCollectionsAsync();
         Task<CollectionDto> ReadCollectionAsync(long id);
         Task<List<CollectionDto>> ReadCollectionsAsync();
     }
