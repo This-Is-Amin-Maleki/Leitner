@@ -28,8 +28,8 @@ namespace ServicesLeit.Interfaces
         Task<LoginResult> LoginTwoFactorAsync(PreLoginViewModel model);
         Task<LoginCheckDto> PreLoginAsync(PreLoginViewModel model);
         Task<LoginResult> LoginAsync(LoginCheckDto model);
-        Task<Authentication2FactorActivatorDto?> TwoFactorActivatorAsync(ClaimsPrincipal principal);
-        Task<bool> TwoFactorConfirmAsync(Authentication2FactorConfirmViewModel model);
+        Task<ActiveTFADto?> TwoFactorActivatorAsync(ClaimsPrincipal principal);
+        Task<bool> TwoFactorConfirmAsync(TFAConfirmViewModel model);
         Task<bool> TwoFactorDeactivatorAsync(ClaimsPrincipal principal);
         Task<LoginResult> TwoFactorCheckAsync(string token);
     }

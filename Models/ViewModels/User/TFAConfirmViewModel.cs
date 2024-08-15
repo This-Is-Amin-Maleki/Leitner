@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace ModelsLeit.ViewModels.User
 {
-    public record Authentication2FactorConfirmViewModel
+    public record TFAConfirmViewModel
     {
         [Required]
         public string Code { get; set; }

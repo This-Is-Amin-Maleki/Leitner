@@ -447,9 +447,9 @@ namespace ServicesLeit.Services
         /// </summary>
         /// <param name="principal">It's "User" that come from ControllerBase! [HttpContext?.User!]</param>
         /// <returns></returns>
-        public async Task<Authentication2FactorActivatorDto?> TwoFactorActivatorAsync(ClaimsPrincipal principal)
+        public async Task<ActiveTFADto?> TwoFactorActivatorAsync(ClaimsPrincipal principal)
         {
-            Authentication2FactorActivatorDto? model = null;
+            ActiveTFADto? model = null;
             var user = await _userManager.GetUserAsync(principal);
             if (user is null)
             {
@@ -467,7 +467,7 @@ namespace ServicesLeit.Services
             return model;
         }
 
-        public async Task<bool> TwoFactorConfirmAsync(Authentication2FactorConfirmViewModel model)
+        public async Task<bool> TwoFactorConfirmAsync(TFAConfirmViewModel model)
         {
             var user = await _userManager.GetUserAsync(model.Principal);
             if (user is null)
