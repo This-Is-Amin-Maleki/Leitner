@@ -14,6 +14,7 @@ namespace ServicesLeit.Interfaces
         Task<UserDto> ReadAsync(long id);
 
         Task<UserModifyDto?> ModifyAsync(UserModifyViewModel model);
+        Task<UserModifyDto?> ModifyAsync(UserModifyLimitedViewModel model);
 
         Task<bool> ModifyRoleAsync(UserModifyRoleDto model);
         Task<bool> ModifyRolesAsync(UserModifyRolesDto model);
