@@ -1,0 +1,38 @@
+﻿@using ModelsLeit.DTOs.User
+
+@model ActiveTFADto
+
+@{
+    ViewData["Title"] = "Enable 2FA Activation";
+}
+
+<h2>@ViewData["Title"]</h2>
+<a asp-action="Index" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+<br />
+<form method="post">
+    <p>
+        Enter below Code to your authenticator App:
+        <br />
+        <code>@Model.Token</code>
+    </p>
+    <p>
+        or scan the <i class="bi bi-qr-code"></i>
+    </p>
+    <div id="qr"></div>
+
+    <div class="input-group mb-2">
+        <span class="input-group-text"><i class="bi bi-hash"></i></span>
+        <input name="model" class="form-control" placeholder="Code">
+    </div>
+    <br />
+    <br />
+    <button type="submit" class="btn btn-primary"><i class="bi bi-lock"></i> Enable</button>
+
+</form>
+
+@section Scripts{
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+        <script>
+                new QrCode($("qr"), @Model.QRUri)
+        </script>
+}
