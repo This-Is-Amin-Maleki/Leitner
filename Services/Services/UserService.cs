@@ -95,6 +95,16 @@ namespace ServicesLeit.Services
                 output.Phone = model.Phone;
                 output.PhoneToken = phoneToken.Token;
             }
+            UserModifyRoleDto addRole = new()
+            {
+                Id = user.Id,
+                Type = model.Type,
+            };
+            if (await ModifyRoleAsync(addRole))
+            {
+                output.Role = UserType.User;
+            }
+
             return output;
         }
 
