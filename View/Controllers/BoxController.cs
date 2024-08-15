@@ -64,7 +64,7 @@ namespace ViewLeit.Controllers
             if(model is null)
             {
                 ModelState.AddModelError("XX", "Not Allow!");
-                return RedirectToAction(nameof(CollectionController.Index),"Collection");
+                return RedirectToAction("Index", "Page");
             }
             return View(model);
         }
@@ -84,7 +84,7 @@ namespace ViewLeit.Controllers
             if(collection is null)
             {
                 ModelState.AddModelError("XX", "Not Allow!");
-                return RedirectToAction(nameof(CollectionController.Index),"Collection");
+                return RedirectToAction("Index", "Page");
             }
             collection.CardPerDay= model.CardPerDay;
             collection.UserId = long.Parse(_userManager.GetUserId(User)!);
