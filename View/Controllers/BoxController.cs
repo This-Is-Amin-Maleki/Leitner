@@ -7,18 +7,27 @@ using ServicesLeit.Services;
 using ServicesLeit.Services;
 using ModelsLeit.DTOs.Container;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using ModelsLeit.Entities;
+using View.Controllers;
 
 namespace ViewLeit.Controllers
 {
     [Authorize]
     public class BoxController : Controller
     {
-        BoxService _boxService;
-        CollectionService _collectionService;
-        public BoxController(BoxService boxService,CollectionService collectionService)
+        private readonly BoxService _boxService;
+        private readonly CollectionService _collectionService;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public BoxController(
+            BoxService boxService,
+            CollectionService collectionService,
+            UserManager<ApplicationUser> userManager)
         {
             _boxService = boxService;
             _collectionService = collectionService;
+            _userManager = userManager;
         }
 
         // GET: BoxController
