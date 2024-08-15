@@ -11,14 +11,21 @@ namespace ViewLeit.Controllers
     [Authorize]
     public class CardController: Controller
     {
-        CardService _cardService;
-        FileService _fileService;
-        CollectionService _collectionService;
-        public CardController(CardService cardService, FileService fileService, CollectionService collectionService)
+        private readonly CardService _cardService;
+        private readonly FileService _fileService;
+        private readonly CollectionService _collectionService;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public CardController(
+            CardService cardService,
+            FileService fileService,
+            CollectionService collectionService,
+            UserManager<ApplicationUser> userManager)
         {
             _cardService = cardService;
             _fileService = fileService;
             _collectionService = collectionService;
+            _userManager = userManager;
         }
 
         // GET: CardController
