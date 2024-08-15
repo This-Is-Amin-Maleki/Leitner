@@ -6,21 +6,16 @@ namespace ServicesLeit.Interfaces
 {
     public interface IBoxService
     {
-       Task<List<BoxMiniDto>> ReadAllAsync();
-       Task<List<BoxMiniDto>> GetAllAsync();
-       Task<List<BoxMiniDto>> ReadByCollectionAsync(long id);
-       Task<List<BoxMiniDto>> GetByCollectionAsync(long id);
-       Task<BoxMiniDto> ReadAsync(long id);
-       Task<BoxMiniDto> GetAsync(long id);
-       Task AddAsync(BoxAddDto model);
-
-       Task<BoxReviewDto> ReviewAsync(long id);
-
-       Task<ContainerStudyDto> StudyAsync(long id);
-       Task UpdateAsync(ContainerStudiedDto model);
-       Task<ContainerStudyDto> StudyFailAsync(ContainerStudiedDto model);
-       Task DeleteAsync(long id);
-
+        Task AddAsync(BoxAddDto model);
+        Task DeleteAsync(long id, long userId);
+        Task<List<BoxMiniDto>> ReadAllAsync();
+        Task<List<BoxMiniDto>> ReadAllAsync(long userId);
+        Task<List<BoxMiniDto>> ReadByCollectionAsync(long id);
+        Task<List<BoxMiniDto>> ReadByCollectionAsync(long id, long userId);
         Task<CardDto> ReadNextCardAsync(long boxId, int num);
+        Task<BoxReviewDto> ReviewAsync(long id, long userId);
+        Task<ContainerStudyDto> StudyAsync(long id, long userId);
+        Task<ContainerStudyDto> StudyFailAsync(ContainerStudiedDto model);
+        Task UpdateAsync(ContainerStudiedDto model);
     }
 }

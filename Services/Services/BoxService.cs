@@ -11,7 +11,7 @@ using System.Data;
 
 namespace ServicesLeit.Services
 {
-    public class BoxService: IBoxService
+    public class BoxService : IBoxService
     {
         private readonly ILogger<BoxService> _logger;
 
