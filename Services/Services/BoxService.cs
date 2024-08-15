@@ -48,21 +48,29 @@ namespace ServicesLeit.Services
                 })
                 .ToListAsync();
         }
-        public async Task<List<BoxMiniDto>> GetAllAsync()
+        public async Task<List<BoxMiniDto>> ReadAllAsync(long userId)
         {//use auto mapper
             return await _dbContext.Boxes
+                .AsNoTracking()
                 .Include(x => x.Collection)
+                .ThenInclude(x => x.Cards)
+                .ThenInclude(x => x.ContainerCards)
+                .Where(x => x.UserId == userId)
                 .Select(x => new BoxMiniDto()
                 {
                     Id = x.Id,
                     DateAdded = x.DateAdded,
                     DateStudied = x.DateStudied,
+                    CardPerDay = x.CardPerDay,
                     LastSlot = x.LastSlot,
+                    LastCardId = x.LastCardId,
+                    Completed = x.Completed,
                     Collection = new CollectionMiniDto()
                     {
                         Id = x.Collection.Id,
-                        Name = x.Collection.Name
-                    }
+                        Name = x.Collection.Name,
+
+                    },
                 })
                 .ToListAsync();
         }
