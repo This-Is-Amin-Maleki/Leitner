@@ -200,11 +200,12 @@ namespace ServicesLeit.Services
             return model;
         }
 
-        public async Task<ContainerStudyDto> StudyAsync(long id)
+        public async Task<ContainerStudyDto> StudyAsync(long id, long userId)
         {
             var boxDto = await _dbContext.Boxes
                 .AsNoTracking()
                 .Include(x => x.Collection)
+                .Where(x => x.Id == id && x.UserId == userId)
                 .Select(x => new BoxDto()
                 {
                     Id = x.Id,
@@ -221,7 +222,7 @@ namespace ServicesLeit.Services
                     },
                     Containers = new List<ContainersDto>(),
                 })
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync();
 
             if (boxDto is null)
             {
@@ -254,14 +255,15 @@ namespace ServicesLeit.Services
                     }
                 ).ToListAsync();
 
-            ContainerReadDto read= await ReadLastContainerOfSlotAsync(boxDto);
+            ContainerReadDto read = await ReadLastContainerOfSlotAsync(boxDto);
             ContainerStudyDto container = read.Container;
             Container mainContainer = new();
             Box box = new();
             while (read.AnyCard is false)// || container.SlotOrder == -1 && cards are empty)
             {
                 boxDto.LastSlot = ForwardEmptyContainer(boxDto);
-                if (boxDto.LastSlot == 0) {
+                if (boxDto.LastSlot == 0)
+                {
                     break;
                 }
                 read = await ReadLastContainerOfSlotAsync(boxDto);
@@ -275,11 +277,11 @@ namespace ServicesLeit.Services
             };
             _dbContext.Attach(box);
             _dbContext.Entry(box).Property(x => x.LastSlot).IsModified = true;
-            
+
             if (read.AnyReqCard)
             {
                 var dropedCards = boxDto.Containers.Where(x => x.SlotOrder < -1).Select(x => x.ContainerCards.Count).ToArray().Sum();
-                if(boxDto.Collection.Count == dropedCards)
+                if (boxDto.Collection.Count == dropedCards)
                 {
                     box.Completed = true;
                     _dbContext.Entry(box).Property(x => x.Completed).IsModified = true;
