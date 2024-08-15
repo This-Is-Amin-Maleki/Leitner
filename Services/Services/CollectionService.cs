@@ -361,14 +361,26 @@ namespace ServicesLeit.Services
                 Status = collectionViewModel.Status,
             };
         }
-        private Collection MapViewModelToCollection(CollectionAddDto collectionViewModel)
+        private Collection MapViewModelToCollection(CollectionCreationDto collectionViewModel)
         {
             return new Collection()
             {
-                Id = collectionViewModel.Id ?? 0,
+                Id = collectionViewModel.Id,
+                UserId = collectionViewModel.UserId,
+                Description = collectionViewModel.Description.Trim(),
+                Status = collectionViewModel.Status ?? CollectionStatus.Draft,
+                Name = (collectionViewModel.Name ?? $"NewCollection{DateTime.Now.ToString("@ yy-MM-dd HH:mm")}").Trim(),
+            };
+        }
+        private Collection MapViewModelToCollection(CollectionEditDto collectionViewModel)
+        {
+            return new Collection()
+            {
+                Id = collectionViewModel.Id,
                 Description = collectionViewModel.Description.Trim(),
                 Name = collectionViewModel.Name.Trim(),
                 Status = collectionViewModel.Status,
+                UserId = collectionViewModel.UserId,
             };
         }
 
