@@ -73,10 +73,12 @@ namespace ServicesLeit.Services
                 .ToListAsync();
             return list;
         }
-        public async Task<(List<CardDto>, string)> GetCardsAsync(long collectionId)
+        public async Task<(List<CardDto>, string)> ReadCardsAsync(long collectionId)
         {//use auto mapper
+#warning if invalid card send 2 save reyurn without collection
             string collectionName = "";
             List<CardDto> list = await _dbContext.Cards
+                .AsNoTracking()
                 .Include(x => x.Collection)
                 .Where(x => x.CollectionId == collectionId)
                 .Select(x => new CardDto()
@@ -86,23 +88,17 @@ namespace ServicesLeit.Services
                     Answer = x.Answer,
                     Description = x.Description,
                     HasMp3 = x.HasMp3,
+                    Collection = new CollectionMiniDto()
+                    {
+                        Id = x.Collection.Id,
+                        Name = x.Collection.Name,
+                    }
                 })
                 .ToListAsync();
-            if (list.Count > 0)
-            {
-                collectionName = list.FirstOrDefault().Collection.Name;
-            }
-            else
-            {
-                var collection = await _dbContext.Collections
-                .AsNoTracking()
-                .Select(x => new { x.Name, x.Id })
-                .FirstOrDefaultAsync(x => x.Id == collectionId);
-
-                collectionName = collection.Name;
-            }
+                collectionName = (list.Count > 0) ? list.First().Collection.Name! : await GetCollectionName(collectionId);
             return (list, collectionName);
         }
+
 #warning check performance
         public async Task<CardDto> ReadCardAsync(long id)
         {
