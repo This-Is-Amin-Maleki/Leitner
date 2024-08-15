@@ -36,9 +36,11 @@ namespace ServicesLeit.Services
                 })
                 .ToListAsync();
         }
+        public async Task<List<CollectionDto>> ReadUserCollectionsAsync(long userId)
         {//use auto mapper
             return await _dbContext.Collections
                 .AsNoTracking()
+                .Where(x => x.UserId == userId)
                 .Select(x => new CollectionDto()
                 {
                     Id = x.Id,
@@ -46,6 +48,7 @@ namespace ServicesLeit.Services
                     Description = x.Description,
                     PublishedDate = x.PublishedDate,
                     Status = x.Status,
+                    CardsQ = x.Cards.Count
                 })
                 .ToListAsync();
         }
