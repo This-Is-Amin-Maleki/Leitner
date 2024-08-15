@@ -172,6 +172,25 @@ namespace ServicesLeit.Services
             await _collection.CheckStatusAsync(model.Collection.Id, "Can not update any card of the @ collection!");
             var card = MapViewModelToCard(model);
 
+            var oldCard = await _dbContext.Cards
+                .FirstAsync(x => x.Id == model.Id);
+
+            if (oldCard is null)
+            {
+                throw new Exception("Not Found");
+            }
+
+#warning catch!!
+            try
+            {
+                _dbContext.Cards.Update(card);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
             var hasCard = await _dbContext.Cards
                 .AnyAsync(x => x.Id == model.Id);
 
