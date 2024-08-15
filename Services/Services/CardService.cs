@@ -191,18 +191,25 @@ namespace ServicesLeit.Services
 
             }
         }
+        public async Task DeleteCardLimitedAsync(CardDto model)
+        {
+            await _collection.CheckStatusAsync(model.Collection.Id, "Can not delete any card of the @ collection!");
+            var card = MapViewModelToCard(model);
+
             var hasCard = await _dbContext.Cards
-                .AnyAsync(x => x.Id == model.Id);
+                .AnyAsync(x => x.Id == model.Id && x.UserId == model.UserId);
 
             if (hasCard is false)
             {
                 throw new Exception("Not Found");
             }
+
 #warning catch!!
             try
             {
-                _dbContext.Cards.Update(card);
+                _dbContext.Cards.Remove(card);
                 await _dbContext.SaveChangesAsync();
+
             }
             catch (Exception ex)
             {
