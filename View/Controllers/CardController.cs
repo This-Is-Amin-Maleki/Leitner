@@ -31,7 +31,8 @@ namespace ViewLeit.Controllers
         // GET: CardController
         public async Task<ActionResult> Index(long id)
         {
-            List<CardDto> model = await _cardService.ReadCardsLimitedAsync(id);
+            var userId = long.Parse(_userManager.GetUserId(User)!);
+            List<CardDto> model = await _cardService.ReadCardsLimitedAsync(id, userId);
             CollectionStatus? status;
             if (model.Count > 0)
             {
@@ -41,7 +42,7 @@ namespace ViewLeit.Controllers
             }
             else
             {
-                var collectionData= await _collectionService.GetCollectionNameAndStatusAsync(id);
+                var collectionData= await _collectionService.ReadCollectionNameAndStatusAsync(id);
                 ViewData["CollectionName"] = collectionData.Name;
                 status = collectionData.Status;
             }
@@ -51,8 +52,11 @@ namespace ViewLeit.Controllers
         }
 
         // GET: CardController/Details/5
-        public async Task<ActionResult> Details(long id) =>
-            View(await _cardService.ReadCardAsync(id));
+        public async Task<ActionResult> Details(long id)
+        {
+            var userId = long.Parse(_userManager.GetUserId(User)!);
+            return View(await _cardService.ReadCardLimitedAsync(id, userId));
+        }
 
 
         // GET: CardController/Create
@@ -72,6 +76,8 @@ namespace ViewLeit.Controllers
                 ModelState.AddModelError("XX", "Not Valid!");
                 return View(model);
             }
+
+            model.UserId = long.Parse(_userManager.GetUserId(User)!);
 #warning catch!!
             try
             { 
@@ -119,7 +125,12 @@ namespace ViewLeit.Controllers
                     await sheet.CopyToAsync(stream);
                 }
                 // Processing data
-                List<Card> list = _fileService.ReadCardsFromExcelFile(tempFilePath,id,1000);
+                List<Card> list = _fileService.ReadCardsFromExcelFile(tempFilePath, id, 1000);
+
+                //set userId
+               var userId = long.Parse(_userManager.GetUserId(User)!);
+                list.ForEach(x => x.UserId = userId);
+
                 await _cardService.BulkAddCardsAsync(list);
             }
             catch (Exception ex)
@@ -137,8 +148,11 @@ namespace ViewLeit.Controllers
         }
 
         // GET: CardController/Edit
-        public async Task<ActionResult> Edit(long id) => 
-            View(await _cardService.ReadCardAsync(id));
+        public async Task<ActionResult> Edit(long id)
+        {
+            var userId = long.Parse(_userManager.GetUserId(User)!);
+            return View(await _cardService.ReadCardLimitedAsync(id, userId));
+        } 
 
         // POST: CardController/Edit
         [HttpPost]
@@ -150,11 +164,12 @@ namespace ViewLeit.Controllers
                 ModelState.AddModelError("XX", "Not Valid!");
                 return View(model);
             }
+            model.UserId = long.Parse(_userManager.GetUserId(User)!);
 
 #warning catch!!
             try
              {
-                await _cardService.UpdateCardAsync(model);
+                await _cardService.UpdateCardLimitedAsync(model);
                 return RedirectToAction(nameof(Index), new { id = model.Collection.Id });
             }
              catch (Exception ex)
@@ -178,10 +193,11 @@ namespace ViewLeit.Controllers
                 ModelState.AddModelError("XX", "Not Valid!");
                 return View(model);
             }
+            model.UserId = long.Parse(_userManager.GetUserId(User)!);
 
             try
             {
-                await _cardService.DeleteCardAsync(model);
+                await _cardService.DeleteCardLimitedAsync(model);
                 return RedirectToAction(nameof(Index), new { id = model.Collection.Id });
             }
             catch (Exception ex)
