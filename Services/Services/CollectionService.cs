@@ -36,10 +36,9 @@ namespace ServicesLeit.Services
                 })
                 .ToListAsync();
         }
-        public async Task<List<CollectionDto>> GetCollectionsAsync()
         {//use auto mapper
             return await _dbContext.Collections
-                .FromSqlRaw("SELECT Id, Name, LEFT(Description, 200) AS Description, PublishedDate, Status FROM Collections")
+                .AsNoTracking()
                 .Select(x => new CollectionDto()
                 {
                     Id = x.Id,
@@ -50,7 +49,6 @@ namespace ServicesLeit.Services
                 })
                 .ToListAsync();
         }
-#warning check performance
         public async Task<CollectionDto> ReadCollectionAsync(long id)
         {
             var collection = await _dbContext.Collections
@@ -71,8 +69,6 @@ namespace ServicesLeit.Services
                 CreateEmptyCollectionViewModel() :
                 collection;
         }
-#warning check performance
-        public async Task<CollectionDto> GetCollectionAsync(long id)
         {
             var collection = await _dbContext.Collections
                 .FindAsync(id);
@@ -81,7 +77,6 @@ namespace ServicesLeit.Services
                 CreateEmptyCollectionViewModel() :
                 MapCollectionViewModel(collection);
         }
-        public async Task<CollectionMiniDto> GetCollectionNameAndStatusAsync(long id)
         {
             var model = await _dbContext.Collections
                 .AsNoTracking()
