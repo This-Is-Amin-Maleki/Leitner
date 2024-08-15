@@ -486,23 +486,23 @@ namespace ServicesLeit.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<CardDto> ReadNextCardAsync(long boxId,int num)
+        public async Task<CardDto> ReadNextCardAsync(long boxId, int num)
         {
             //check box
             var box = await _dbContext.Boxes
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x=>x.Id == boxId);
+                .FirstOrDefaultAsync(x => x.Id == boxId);
 
-            if(box is null)
+            if (box is null)
             {
                 throw new Exception("Box Not Found");
             }
 
             //get new cardsArray
-            var cards = await _cardService.ReadCardsAsync(box.LastCardId, box.CollectionId,1,(num-1));
+            var cards = await _cardService.ReadCardsAsync(box.LastCardId, box.CollectionId, 1, (num - 1));
             var card = cards.FirstOrDefault();
 
-            if(card is null)
+            if (card is null)
             {
                 throw new Exception("No cards available for review.");
             }
@@ -516,12 +516,12 @@ namespace ServicesLeit.Services
             int order = model.LastSlot;
             //0 => 1 => 2 => 3 => 4 => -1 |=> 0
             int nextOrder = order is 4 ? -1 : order + 1;
-            
+
             var currentContainer = model.Containers
                 .FirstOrDefault(x => x.SlotOrder == order);
-            
+
             var nextSlotContainer = model.Containers
-                .FirstOrDefault(x => x.SlotOrder == nextOrder)??new();
+                .FirstOrDefault(x => x.SlotOrder == nextOrder) ?? new();
 
             if (nextSlotContainer.Id is 0)//No Continer in Slot, So get SlotId to move new container to that.
             {
@@ -541,7 +541,7 @@ namespace ServicesLeit.Services
             _dbContext.SaveChanges();
             return nextOrder;
         }
-        
+
         private static List<CardDto> CardsIds2Card(long[] cards)
         {
             //cardsArray id array to cardsArray list
@@ -608,7 +608,7 @@ namespace ServicesLeit.Services
                         .ToList(),
                     Id = x.Id,
                     BoxId = model.Id,
-                    LastCardId=model.LastCardId,
+                    LastCardId = model.LastCardId,
                     SlotId = x.SlotId,
                     SlotOrder = model.LastSlot,//x.SlotOrder,
                     CardPerDay = model.CardPerDay,
@@ -669,7 +669,7 @@ namespace ServicesLeit.Services
             return new()
             {
                 AnyCard = container.Approved.Any(),
-                Container =container,
+                Container = container,
                 AnyReqCard = anyReqCard,
             };
         }
