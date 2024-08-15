@@ -98,7 +98,6 @@ namespace ServicesLeit.Services
                 collectionName = (list.Count > 0) ? list.First().Collection.Name! : await GetCollectionName(collectionId);
             return (list, collectionName);
         }
-
 #warning check performance
         public async Task<CardDto> ReadCardLimitedAsync(long id, long userId)
         {
@@ -303,6 +302,15 @@ namespace ServicesLeit.Services
                 CollectionId = model.Collection.Id,
                 UserId = model.UserId,
             };
+        }
+        private async Task<string> GetCollectionName(long collectionId)
+        {
+            var collection = await _dbContext.Collections
+            .AsNoTracking()
+            .Select(x => new { x.Name, x.Id })
+            .FirstAsync(x => x.Id == collectionId);
+
+            return collection.Name;
         }
     }
 }
