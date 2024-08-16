@@ -12,6 +12,7 @@ using System.Data;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
+using System.Web;
 
 namespace ServicesLeit.Services
 {
@@ -173,11 +174,12 @@ namespace ServicesLeit.Services
                 return output;
             }
 
+            output = new();
 
             if (user.Email != model.Email)
             {
                 output.Email = model.Email;
-                output.EmailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                output.EmailToken = await _userManager.GenerateChangeEmailTokenAsync(user, model.Email);
             }
 
             if (user.PhoneNumber != model.Phone)
@@ -189,8 +191,8 @@ namespace ServicesLeit.Services
             if (!(model.Password.IsNullOrEmpty() &&
                 model.NewPassword.IsNullOrEmpty()))
             {
-                await _userManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
-                if (result.Succeeded)
+                var passResult = await _userManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
+                if (passResult.Succeeded)
                 {
                     output.PassChanged = true;
                 }
