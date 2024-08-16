@@ -60,11 +60,11 @@ namespace View.Controllers
             {
                 return RedirectToAction("Index", "Page");
             }
-            PEditUserViewModel output = new()
+            UserModifyLimitedViewModel output = new()
             {
-                //Bio = user.Bio,
-                //Name = user.Name,
                 Email = user.Email ?? string.Empty,
+                Bio = user.Bio,
+                Name = user.Name,
             };
             return View(output);
         }
