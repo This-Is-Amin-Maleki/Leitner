@@ -112,7 +112,7 @@ namespace View.Controllers
             TempData["Result"] = "Profile updated successfully!";
             return View();
         }
-
+        /*
         public IActionResult ConfirmAuthenticator() => View();
 
         public async Task<IActionResult> Enable2FA()
@@ -162,5 +162,6 @@ namespace View.Controllers
             }
             return View();
         }
+        */
     }
 }
