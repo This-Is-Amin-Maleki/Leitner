@@ -1,0 +1,23 @@
+﻿@using ModelsLeit.DTOs.User
+
+@model ActiveTFADto
+
+@{
+    ViewData["Title"] = "2FA Deactivation";
+}
+
+<h2>@ViewData["Title"]</h2>
+<a asp-controller="Page" asp-action="Index" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+@if (TempData.Any(x => x.Key is "Twofactor"))
+{
+    <p class="text-warning">@TempData["Twofactor"]</p>
+}
+<br />
+    <p>
+        Are You Sure You Want to Disable Two-Factor Authentication?
+    <br /><br /><br />
+    <center>
+        <a asp-action="Deactivate2FA" class="btn btn-outline-warning"><i class="bi bi-lock"></i> Disable</a>
+    </center>
+
+    </p>

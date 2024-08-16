@@ -116,7 +116,7 @@ namespace View.Controllers
 
         public IActionResult ConfirmAuthenticator() => View();
 
-        public async Task<IActionResult> EnableAuthenticator()
+        public async Task<IActionResult> Enable2FA()
         {
             var result = await _userService.TwoFactorActivatorAsync(User);
             if(result is null)
@@ -129,7 +129,7 @@ namespace View.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EnableAuthenticator(string model)
+        public async Task<IActionResult> Enable2FA(string model)
         {
             if (!ModelState.IsValid)
             {
@@ -147,10 +147,10 @@ namespace View.Controllers
                 return View();
             }
 
-            return RedirectToAction("Profile");
+            return View("Confirm2FA");
         }
 
-        public async Task<IActionResult> DisableAuthenticator()
+        public async Task<IActionResult> Deactivate2FA()
         {
             var result = await _userService.TwoFactorDeactivatorAsync(User);
             TempData["Twofactor"] = "Two-factor authentication has been disabled successfully.";
