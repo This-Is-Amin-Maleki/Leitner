@@ -163,3 +163,8 @@ body div main{
 .h-27 {
     height:2.7em;
 }
+#qr img {
+    width: 132px;
+    border: solid #fff 5px !important;
+    border-radius: 10%
+}
