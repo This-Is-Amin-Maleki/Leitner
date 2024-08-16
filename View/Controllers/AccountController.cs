@@ -11,7 +11,7 @@ using ModelsLeit.ViewModels.User;
 
 namespace View.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class AccountController : Controller
     {
         //private readonly ApplicationDbContext _db;
