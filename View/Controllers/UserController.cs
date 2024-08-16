@@ -99,6 +99,55 @@ namespace View.Controllers
 
         [HttpPost]// p
         [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoginFake(PreLoginViewModel model)
+
+        {
+            if (!ModelState.IsValid)
+            {
+                return PartialView("Partial/User/_PartialLoginForm", model);
+            }
+            //send lockOutTime To View
+            TempData["LockedOutTime"] = 0;
+
+            model.Mode = UserCheckMode.EmailAndUserName;
+            var preLoginData = await _userService.PreLoginAsync(model);
+            var result = await _userService.MyLoginAsync(preLoginData.User, model.Password);
+
+            if ((int)result >= 9)
+            {
+                LoginResultViewModel outModel = new()
+                {
+                    Id = "Login",
+                    Title = "Login Failed",
+                    Message = "An error has occurred while processing your request. Please try again later.",
+                    Button = "Reload",
+                    Destination = ""
+                };
+                return PartialView("Partial/User/_PartialResultDialog", outModel);
+            }
+
+            if (result is LoginResult.Success)
+            {
+                var output = Content(Url.Action("Index", "Box"));
+                return output;
+            }
+
+            if (result is LoginResult.TwoFactorRequire)
+            {
+                return PartialView("Partial/User/_PartialTwoFactorForm", new User2FAViewModel());
+            }
+            var error = result.LoginResultError(preLoginData.User.LockoutEnd);
+            ModelState.AddModelError(error.key, error.message);
+
+            if (error.key is "NotConfirmed")
+            {
+                ViewData["NotConfirmed"] = 1;
+            }
+
+            return PartialView("Partial/User/_PartialLoginForm", model);
+        }
+        [HttpPost]// p
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(UserRegisterViewModel model)
         {
             UserRegisterViewModel registerationData = new()
@@ -327,5 +376,36 @@ namespace View.Controllers
 #warning check modelState is OK!!
         }
 
+        [HttpPost]// p
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TwoFactorFake(User2FAViewModel model)
+        {
+            PreLoginViewModel preLoginModel = new()
+            {
+                Password = model.Password,
+                Identifier = model.Identifier,
+                Mode = UserCheckMode.EmailAndUserName
+            };
+            if (!ModelState.IsValid)//model is null)// 
+            {
+                return PartialView("Partial/User/_PartialLoginForm", preLoginModel);
+            }
+
+            model.User = await _userService.PreLoginFakeAsync(preLoginModel);
+
+            var result = await _userService.MyTFA(model);
+
+            if (result is LoginResult.Success)
+            {
+                return RedirectToAction("Index", "Box");
+            }
+
+            var error = result.LoginResultError();
+
+            ModelState.AddModelError(error.key, error.message);
+
+            return PartialView("Partial/User/_PartialLoginForm", preLoginModel);
+#warning check modelState is OK!!
+        }
     }
 }

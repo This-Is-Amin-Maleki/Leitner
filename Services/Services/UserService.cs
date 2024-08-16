@@ -454,9 +454,16 @@ namespace ServicesLeit.Services
             await _signInManager.SignInAsync(user, false);
             return LoginResult.Success;
         }
+        public async Task<ApplicationUser?> PreLoginFakeAsync(PreLoginViewModel model)
+        {
+            var user = await UserGetAsync(model.Identifier, model.Mode);
+
+            return user;
+        }
         public async Task<LoginCheckDto> PreLoginAsync(PreLoginViewModel model)
         {
             var user = await UserGetAsync(model.Identifier, model.Mode);
+
             return new LoginCheckDto
             {
                 User = user,
@@ -584,10 +591,77 @@ namespace ServicesLeit.Services
             var resultTwoFactor = await _signInManager.TwoFactorAuthenticatorSignInAsync(token, false, false);
             if (resultTwoFactor.Succeeded)
             {
+                return LoginResult.Success;
             }
-            return LoginResult.Success;
+            if (resultTwoFactor.IsLockedOut)
+            {
+                return LoginResult.LockedOut;
+            }
+            return LoginResult.TwoFactorInvalid;
         }
 
+        //////////////// Unsuccessful attempt to handle scenarios and create a workaround when 2FA does not work. د:
+        public async Task<LoginResult> MyLoginAsync(ApplicationUser? model, string password)
+        {
+            if (model is null)
+                return LoginResult.NotFound;
+
+            if (!model.EmailConfirmed)
+                return LoginResult.EmailNotConfirmed;
+
+            if (!model.Active)
+                return LoginResult.Deactive;
+
+            if (model.LockoutEnabled && model.LockoutEnd > DateTime.Now)
+                return LoginResult.LockedOut;
+
+            if (model.TwoFactorEnabled)
+                return LoginResult.TwoFactorRequire;
+
+            var result = await _signInManager.CheckPasswordSignInAsync(model, password, true);
+
+            if (!result.Succeeded)
+            {
+                return LoginResult.Fail;
+            }
+
+            await _signInManager.SignInAsync(model, false);
+            return LoginResult.Success;
+        }
+        public async Task<LoginResult> MyTFA(User2FAViewModel model)
+        {
+            if (model.User is null)
+            {
+                return LoginResult.NotFound;
+            }
+
+            var result = await _signInManager.CheckPasswordSignInAsync(model.User, model.Password, true);
+
+            SignInResult? resultTwoFactor = null;
+            if (result.RequiresTwoFactor || model.User.TwoFactorEnabled)
+            {
+                resultTwoFactor = await _signInManager.TwoFactorAuthenticatorSignInAsync(model.Token, false, false);
+
+            }
+
+            if (resultTwoFactor is null)
+            {
+                return LoginResult.TwoFactorInvalid;
+            }
+
+            if (result.IsLockedOut || resultTwoFactor.IsLockedOut)
+            {
+                return LoginResult.LockedOut;
+            }
+
+            if (resultTwoFactor.Succeeded)
+            {
+                await _signInManager.SignInAsync(model.User, false);
+                return LoginResult.Success;
+            }
+
+            return LoginResult.TwoFactorInvalid;
+        }
 
         ///////////////////////////////////
         private async Task<ApplicationUser?> UserGetAsync(string identifier, UserCheckMode mode)
