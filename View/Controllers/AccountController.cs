@@ -150,6 +150,8 @@ namespace View.Controllers
             return View("Confirm2FA");
         }
 
+        public async Task<IActionResult> Disable2FA() => View();
+
         public async Task<IActionResult> Deactivate2FA()
         {
             var result = await _userService.TwoFactorDeactivatorAsync(User);
@@ -157,8 +159,9 @@ namespace View.Controllers
             if (!result)
             {
                 TempData["Twofactor"] = "Failed to disable two-factor authentication! Please try again later or contact support.";
+                return View("Disable2FA");
             }
-            return RedirectToAction("Profile");
+            return View();
         }
     }
 }
