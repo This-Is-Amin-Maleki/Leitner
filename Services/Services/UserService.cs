@@ -518,7 +518,7 @@ namespace ServicesLeit.Services
         otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example&algorithm=SHA1&digits=6&period=30
             await _userManager.ResetAuthenticatorKeyAsync(user!);
             var token = await _userManager.GetAuthenticatorKeyAsync(user!);
-            string AuthenticationUri = string.Format(AuthenticationUriFormat, _urlEncoder.Encode("IdentityManager"), _urlEncoder.Encode(user!.Email!), token);
+            string AuthenticationUri = string.Format(AuthenticationUriFormat, _urlEncoder.Encode("Leitner"), _urlEncoder.Encode(user!.Email!), token);
             model = new()
             {
                 Token = token,
