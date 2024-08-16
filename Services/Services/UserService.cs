@@ -514,7 +514,8 @@ namespace ServicesLeit.Services
             {
                 return model;
             }
-            string AuthenticationUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer{1}&digits{6}";
+            string AuthenticationUriFormat = "otpauth://totp/{0}:{1}?secret={2}";
+        otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example&algorithm=SHA1&digits=6&period=30
             await _userManager.ResetAuthenticatorKeyAsync(user!);
             var token = await _userManager.GetAuthenticatorKeyAsync(user!);
             string AuthenticationUri = string.Format(AuthenticationUriFormat, _urlEncoder.Encode("IdentityManager"), _urlEncoder.Encode(user!.Email!), token);
