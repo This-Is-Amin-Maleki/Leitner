@@ -168,9 +168,9 @@ namespace ServicesLeit.Services
             userModified.Email = model.Email ?? user.Email;
 
             var result = await _userManager.UpdateAsync(userModified);
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                output = new();
+                return output;
             }
 
 
@@ -186,8 +186,8 @@ namespace ServicesLeit.Services
                 output.PhoneToken = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.Phone);
             }
 
-            if (model.Password.IsNullOrEmpty() &&
-                model.NewPassword.IsNullOrEmpty())
+            if (!(model.Password.IsNullOrEmpty() &&
+                model.NewPassword.IsNullOrEmpty()))
             {
                 await _userManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
                 if (result.Succeeded)
@@ -580,9 +580,8 @@ namespace ServicesLeit.Services
         public async Task<LoginResult> TwoFactorCheckAsync(string token)
         {
             var resultTwoFactor = await _signInManager.TwoFactorAuthenticatorSignInAsync(token, false, false);
-            if (!resultTwoFactor.Succeeded)
+            if (resultTwoFactor.Succeeded)
             {
-                return LoginResult.TwoFactorInvalid;
             }
             return LoginResult.Success;
         }
