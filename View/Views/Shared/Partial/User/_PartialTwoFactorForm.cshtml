@@ -1,5 +1,5 @@
 ﻿@using ModelsLeit.ViewModels.User
-@model UserTokenViewModel
+@model string
 @* It loads after login in #login parent!!*@
 <form id="Login" iq="TwoFactor" method="post" class="someForm">
     <br><br><br><br><br>
@@ -9,7 +9,7 @@
     </div>
     <div class="input-group mb-2">
         <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-        <input asp-for="Token" type="text" class="small form-control" placeholder="Token">
+        <input asp-for="@Model" type="text" class="small form-control" placeholder="Token">
     </div>
     <p class="text-center small mb-3">This site is protected by reCAPTCHA and the Google<a class=" text-decoration-none link-primary" href="https://policies.google.com/privacy?hl=fa"> Privacy Policy</a> and <a class=" text-decoration-none link-primary" href="https://policies.google.com/terms?hl=fa"> Terms of Service</a> apply.</p>
     <a class="btn btn-primary float-start go">Verify</a>

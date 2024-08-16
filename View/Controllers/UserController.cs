@@ -84,7 +84,7 @@ namespace View.Controllers
 
             if (result is LoginResult.TwoFactorRequire)
             {
-                return PartialView("Partial/User/_PartialTwoFactorForm", model);
+                return PartialView("Partial/User/_PartialTwoFactorForm");
             }
             var error = result.LoginResultError(preLoginData.User.LockoutEnd);
             ModelState.AddModelError(error.key, error.message);
@@ -306,10 +306,10 @@ namespace View.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> TwoFactor(string model)
         {
-            var loginModel = new PreLoginViewModel();
-            if (!ModelState.IsValid)
+            var preLoginModel = new PreLoginViewModel();
+            if (model is null)
             {
-                return PartialView("Partial/User/_PartialLoginForm", loginModel);
+                return PartialView("Partial/User/_PartialLoginForm", preLoginModel);
             }
 
             var result = await _userService.TwoFactorCheckAsync(model);
@@ -323,7 +323,7 @@ namespace View.Controllers
 
             ModelState.AddModelError(error.key, error.message);
 
-            return PartialView("Partial/User/_PartialLoginForm", loginModel);
+            return PartialView("Partial/User/_PartialLoginForm", preLoginModel);
 #warning check modelState is OK!!
         }
 
