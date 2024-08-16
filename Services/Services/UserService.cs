@@ -166,7 +166,6 @@ namespace ServicesLeit.Services
             ApplicationUser userModified = user;
             userModified.Name = model.Name ?? user.Name;
             userModified.Bio = model.Bio ?? user.Bio;
-            userModified.Email = model.Email ?? user.Email;
 
             var result = await _userManager.UpdateAsync(userModified);
             if (!result.Succeeded)

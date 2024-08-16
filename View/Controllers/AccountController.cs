@@ -62,7 +62,6 @@ namespace View.Controllers
             }
             UserModifyLimitedViewModel output = new()
             {
-                Email = user.Email ?? string.Empty,
                 Bio = user.Bio,
                 Name = user.Name,
             };
