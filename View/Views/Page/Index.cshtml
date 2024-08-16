@@ -7,6 +7,7 @@
 @{
     ViewData["Title"] = "Leitner";
     var userSigned = User.Identity.IsAuthenticated;
+    var json = JsonConvert.SerializeObject(Enum.GetNames(typeof(UserFormType)));
 }
 
 <div class="container-fluid">
