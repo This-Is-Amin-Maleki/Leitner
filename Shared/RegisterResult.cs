@@ -4,8 +4,9 @@
     {
         Success = 1,
 
-        PhoneInUse = 8,
-        EmailInUse = 9,
+        EmailOrPhoneInUse = 7,
+        RoleFail = 8,
+        RoleAndDeleteFail = 9,
         Fail = 10,
     }
 }

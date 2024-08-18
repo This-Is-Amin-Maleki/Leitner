@@ -37,21 +37,13 @@ namespace ServicesLeit.Services
         public async Task<UserRegisterDto> RegisterAsync(UserRegisterViewModel model)
         {
             UserRegisterDto output = new();
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            var user = await _userManager.Users
+                    .FirstOrDefaultAsync(x =>
+                    (model.Phone != null && x.PhoneNumber == model.Phone) ||
+                    x.Email == model.Email);
             if (user is not null)
             {
-                output.Result = RegisterResult.EmailInUse;
-                return output;
-            }
-
-            if (model.Phone is not null)
-            {
-                user = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == model.Phone);
-            }
-
-            if (user is not null)
-            {
-                output.Result = RegisterResult.PhoneInUse;
+                output.Result = RegisterResult.EmailOrPhoneInUse;
                 return output;
             }
 
@@ -97,9 +89,17 @@ namespace ServicesLeit.Services
             }
 
 
-            await _userManager.AddToRoleAsync(user, model.Type.ToString());
+            result = await _userManager.AddToRoleAsync(user, model.Type.ToString());
+            if (!result.Succeeded)
             {
-                output.Role = UserType.User;
+                result = await _userManager.DeleteAsync(user);
+                output.Result = RegisterResult.RoleFail;
+                return output;
+            }
+
+            if (!result.Succeeded) //when addRole Faild and can't delete registered User 
+            {
+                output.Result = RegisterResult.RoleAndDeleteFail;
             }
 
             return output;
