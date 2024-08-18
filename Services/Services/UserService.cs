@@ -416,14 +416,14 @@ namespace ServicesLeit.Services
                 return LoginResult.NotFound;
             }
 
-            if (!user.Active)
-            {
-                return LoginResult.Deactive;
-            }
-
             if (!user.EmailConfirmed)
             {
                 return LoginResult.EmailNotConfirmed;
+            }
+
+            if (!user.Active)
+            {
+                return LoginResult.Deactive;
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, true);
@@ -473,14 +473,14 @@ namespace ServicesLeit.Services
                 return LoginResult.NotFound;
             }
 
-            if (!model.User.Active)
-            {
-                return LoginResult.Deactive;
-            }
-
             if (!model.User.EmailConfirmed)
             {
                 return LoginResult.EmailNotConfirmed;
+            }
+
+            if (!model.User.Active)
+            {
+                return LoginResult.Deactive;
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(model.User, model.Password, true);
