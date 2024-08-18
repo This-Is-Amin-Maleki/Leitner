@@ -95,12 +95,9 @@ namespace ServicesLeit.Services
                 output.Phone = model.Phone;
                 output.PhoneToken = phoneToken.Token;
             }
-            UserModifyRoleDto addRole = new()
-            {
-                Id = user.Id,
-                Type = model.Type,
-            };
-            if (await ModifyRoleAsync(addRole))
+
+
+            await _userManager.AddToRoleAsync(user, model.Type.ToString());
             {
                 output.Role = UserType.User;
             }
@@ -225,7 +222,7 @@ namespace ServicesLeit.Services
             if (result.Succeeded)
             {
                 UserModifyRoleDto roleModifier = new()
-                {
+            {
                     Id = model.Id,
                     Type = model.Type,
                 };
@@ -233,7 +230,6 @@ namespace ServicesLeit.Services
             }
             return true;
         }
-
         public async Task<bool> ModifyRoleAsync(UserModifyRoleDto model)
         {
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
