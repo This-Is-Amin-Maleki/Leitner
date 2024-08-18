@@ -27,9 +27,10 @@ namespace View.Controllers
             _signInManager = signInManager;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? returnUrl)
         {
             HomePageViewModel model = new();
+            model.Login.ReturnUrl = returnUrl ?? string.Empty;
             model.Collections = await ReadCollections();
             return View(model);
         }

@@ -78,7 +78,9 @@ namespace View.Controllers
 
             if (result is LoginResult.Success)
             {
-                var output= Content(Url.Action("Index", "Box"));
+                var output = string.IsNullOrEmpty(model.ReturnUrl) ?
+                    Content("/") :
+                    Content(model.ReturnUrl);
                 return output;
             }
 
@@ -128,7 +130,10 @@ namespace View.Controllers
 
             if (result is LoginResult.Success)
             {
-                var output = Content(Url.Action("Index", "Box"));
+                var output = string.IsNullOrEmpty(model.ReturnUrl) ?
+                    Content(Url.Action("Index", "Box")) :
+                    Content(model.ReturnUrl);
+                return output;
                 return output;
             }
 
