@@ -47,6 +47,7 @@ namespace View.Controllers
             _userService = userService;
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Logout()
         {
             await _userService.LogoutAsync();
