@@ -49,8 +49,10 @@ namespace ViewLeit.Extensions
         public static (string key, string message) RegisterResultError(this RegisterResult result) =>
             result switch
             {
-                RegisterResult.EmailInUse => ("EmailInUse", "The email address is already in use!"),
-                RegisterResult.PhoneInUse => ("PhoneInUse", "The phone number is already in use!"),
+                RegisterResult.EmailOrPhoneInUse => ("EmailOrPhoneInUse", "The email address is already in use!"),
+                //RegisterResult.EmailOrPhoneInUse => ("EmailInUse", "The email address or The phone number is already in use!"),
+                //RegisterResult.PhoneInUse => ("PhoneInUse", "The phone number is already in use!"),
+
                 //RegisterResult.Fail
                 _ => ("Fail", "Registration failed. Please try again later!"),
             };
