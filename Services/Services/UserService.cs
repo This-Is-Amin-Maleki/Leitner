@@ -237,17 +237,17 @@ namespace ServicesLeit.Services
             {
                 return false;
             }
-            IdentityResult? result;
+            IdentityResult? result =new();
             var oldRoles = await _userManager.GetRolesAsync(user);
-            if (oldRoles.Contains(nameof(model.Type)))
+            if (oldRoles.Any())
             {
                 result = await _userManager.RemoveFromRolesAsync(user, oldRoles);
-                if (!result.Succeeded)
-                {
-                    return false;
-                }
             }
-            result = await _userManager.AddToRoleAsync(user, nameof(model.Type));
+            if (!result.Succeeded)
+            {
+                return false;
+            }
+            result = await _userManager.AddToRoleAsync(user, model.Type.ToString());
             if (!result.Succeeded)
             {
                 return false;
