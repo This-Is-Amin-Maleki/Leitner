@@ -5,6 +5,8 @@ using EFCore.BulkExtensions;
 using Microsoft.Extensions.Logging;
 using ModelsLeit.DTOs.Card;
 using ModelsLeit.DTOs.Collection;
+using SharedLeit;
+using ServicesLeit.Interfaces;
 
 namespace ServicesLeit.Services
 {
@@ -114,6 +116,66 @@ namespace ServicesLeit.Services
                 CreateEmptyCardViewModel() :
                 MapCardToViewModel(card);
         }
+
+        public async Task<List<CardDto>> ReadCardsAsync(long lastCardId, long collectionId, int count, int skip = 0)
+        {
+            //get new cardsArray
+            return await _dbContext.Cards
+                .AsNoTracking()
+                .Where(x => x.Id > lastCardId && x.CollectionId == collectionId)
+                .Select(x => new CardDto
+                {
+                    Id = x.Id,
+                    Answer = x.Answer,
+                    Ask = x.Ask,
+                    Description = x.Description,
+                    HasMp3 = x.HasMp3,
+                })
+                .Skip(skip)
+                .Take(count)
+                .ToListAsync();
+        }
+        public async Task<List<Card>> ReadCardsAsync(IEnumerable<long> cards)
+        {
+            return await _dbContext.Cards
+                .AsNoTracking()
+                .Where(x => cards.Contains(x.Id))
+                .ToListAsync();
+        }
+        public async Task<CardsListStatusDto> ReadCardsByStatusAsync(long id)
+        {
+            CardsListStatusDto? checkList = await _dbContext.Cards
+                .AsNoTracking()
+                .Include(x => x.Collection)
+                .Where(x => x.CollectionId == id && x.Status == CardStatus.Submitted)
+                .GroupBy(x => new { x.Collection.Id, x.Collection.Name })
+                .Select(group => new CardsListStatusDto
+                {
+                    CollectionName = group.Key.Name,
+                    Id = group.Key.Id,
+                    Submitted = group.Select(x => new CardCheckDto
+                    {
+                        Id = x.Id,
+                        Answer = x.Answer,
+                        Description = x.Description,
+                        Ask = x.Ask,
+                        HasMp3 = x.HasMp3,
+                        Status = x.Status,
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            if (checkList is null)
+            {
+                throw new Exception("Collection Not Found");
+            }
+            if (checkList.Submitted.Count is 0)
+            {
+                throw new Exception("Any Cards to Check");
+            }
+            return checkList;
+        }
+
         public async Task AddCardAsync(CardDto model)
         {
             await _collection.CheckStatusAsync(model.Collection.Id, "Can not add any cards to the @ collection!");
