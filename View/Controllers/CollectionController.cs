@@ -29,7 +29,7 @@ namespace ViewLeit.Controllers
             var userId = long.Parse(_userManager.GetUserId(User)!);
             var output = /*User.IsInRole(nameof(UserType.Admin)) ?
                 await _collectionService.ReadCollectionsAsync() :*/
-                await _collectionService.ReadUserCollectionsAsync(userId);
+                await _collectionService.ReadAllAsync(userId);
             return View(output);
         }
 
@@ -79,7 +79,7 @@ namespace ViewLeit.Controllers
         // POST: CollectionController/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(CollectionEditDto model)
+        public async Task<ActionResult> Edit(CollectionModifyDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -108,7 +108,7 @@ namespace ViewLeit.Controllers
         // POST: CollectionController/Delete
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(CollectionEditDto model)
+        public async Task<ActionResult> Delete(CollectionModifyDto model)
         {
             if (!ModelState.IsValid)
             {
