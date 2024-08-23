@@ -297,33 +297,72 @@ namespace ServicesLeit.Services
 
             }
         }
-
-        public async Task<List<CardDto>> ReadCardsAsync(long lastCardId, long collectionId, int count, int skip = 0)
+        public async Task<CardCheckedResultDto> BulkUpdateCardsStatusAsync(CardsArrayStatusDto model)
         {
-            //get new cardsArray
-            return await _dbContext.Cards
+            var allCards = (model.Rejected ?? [])
+                .Concat(model.Approved ?? [])
+                .Concat(model.Blocked ?? [])
+                .ToArray();
+
+            var cards = await _dbContext.Cards
                 .AsNoTracking()
-                .Where(x => x.Id > lastCardId && x.CollectionId == collectionId)
-                .Select(x => new CardDto
+                .Include(x => x.Collection)
+                .Where(x => allCards.Contains(x.Id))
+                /*.Select(x=> new CardForCheckDto
                 {
-                    Id = x.Id,
-                    Answer = x.Answer,
-                    Ask = x.Ask,
-                    Description = x.Description,
-                    HasMp3 = x.HasMp3,
-                })
-                .Skip(skip)
-                .Take(count)
+                     Id = x.Id,
+                      Status = x.Status,
+                      Collection = new CollectionMiniDto
+                      {
+                           Id = x.CollectionId,
+                           Name = x.Collection.Name
+                      }
+                })*/
                 .ToListAsync();
-        }
-        public async Task<List<Card>> ReadCardsAsync(IEnumerable<long> cards)
-        {
-            return await _dbContext.Cards
-                .AsNoTracking()
-                .Where(x => cards.Contains(x.Id))
-                .ToListAsync();
-        }
 
+            if (cards is null)
+            {
+                throw new Exception("Not Found");
+            }
+
+            if (cards.Count is 0)
+            {
+                throw new Exception("Any Cards");
+            }
+
+            if (model.Approved != null && model.Approved.Length > 0)
+                cards.Where(x => model.Approved.Contains(x.Id)).ToList().ForEach(x => x.Status = CardStatus.Approved);
+
+            if (model.Rejected != null && model.Approved.Length > 0)
+                cards.Where(x => model.Rejected.Contains(x.Id)).ToList().ForEach(x => x.Status = CardStatus.Rejected);
+
+            if (model.Blocked != null && model.Approved.Length > 0)
+                cards.Where(x => model.Blocked.Contains(x.Id)).ToList().ForEach(x => x.Status = CardStatus.Blocked);
+            /*
+            List<Card> updateCards = cards
+                .Select(x => new Card
+                    {
+                        Id = x.Id,
+                        Status = x.Status
+                    })
+                .ToList();
+            */
+            await _dbContext.BulkUpdateAsync(cards);
+
+            var firstCard = cards.FirstOrDefault();
+
+            CardCheckedResultDto output = new()
+            {
+                CheckedCards = allCards.Length,
+                Collection = new CollectionMiniDto
+                {
+                    Id = firstCard.Collection.Id,
+                    Name = firstCard.Collection.Name,
+                }
+            };
+
+            return output;
+        }
         ////////////////////////////////////////////////////////
         private CardDto CreateEmptyCardViewModel()
         {
