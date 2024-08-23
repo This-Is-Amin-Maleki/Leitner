@@ -319,7 +319,7 @@ namespace ServicesLeit.Services
             int rejectOrder = nextOrder < 1 ? order - 2 : -1;
             long[] orders = [nextOrder, order, rejectOrder];
 
-            var slots = _dbContext.Slots
+            var slots = await _dbContext.Slots
                     .AsNoTracking()
                     .Include(x => x.Containers)
                     .ThenInclude(x => x.ContainerCards)
@@ -332,7 +332,7 @@ namespace ServicesLeit.Services
                         Order = x.Order,
                         Containers = x.Containers.OrderBy(y => y.DateModified).Take(1).ToList(),
                     })
-                    .ToList();
+                    .ToListAsync();
 
             model.Approved = model.Approved ?? [];
             model.Rejected = model.Rejected ?? [];
@@ -375,10 +375,10 @@ namespace ServicesLeit.Services
             var nextSlot = slots
                     .FirstOrDefault(x => x.Order == nextOrder);
             //remove all containcards in container
-            var containerCards = _dbContext.ContainerCards
+            var containerCards = await _dbContext.ContainerCards
                 .AsNoTracking()
                 .Where(x => x.ContainerId == model.Id)
-                .ToList();
+                .ToListAsync();
             _dbContext.ContainerCards.RemoveRange(containerCards);
             //recreate this contain and containcards
 
