@@ -27,6 +27,7 @@
         Don't have an account?
         <a href="#Register" class="change text-decoration-none link-primary">Sign up</a>
     </span>
+    <input asp-for="ReturnUrl" type="hidden" />
     <br>@Html.AntiForgeryToken()
 </form>
 
