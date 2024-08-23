@@ -1,17 +1,9 @@
 ﻿using DataAccessLeit.Context;
 using Microsoft.EntityFrameworkCore;
 using ModelsLeit.Entities;
-using ModelsLeit.ViewModels;
-using ServicesLeit.Interfaces;
-using SharedLeit;
-using System.Collections;
-using System.Collections.Generic;
 using EFCore.BulkExtensions;
-using System.Xml;
 using Microsoft.Extensions.Logging;
-using ServicesLeit.Services;
 using ModelsLeit.DTOs.Card;
-using ModelsLeit.DTOs.User;
 using ModelsLeit.DTOs.Collection;
 
 namespace ServicesLeit.Services
