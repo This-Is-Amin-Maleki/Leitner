@@ -41,7 +41,6 @@ namespace ServicesLeit.Services
                 .Select(x => new BoxMiniDto()
                 {
                     Id = x.Id,
-                    DateAdded = x.DateAdded,
                     DateStudied = x.DateStudied,
                     CardPerDay = x.CardPerDay,
                     LastSlot = x.LastSlot,
@@ -73,7 +72,6 @@ namespace ServicesLeit.Services
                 .Select(x => new BoxMiniDto()
                 {
                     Id = x.Id,
-                    DateAdded = x.DateAdded,
                     DateStudied = x.DateStudied,
                     CardPerDay = x.CardPerDay,
                     LastSlot = x.LastSlot,
