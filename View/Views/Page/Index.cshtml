@@ -5,11 +5,35 @@
 @model HomePageViewModel
 
 @{
+    var error = ViewData["Error"] is not null && !string.IsNullOrEmpty(ViewData["Error"].ToString());
     ViewData["Title"] = "Leitner";
     var userSigned = User.Identity.IsAuthenticated;
     var json = JsonConvert.SerializeObject(Enum.GetNames(typeof(UserFormType)));
+
 }
 
+@if(error)
+{
+    <div class="modal fade show" id="errorDialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="errorDialogLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                     <h1 class="modal-title fs-5 mb-3" id="errorDialogLabel" style="line-height:1.5em;font-size:1.5em !important">
+                       <i style="font-size:1.2em" class="bi bi-exclamation-diamond text-danger pe-3 float-start"></i>
+                       @ViewData["ErrorTitle"]
+                    </h1>
+                    <h5 class="p-3 mb-5">
+                       @ViewData["Error"]
+                    </h5>
+                    <button type="button" class="btn btn-warning float-end m-2" data-bs-dismiss="modal" style="font-size:1.2em !important">
+                       <b>OK</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
 <div class="container-fluid">
     <div class="row fixedPage">
         <div class="col-12 pageSizeDetail@(userSigned ? string.Empty : " col-sm-12 col-md-5 col-lg-7 col-xl-8 ")">
@@ -26,11 +50,11 @@
                     <br />
                     @if (userSigned)
                     {
-                        <center><a class="btn btn-outline-success" asp-controller="Collection" asp-action="Create">Create your Collection</a></center>
+                        <center><a class="btn btn-outline-dark" asp-controller="Collection" asp-action="Create">Create your Collection</a></center>
                     }
                     else
                     {
-                        <center><button class="btn btn-outline-success" disabled>Create your Collection</button></center>
+                        <center><button class="btn btn-dark" disabled>Create your Collection</button></center>
                     }
                     <br />
                     <br />
@@ -49,7 +73,7 @@
                                     @collection.Description
                                 </p>
                                 @Html.Raw(
-                                            collection.CardsQ == 0 // price is Zero
+                                            collection.Id != 0 // price is Zero
                                             ?
                                             "<div class=\"mt-auto d-flex justify-content-" +
                                              (userSigned ?
@@ -59,7 +83,7 @@
 
                                             :
                                             "<div class=\"mt-auto d-flex justify-content-between\">" +
-                                            $"<span>{collection.CardsQ}$</span>" +
+                                            $"<span>{collection.Id}$</span>" +
                                              (userSigned ? "<a href=\"Box/Add/" + +collection.Id + "\" class=\"btn btn-outline-primary\"><i class=\"bi bi-cart3\"></i> Buy</a>" : string.Empty) +
                                             "</div>"
                                             )
@@ -104,7 +128,6 @@
     <input name="__RequestVerificationToken" type="hidden" value="CfDJ8GuJe7bQOfZGlbPnFKZXxXF1nWuvTgYTtMuKrEJJ6Luvlqf8ZvOegT6IKlaUVmk_QzBvL8d7M4KUNpgaUbKMPH7NVYHOaSk8Z0e_-osr-f51mp2KspsZCb7_SGeL1HgmNf3vagjdcc8PLb89jrpD2KQ">
 *@
 
-
 @section Scripts {
     @if (!userSigned)
     {
@@ -114,7 +137,6 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <script>
         $(document).ready(function () {
-
             var formGo = function (e, fun) {
                 var form = e;
                 var action = form.attr('iq');
@@ -195,5 +217,11 @@
             }
         });
     </script>
-}
+    }
+    @if (error)
+    {
+        <script>
+        $(document).ready(function() {$('#errorDialog').modal('show');});
+        </script>
+    }
 }
