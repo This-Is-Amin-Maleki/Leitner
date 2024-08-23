@@ -205,7 +205,11 @@ namespace ServicesLeit.Services
 
             var oldCard = await _dbContext.Cards
                 .FirstAsync(x => x.Id == model.Id && x.UserId == model.UserId);
-
+            if (card.Status == CardStatus.Blocked)
+            {
+                throw new Exception("The Card has been blocked!");
+            }
+            card.Status = CardStatus.Submitted;
             if (oldCard is null)
             {
                 throw new Exception("Not Found");
