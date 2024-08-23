@@ -1,0 +1,80 @@
+﻿@using ModelsLeit.ViewModels.User
+@using SharedLeit
+
+@model UserModifyViewModel
+
+@{
+    ViewData["Title"] = $"Edit {Model.UserName}";
+}
+
+<h2>Edit <b>@Model.UserName</b></h2>
+<a asp-action="Index" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+<br />
+<form id="EditForm" asp-action="Modify" method="post">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Bio"></label>
+        <textarea asp-for="Bio" class="form-control"></textarea>
+        <span asp-validation-for="Bio" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Type"></label>
+        <select asp-for="Type" class="form-control bg-danger-subtle color-danger" asp-items="Html.GetEnumSelectList<UserType>()">@******@
+            <option disabled selected>Please Select One</option>
+        </select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="UserName"></label>
+        <input asp-for="UserName" class="form-control" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" type="email" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-check form-switch">
+        <input asp-for="EmailConfirmed" class="form-check-input" type="checkbox" role="switch" id="EmailConfirmedSwitch">
+        <label asp-for="EmailConfirmed" class="form-check-label" for="EmailConfirmedSwitch">Confirmed Email</label>
+    </div>
+    <div class="form-group">
+        <label asp-for="Phone"></label>
+        <input asp-for="Phone" class="form-control" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+    <div class="form-check form-switch">
+        <input asp-for="PhoneConfirmed" class="form-check-input" type="checkbox" role="switch" id="PhoneConfirmedSwitch">
+        <label asp-for="PhoneConfirmed" class="form-check-label" for="PhoneConfirmedSwitch">Confirmed Phone</label>
+    </div>
+    <div class="form-check form-switch">
+        <input asp-for="Active" class="form-check-input" type="checkbox" role="switch" id="ActiveSwitch">
+        <label asp-for="Active" class="form-check-label" for="ActiveSwitch">Active User</label>
+    </div>
+    <div class="form-check form-switch">
+        <input asp-for="TwoFactorAuthentication" class="form-check-input" type="checkbox" role="switch" id="TFASwitch">
+        <label asp-for="TwoFactorAuthentication" class="form-check-label" for="TFASwitch">Enable 2FA</label>
+    </div>
+    <div class="form-check form-switch">
+    <input asp-for="LockoutEnabled" type="datetime-local" class="form-check-input" type="checkbox" role="switch" id="LockoutSwitch">
+        <label asp-for="LockoutEnabled" class="form-check-label" for="LockoutSwitch">Enable Lockout</label>
+    </div>
+    <div class="form-group">
+        <label asp-for="LockoutEnd"></label>
+        <input asp-for="LockoutEnd" class="form-control" type="datetime-local" />
+        <span asp-validation-for="LockoutEnd" class="text-danger"></span>
+    </div>
+    <br />
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ParameterActive" />
+    <input type="hidden" asp-for="ParameterType" />
+    <br />
+    <button type="submit" class="btn btn-success">
+        <i class="bi bi-floppy"></i>
+        Save
+    </button>
+</form>

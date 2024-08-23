@@ -1,0 +1,77 @@
+﻿@using ModelsLeit.ViewModels.User
+@using SharedLeit
+
+@model UserModifyViewModel
+
+@{
+    ViewData["Title"] = $"Edit {Model.UserName}";
+    string roleColor = (Model.Active ? string.Empty : " text-danger");
+}
+
+<h2>User <b>@Model.UserName </b>
+    @Html.Raw(Model.Type is UserType.User ?
+        $"<i class=\"bi bi-person{roleColor}\"></i>" :
+        $"<i class=\"bi bi-person-gear{roleColor}\"></i>")
+</h2>
+<a class="float-start btn btn-dark me-3" asp-action="Index" asp-route-type="@Model.Type" asp-route-active="@Model.Active">
+    <i class="bi bi-people"></i>
+    Users
+</a>
+
+<a class="float-start btn btn-dark me-3" asp-controller="AdminBox" asp-action="Index"
+   asp-route-userId="@Model.Id">
+    <i class="bi bi-inboxes"></i>
+    Boxes
+</a>
+
+<a class="float-start btn btn-dark me-3" asp-controller="AdminCollection" asp-action="Index"
+   asp-route-userId="@Model.Id">
+    <i class="bi bi-folder"></i>
+    Collections
+</a>
+
+<a class="float-end btn btn-dark" asp-action="Modify"
+   asp-route-id="@Model.Id">
+    <i class="bi bi-pencil"></i>
+    Edit
+</a>
+</br></br>
+<div>
+    <dl>
+        <dt>
+            Name
+            <un>@Model.Name</un>
+        </dt>
+        <dd></dd>
+
+        <dt>
+            Email
+            <un @Html.Raw(Model.EmailConfirmed is not true ?
+            "class=\"text-danger\"" :
+            string.Empty)>@Model.Email</un>
+        </dt>
+        <dd></dd>
+
+        @Html.Raw(!string.IsNullOrEmpty(Model.Phone)?
+        "<dt>Phone <un" +
+        (Model.PhoneConfirmed == false ? " class=\"text-danger\"" : string.Empty) +
+        ">" + Model.Phone +"</un></dt><dd></dd>" :
+            string.Empty)
+        
+        @Html.Raw( Model.LockoutEnabled ?
+                 $" <dt>Lockout <un>" +
+                 (Model.LockoutEnd.Value != null ? Model.LockoutEnd.Value.ToString("g") : string.Empty) +
+                 "</un></dt><dd></dd>" :
+            string.Empty)
+
+        @Html.Raw(Model.TwoFactorAuthentication ?
+            "<dt>2FA</dt><dd></dd>" :
+            string.Empty)
+
+        @Html.Raw(Model.Bio.Length > 0 ?
+                 $"<dt>Bio</dt><dd>{Model.Bio}</dd>" :
+            string.Empty)
+
+    </dl>
+    <br />
+</div>

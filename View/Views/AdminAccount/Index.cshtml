@@ -1,0 +1,93 @@
+﻿@using ModelsLeit.DTOs.User
+@using SharedLeit
+@model IEnumerable<UserListDto>
+
+@{
+    ViewData["Title"] = "Users List";
+    bool isAdmin = UserType.Admin == (UserType?)ViewBag.UserType;
+    bool isUser = UserType.User == (UserType?)ViewBag.UserType;
+    bool isActivated = (bool?)ViewBag.Active is true;
+    bool isDeactivated = (bool?)ViewBag.Active is false;
+}
+
+<h2>@ViewData["Title"]</h2>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>User Name</th>
+            <th>Email</th>
+            <th>
+                @if (!isAdmin)
+                {
+                    <a class="btn btn-primary me-2" asp-action="Index"
+                    asp-route-type="@UserType.Admin"
+                       asp-route-active="@ViewBag.Active">
+                        <i class="bi bi-person-circle"></i>
+                        Admin
+                    </a>
+                }
+                @if (!isUser)
+                {
+                    <a class="btn btn-primary me-2" asp-action="Index"
+                       asp-route-type="@UserType.User"
+                       asp-route-active="@ViewBag.Active">
+                        <i class="bi bi-person-circle"></i>
+                        User
+                    </a>
+                }
+                @if (!isActivated)
+                {
+                    <a class="btn btn-primary me-2" asp-action="Index"
+                       asp-route-type="@ViewBag.UserType"
+                       asp-route-active="@true">
+                        <i class="bi bi-check-circle"></i>
+                        Active
+                    </a>
+                }
+                @if (!isDeactivated)
+                {
+                    <a class="btn btn-primary" asp-action="Index"
+                       asp-route-type="@ViewBag.UserType"
+                       asp-route-active="@false">
+                        <i class="bi bi-x-circle"></i>
+                        Deactive
+                    </a>
+                }
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.UserName</td>
+                <td>@item.Email</td>
+                <td>
+                    <a class="btn btn-primary me-2" asp-controller="AdminBox" asp-action="Index"
+                       asp-route-userId="@item.Id">
+                        <i class="bi bi-inboxes"></i>
+                        Boxes
+                    </a>
+                    <a class="btn btn-primary me-2" asp-controller="AdminCollection" asp-action="Index"
+                       asp-route-userId="@item.Id">
+                        <i class="bi bi-folder"></i>
+                        Collections
+                    </a>
+                    <a class="btn btn-primary me-2" asp-action="Detail"
+                       asp-route-id="@item.Id">
+                        <i class="bi bi-file-text"></i>
+                        Detail
+                    </a>
+                    <a class="btn btn-primary" asp-action="Modify"
+                        asp-route-id="@item.Id"
+                        asp-route-type="@ViewBag.UserType"
+                        asp-route-active="@ViewBag.Active">
+                        <i class="bi bi-pencil"></i>
+                        Edit
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
