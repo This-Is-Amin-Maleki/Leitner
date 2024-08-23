@@ -1,8 +1,10 @@
 using DataAccessLeit.Context;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using ModelsLeit.Entities;
-using ServicesLeit.Services;
+using ServicesLeit.Interfaces;
 using ServicesLeit.Services;
 using System.Diagnostics;
 using ViewLeit.Extensions;
@@ -31,7 +33,7 @@ namespace ViewLeit
             });
 
             builder.Services
-                .AddIdentity<ApplicationUser, UserRole>()
+                .AddIdentity<ApplicationUser, IdentityRole<long>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
             
@@ -41,27 +43,69 @@ namespace ViewLeit
             builder.Services.AddScoped<UserService>();
             builder.Services.AddTransient<FileService>();//stateless Service
             
-            builder.Services.ConfigureApplicationCookie(o =>
-                o.AccessDeniedPath = "/"
-            );
+            // using Microsoft.AspNetCore.Identity;
 
-            builder.Services.Configure<IdentityOptions>(x =>
+            builder.Services.Configure<PasswordHasherOptions>(option =>
             {
-                x.Password.RequireDigit = false;
-                x.Password.RequireLowercase = true;
-                x.Password.RequireUppercase = false;
-                x.Lockout.MaxFailedAccessAttempts = 5;
-                x.SignIn.RequireConfirmedEmail = false;
-                
+                option.IterationCount = 12000;
+            });
+
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = "/AccessDenied";
+                options.Cookie.Name = "Leitner";
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromDays(1);
+                options.LoginPath = "/Page";
+                // ReturnUrlParameter requires 
+                //using Microsoft.AspNetCore.Authentication.Cookies;
+                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                options.SlidingExpiration = true;
+            });
+            
+            // Force Identity's security stamp to be validated every minute.
+            builder.Services.Configure<SecurityStampValidatorOptions>(options => 
+                               options.ValidationInterval = TimeSpan.FromMinutes(1));
+
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = false;
+                options.SignIn.RequireConfirmedEmail = false;
+
+                // Default Lockout settings.
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                //options.Lockout.MaxFailedAccessAttempts = 5;
+                //options.Lockout.AllowedForNewUsers = true;
+
+                // Default Password settings.
+                //options.Password.RequireDigit = true;
+                //options.Password.RequireLowercase = true;
+                //options.Password.RequireNonAlphanumeric = true;
+                //options.Password.RequireUppercase = true;
+                //options.Password.RequiredLength = 6;
+                //options.Password.RequiredUniqueChars = 1;
+
+                // Default SignIn settings.
+                //options.SignIn.RequireConfirmedEmail = false;
+                //options.SignIn.RequireConfirmedPhoneNumber = false;
+
+                // Default Register settings.
+                //options.User.AllowedUserNameCharacters =
+          //"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                //options.User.RequireUniqueEmail = false;
+
             }
             );
-            builder.Services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromMinutes(3));
+            builder.Services.Configure<DataProtectionTokenProviderOptions>( options => 
+                options.TokenLifespan = TimeSpan.FromMinutes(3));
 
 
             var app = builder.Build();
 
             
-                app.UseExceptionHandler("/Error");
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -70,7 +114,7 @@ namespace ViewLeit
                 app.UseHsts();
             }
 
-            app.AutoMigrationAndSeedDataAsync<ApplicationDbContext>(
+           app.AutoMigrationAndSeedDataAsync<ApplicationDbContext>(
                 builder.Configuration["Admin:Email"],
                 builder.Configuration["Admin:Password"]
             );
