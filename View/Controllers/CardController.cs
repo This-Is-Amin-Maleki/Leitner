@@ -5,6 +5,7 @@ using ServicesLeit.Services;
 using SharedLeit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using ServicesLeit.Interfaces;
 
 namespace ViewLeit.Controllers
 {
@@ -32,7 +33,7 @@ namespace ViewLeit.Controllers
         public async Task<ActionResult> Index(long id)
         {
             var userId = long.Parse(_userManager.GetUserId(User)!);
-            List<CardDto> model = await _cardService.ReadCardsLimitedAsync(id, userId);
+            List<CardMiniDto> model = await _cardService.ReadCardsLimitedAsync(id, userId);
             CollectionStatus? status;
             if (model.Count > 0)
             {
