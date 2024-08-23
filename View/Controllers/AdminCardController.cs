@@ -5,6 +5,11 @@ using ServicesLeit.Services;
 using SharedLeit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using ModelsLeit.DTOs.Container;
+using Newtonsoft.Json;
+using ServicesLeit.Interfaces;
+using System.Data;
+using System.Runtime.InteropServices;
 
 namespace ViewLeit.Controllers
 {
@@ -26,9 +31,9 @@ namespace ViewLeit.Controllers
         }
 
         // GET: CardController
-        public async Task<ActionResult> Index(long id)
+        public async Task<ActionResult> Index(long id, [Optional] CardStatus? state)
         {
-            List<CardDto> model = await _cardService.ReadCardsUnlimitedAsync(id);
+            List<CardMiniUnlimitedDto> model = await _cardService.ReadCardsUnlimitedAsync(id, state);
             CollectionStatus? status;
             if (model.Count > 0)
             {
@@ -42,8 +47,8 @@ namespace ViewLeit.Controllers
                 ViewData["CollectionName"] = collectionData.Name;
                 status = collectionData.Status;
             }
-            ViewData["noEdit"] = status is CollectionStatus.Published or CollectionStatus.Submit;
             ViewData["CollectionId"] = id;
+            ViewData["State"] = state;
             return View(model);
         }
 
@@ -78,11 +83,7 @@ namespace ViewLeit.Controllers
                  return View(model);
              }
         }
-
-        // GET: CardController/Delete
-        //public async Task<ActionResult> Delete(long id) =>
-        //    ViewLeit(await _cardService.ReadCardAsync(id));
-
+        /*
         // POST: CardController/Delete
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -104,7 +105,52 @@ namespace ViewLeit.Controllers
                 ModelState.AddModelError("xx", ex.Message);
                 return View(model);
             }
+        }*/
+        public async Task<ActionResult> CheckAll(long id)
+        {
+            try
+            {
+                var model = await _cardService.ReadCardsByStatusAsync(id);
+                if (model is null && model.Submitted.Count is 0)
+                {
+                    ViewData["er"] = "No cards left to check";
+                    return RedirectToAction(nameof(Index), new { id });
+                }
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction(nameof(Index), new { id });
+            }
         }
 
+        public async Task<ActionResult> Check(long id)
+        {
+            try
+            {
+                var model = await _cardService.ReadCardsByStatusAsync(id);
+                if (model is null && model.Submitted.Count is 0)
+                {
+                    ViewData["er"] = "No cards left to check";
+                    return RedirectToAction(nameof(Index), new { id });
+                }
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction(nameof(Index), new {id});
+            }
+        }
+
+        // POST: BoxController/Add
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public async Task<ActionResult> Check(CardsArrayStatusDto model)
+        {
+            CardCheckedResultDto cardsUpdated = await _cardService.BulkUpdateCardsStatusAsync(model);
+            ViewData["Collection"] = cardsUpdated.Collection.Name;
+            ViewData["CardsCount"] = cardsUpdated.CheckedCards;
+            return RedirectToAction(nameof(Index), new {id = model.Id});
+        }
     }
 }

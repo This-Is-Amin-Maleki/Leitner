@@ -1,0 +1,94 @@
+﻿@using ModelsLeit.DTOs.Card
+@using SharedLeit
+@model IEnumerable<CardMiniUnlimitedDto>
+@{
+    bool check = false;
+    if (ViewData["Collection"] != null && ViewData["CardsCount"] != null)
+    {
+        check = true;
+    }
+    ViewData["Title"] = $"{ViewData["CollectionName"]} Card Index";
+    string[] statusesIcons =
+    {
+        "<i class='bi bi-question-circle me-2'></i>",        // Submitted
+        "<i class='bi bi-check-circle me-2'></i>",           // Approved
+        "<i class='bi bi-x-circle me-2'></i>",               // Rejected
+        "<i class='bi bi-ban me-2'></i>",                    // Blocked
+    };
+    var state = (ViewData["State"] ?? string.Empty).ToString();
+}
+
+@if (check)
+{
+    <div class="position-fixed bottom-0 end-0 p-3 bg-success-subtle" style="z-index: 5">
+        <div id="updateCardsToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+            <div class="toast-body">
+                @ViewData["CardsCount"] cards have been updated in the <b>@ViewData["Collection"]</b>.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+<h2>@ViewData["CollectionName"] Cards</h2>
+
+<a class="float-start btn btn-dark me-5" asp-action="Check" asp-route-id="@ViewData["CollectionId"]">
+    <i class="bi bi-ui-checks-grid"></i>
+    Check Cards
+</a>
+
+@foreach (var item in Enum.GetValues(typeof(CardStatus)).Cast<CardStatus>())
+{
+    <a class="float-start btn me-3 @(state==item.ToString() ? "btn-primary" : "btn-dark")" asp-route-id="@ViewData["CollectionId"]" asp-route-state="@item">
+        @Html.Raw(statusesIcons[(int)item])
+        @item
+    </a>
+}
+
+<a class="float-start btn me-5 @(string.IsNullOrEmpty(state) ? "btn-primary":"btn-dark")" asp-route-id="@ViewData["CollectionId"]">
+    <i class="bi bi-circle"></i>
+    All
+</a>
+
+<a asp-controller="AdminCollection" asp-action="Index" class="float-end btn btn-dark">
+    <i class="bi bi-arrow-left-square"></i>
+    Return
+</a>
+<br /><br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ask</th>
+            <th>Answer</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Ask</td>
+                <td>@item.Answer</td>
+                <td>
+                    @Html.Raw(item.HasMp3 ?
+                        "<i class=\"bi bi-volume-down me-2\"></i>" :
+                        "<i class=\"bi w-16p me-2 d-inline-block\"></i>")
+                    @Html.Raw(statusesIcons[(int)item.Status])
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary float-end"><i class="bi bi-pencil"></i> Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script>
+        function showToast() {
+            var toastElement = document.getElementById('updateCardsToast');
+            var toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+    </script>
+}

@@ -1,0 +1,227 @@
+﻿@using ModelsLeit.DTOs.Card
+@using SharedLeit
+@model CardsListStatusDto
+
+@{
+    ViewData["Title"] = $"Check {Model.CollectionName}";
+    int i = 1;
+}
+
+<div id="cardCounter" class="btn-dark">0</div>
+<div id="cardInfo">
+    <h2>@ViewData["Title"]</h2>
+    <button type="button" class="float-start btn btn-outline-danger mx-2 btn-x disabled"><i class="bi bi-exclamation-octagon"></i> Finish</button>
+    <a asp-action="Index" asp-route-id="@Model.Id" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+    <br /><br />
+</div>
+<form id="checkCards" asp-action="Check" method="post" mo>
+    <div id="cardSpinner" class="top-0 start-0 end-0 bottom-0 position-absolute align-items-center justify-content-center">
+        <div class="spinner-grow" role="status">
+            <span class="visually-hidden">Please Wait!</span>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-1 col-md-2 col-xl-3"></div>
+            <div class="col-sm-10 col-md-8 col-xl-6">                
+                <div class="card align-middle">
+                    @foreach (var item in Model.Submitted)
+{
+    <div class="card-body d-none">
+        <!--input class="d-none cards" type="checkbox" name="Cards[]" value="@item.Id" />
+        <input class="d-none rejects" type="checkbox" name="Rejected[]" value="@item.Id" /-->
+        <h2 class="card-title" @Html.Raw(
+        item.HasMp3 ?
+            //play mp3 on click (speaker icon) ELSE any
+        $"audio='/audio/{item.Id}.mp3' onclick='new Audio(this.getAttribute(\"audio\")).play()'><i class='bi bi-volume-off-fill'></i" :""
+        )>@item.Ask</h2>
+
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+                @if (i != 1)
+                {
+                    <button type="button" item="@item.Id" class="btn btn-outline-primary float-start btn-b"><i class="bi bi-plus-circle"></i> Previous</button>
+                }
+                <button class="btn align-middle btn-outline-dark accordion-btn collapsed float-end" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse@(i)" aria-expanded="false" aria-controls="flush-collapse@(i)"><i class="bi bi-lightbulb"></i> 
+                    Answer
+                </button>
+                <div id="flush-collapse@(i++)" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                    <br />
+                    <h2 class="card-title">@item.Answer</h2>
+                    <div class="accordion-body p-0">@Html.Raw(item.Description)</div>
+
+                    <br /><br />
+                    
+                        <button type="button" item="@item.Id" class="btn btn-outline-warning float-start btn-r me-5">
+                            <i class="bi bi-x-circle"></i>
+                            Reject
+                            </button>
+                        <button type="button" item="@item.Id" class="btn btn-outline-danger float-start btn-l me-5">
+                            <i class="bi bi-ban"></i>
+                            Block
+                        </button>
+                        <button type="button" item="@item.Id" class="btn btn-outline-success float-end btn-a">
+                            <i class="bi bi-check-circle"></i>
+                            Approve
+                        </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+                </div>
+            </div>
+        </div>
+    </div>
+
+<select class="d-none" asp-for="Submitted" asp-items="@(new SelectList(Model.Submitted, "Id", "Id"))" multiple></select>
+<select class="d-none" asp-for="Approved" asp-items="@(new SelectList(Model.Submitted, "Id", "Id"))" multiple></select>
+<select class="d-none" asp-for="Rejected" asp-items="@(new SelectList(Model.Submitted, "Id", "Id"))" multiple></select>
+<select class="d-none" asp-for="Blocked" asp-items="@(new SelectList(Model.Submitted, "Id", "Id"))" multiple></select>
+
+<input asp-for="@Model.Id" type="hidden" value="@Model.Id" />
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var items = 1;
+            var counter = @Model.Submitted.Count;
+            var count = counter;
+            var number = @(i);
+            $('.card-body').first().removeClass('d-none');
+            var formSubmit = function (form) {
+                $("div.container main").fadeOut("fast", function () {
+                    form.submit();
+                }).delay(5000);
+            };
+            var counterUpdate = function () {
+                count = counter - $('#Submitted option:selected').length;
+                if (count == 0) {
+                $('#cardCounter').fadeOut();
+                } else {
+                $('#cardCounter').text(count);
+                }
+            };
+            var checkingBox = function (e, check) {
+                var id = $(e).attr('item');
+                switch (check) {//apr,rjc,blk,sbm
+                    case 1:
+                        $('#Submitted option[value="' + id + '"]').attr('selected', false);
+                        $('#Approved option[value="' + id + '"]').attr('selected', true);
+                        $('#Blocked option[value="' + id + '"]').attr('selected', false);
+                        $('#Rejected option[value="' + id + '"]').attr('selected', false);
+                        break;
+                    case 2:
+                        $('#Submitted option[value="' + id + '"]').attr('selected', false);
+                        $('#Approved option[value="' + id + '"]').attr('selected', false);
+                        $('#Blocked option[value="' + id + '"]').attr('selected', false);
+                        $('#Rejected option[value="' + id + '"]').attr('selected', true);
+                        break;
+                    case 3:
+                        $('#Submitted option[value="' + id + '"]').attr('selected', false);
+                        $('#Approved option[value="' + id + '"]').attr('selected', false);
+                        $('#Blocked option[value="' + id + '"]').attr('selected', true);
+                        $('#Rejected option[value="' + id + '"]').attr('selected', false);
+                        break;
+                    case 4:
+                        $('#Submitted option[value="' + id + '"]').attr('selected', true);
+                        $('#Approved option[value="' + id + '"]').attr('selected', false);
+                        $('#Blocked option[value="' + id + '"]').attr('selected', false);
+                        $('#Rejected option[value="' + id + '"]').attr('selected', false);
+                        break;
+                }
+                counterUpdate();
+            };
+            var buttonFinish = async function (e) {
+                //just send before this card!! ON prev
+                var form = $('form').first();
+                formSubmit(form);
+            }
+            var buttonEvent = async function (e) {
+                var currentParent = $(e).closest('.card-body');
+                var nextVisible = currentParent.nextAll('.card-body.d-none').first();
+                var prevVisible = currentParent.prevAll('.card-body.d-none').first();
+                var accordionBtn = $('.accordion-btn');
+                var form = $(e).closest('form');
+                var sending = $("#sending");
+                var card = $(e).closest('.card');
+                var finButton = $('.btn-x');
+                items = $('#Rejected option:selected').length;
+                card.fadeOut("fast", function () {
+                        if (nextVisible.length == 0) {
+                            formSubmit(form);
+                        } else {
+                            currentParent.addClass('d-none');
+                            accordionBtn.addClass('collapsed');
+                            nextVisible.removeClass('d-none');
+                            card.delay(100).fadeIn("fast");
+                        }
+                    });
+            };
+            var buttonPrevious = function (e) {
+                var card = $(e).closest('.card');
+                card.fadeOut("fast", function () {
+                    var currentParent = $(e).closest('.card-body');
+                    var prevVisible = currentParent.prevAll('.card-body.d-none').first();
+                    var expandedCollapse = $(".show");
+                    var prevButton = $('.btn-b.d-none');
+                    var finButton = $('.btn-x');
+                    if (prevVisible.length != 0) {
+                        currentParent.addClass('d-none');
+                        prevButton.removeClass('d-none');
+                        expandedCollapse.removeClass('show');
+                        prevVisible.removeClass('d-none');
+                        card.delay(100).fadeIn("fast");
+
+                        var id = prevVisible.find('.btn-a').attr('item');
+                        $('#Submitted option[value="' + id + '"]').attr('selected', true);
+                        $('#Approved option[value="' + id + '"]').attr('selected', false);
+                        $('#Blocked option[value="' + id + '"]').attr('selected', false);
+                        $('#Rejected option[value="' + id + '"]').attr('selected', false);
+
+                        if (prevVisible.find('.btn-b').length == 0) {
+                            finButton.addClass('disabled');
+                        }
+                    }
+                    counterUpdate();
+                });
+            };
+            var buttonCollapse = function (e) {
+                $(e).closest(".accordion-item").find(".btn.btn-b").addClass('d-none');
+                var id = $(e).attr('item');
+                @*$(e).closest(".accordion-item").find(".btn.btn-x").addClass('d-none');*@
+            };
+            var readyPage = function () {
+                $('.btn-b,.accordion-btn,.btn-a,.btn-r,.btn-l,.btn-s').unbind();
+                $('.btn-b').click(function () {
+                    //checkingBox(this, 4);
+                    buttonPrevious(this);
+                });//apr,rjc,blk,sbm
+                $('.btn-a').click(function () {
+                    checkingBox(this, 1);
+                    buttonEvent(this);
+                });
+                $('.btn-r').click(function () {
+                    checkingBox(this, 2);
+                    buttonEvent(this);
+                });
+                $('.btn-l').click(function () {
+                    checkingBox(this, 3);
+                    buttonEvent(this);
+                });
+                $('.btn-s').click(function () {
+                    checkingBox(this, 4);
+                    buttonEvent(this);
+                });
+                $('.accordion-btn').click(function () {
+                    buttonCollapse(this);
+                });
+            }
+            $('.btn-x').click(function () {
+                buttonFinish(this);
+            });
+            readyPage();
+        });
+    </script>
+}
