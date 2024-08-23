@@ -4,10 +4,10 @@ using ModelsLeit.Entities;
 using ServicesLeit.Interfaces;
 using SharedLeit;
 using Microsoft.Extensions.Logging;
-using ServicesLeit.Services;
 using ModelsLeit.DTOs.Collection;
 using ModelsLeit.DTOs.Box;
-using System;
+using Microsoft.AspNetCore.Identity;
+using ModelsLeit.DTOs.User;
 
 namespace ServicesLeit.Services
 {
@@ -15,57 +15,73 @@ namespace ServicesLeit.Services
     {
         private readonly ILogger<BoxService> _logger;
         private readonly ApplicationDbContext _dbContext;
+        private readonly UserManager<ApplicationUser> _userManager;
+        //private readonly CardService _cardService;
 
-        public CollectionService(ApplicationDbContext dbContext, ILogger<BoxService> logger)
+        public CollectionService(
+            ApplicationDbContext dbContext,
+            UserManager<ApplicationUser> userManager,
+            //CardService cardService,
+            ILogger<BoxService> logger)
         {
             _logger = logger;
+            _userManager = userManager;
             _dbContext = dbContext;
+            //_cardService = cardService;
         }
-
-        public async Task<List<CollectionDto>> ReadCollectionsAsync()
+        public async Task<List<CollectionListDto>> ReadAllAsync()
         {//use auto mapper
             return await _dbContext.Collections
                 .AsNoTracking()
-                .Select(x => new CollectionDto()
+                .Select(x => new CollectionListDto()
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    Description = x.Description,
                     PublishedDate = x.PublishedDate,
                     Status = x.Status,
-                    CardsQ = x.Cards.Count
+                    CardsQ = x.Cards.Count,
+                    User = new UserMiniDto()
+                    {
+                        Id = x.UserId,
+                        UserName = _userManager.Users.First(y => y.Id == x.UserId).UserName!,
+                    },
                 })
                 .ToListAsync();
         }
-        public async Task<List<CollectionDto>> ReadUserCollectionsAsync(long userId)
+        public async Task<List<CollectionListDto>> ReadAllAsync(long userId)
         {//use auto mapper
+            string userName = _userManager.Users.First(y => y.Id == userId).UserName!;
             return await _dbContext.Collections
                 .AsNoTracking()
                 .Where(x => x.UserId == userId)
-                .Select(x => new CollectionDto()
+                .Select(x => new CollectionListDto()
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    Description = x.Description,
                     PublishedDate = x.PublishedDate,
                     Status = x.Status,
-                    CardsQ = x.Cards.Count
+                    CardsQ = x.Cards.Count,
+                    User = new UserMiniDto()
+                    {
+                        Id = userId,
+                        UserName = userName,
+                    },
                 })
                 .ToListAsync();
         }
         public async Task<List<CollectionDto>> ReadPublishedCollectionsAsync()
         {
-                return await _dbContext.Collections
-                    .AsNoTracking()
-                    .Where(x=> x.Status == CollectionStatus.Published)
-                    .Select(x => new CollectionDto()
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Description = x.Description,
-                        CardsQ = x.Cards.Count
-                    })
-                    .ToListAsync();
+            return await _dbContext.Collections
+                .AsNoTracking()
+                .Where(x => x.Status == CollectionStatus.Published)
+                .Select(x => new CollectionDto()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description,
+                    CardsQ = x.Cards.Count
+                })
+                .ToListAsync();
         }
         public async Task<List<CollectionDto>> ReadUnusedPublishedCollectionsAsync(long userId)
         {
@@ -89,12 +105,12 @@ namespace ServicesLeit.Services
                 .ToListAsync();
         }
 
-        public async Task<CollectionDto> ReadCollectionAsync(long id)
+        public async Task<CollectionUnlimitedDto> ReadCollectionAsync(long id)
         {
             var collection = await _dbContext.Collections
                 .AsNoTracking()
                 .Include(x => x.Boxes)
-                .Select(x => new CollectionDto
+                .Select(x => new CollectionUnlimitedDto
                 {
                     BoxCount = x.Boxes.Count,
                     Description = x.Description,
@@ -102,11 +118,34 @@ namespace ServicesLeit.Services
                     Name = x.Name,
                     PublishedDate = x.PublishedDate,
                     Status = x.Status,
+                    User = new UserMiniDto()
+                    {
+                        Id = x.UserId,
+                        UserName = _userManager.Users.First(y => y.Id == x.UserId).UserName!,
+                    },
                 })
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             return collection is null ?
-                CreateEmptyCollectionViewModel() :
+                CreateEmptyCollectionUnlimitedDto() :
+                collection;
+        }
+        public async Task<CollectionModifyDto> ReadCollectionDataAsync(long id)
+        {
+            var collection = await _dbContext.Collections
+                .AsNoTracking()
+                .Include(x => x.Boxes)
+                .Select(x => new CollectionModifyDto
+                {
+                    Description = x.Description,
+                    Id = x.Id,
+                    Name = x.Name,
+                    Status = x.Status,
+                })
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            return collection is null ?
+                CreateEmptyCollectionModifyDto() :
                 collection;
         }
         public async Task<CollectionDto> ReadUserCollectionAsync(long id, long userId)
@@ -127,7 +166,7 @@ namespace ServicesLeit.Services
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             return collection is null ?
-                CreateEmptyCollectionViewModel() :
+                CreateEmptyCollectionDto() :
                 collection;
         }
         public async Task<CollectionMiniDto> ReadCollectionNameAndStatusAsync(long id)
@@ -137,9 +176,9 @@ namespace ServicesLeit.Services
                 .Where(x => x.Id == id)
                 .Select(x => new CollectionMiniDto
                 {
-                     Id = x.Id,
-                     Name = x.Name,
-                     Status = x.Status,
+                    Id = x.Id,
+                    Name = x.Name,
+                    Status = x.Status,
                 })
                 .FirstOrDefaultAsync();
 
@@ -168,18 +207,18 @@ namespace ServicesLeit.Services
             var collection = MapViewModelToCollection(collectionViewModel);
 
             //add published date Time
-            if(collection.Status is CollectionStatus.Published)
+            if (collection.Status is CollectionStatus.Published)
             {
                 collection.PublishedDate = DateTime.UtcNow;
                 collection.Count = _dbContext.Cards
-                    .Where(x=>x.CollectionId == collection.Id)
+                    .Where(x => x.CollectionId == collection.Id)
                     .Count();
             }
 
-                await _dbContext.Collections.AddAsync(collection);
-                await _dbContext.SaveChangesAsync();
+            await _dbContext.Collections.AddAsync(collection);
+            await _dbContext.SaveChangesAsync();
         }
-        public async Task EditCollectionLimitedAsync(CollectionEditDto model)
+        public async Task EditCollectionLimitedAsync(CollectionModifyDto model)
         {
             var oldCollection = await _dbContext.Collections
                 .AsNoTracking()
@@ -211,6 +250,15 @@ namespace ServicesLeit.Services
         }
         public async Task EditCollectionAsync(CollectionDto model)
         {
+            bool allCardsApproved = true;
+            if (model.Status == CollectionStatus.Published)
+            {
+                allCardsApproved = await IsAllCardsApprovedAsync(model.Id);
+            }
+            if (allCardsApproved is false)
+            {
+                throw new Exception("Not all cards have been checked");
+            }
             var oldCollection = await _dbContext.Collections
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == model.Id);
@@ -239,12 +287,12 @@ namespace ServicesLeit.Services
 
             }
         }
-        public async Task DeleteCollectionLimitedAsync(CollectionEditDto model)
+        public async Task DeleteCollectionLimitedAsync(CollectionModifyDto model)
         {
             CollectionStatus[] forbidStatuses = { CollectionStatus.Published, CollectionStatus.Submit };
 
             CollectionStatus[] allowedStatuses =
-                ((CollectionStatus[]) Enum.GetValues(typeof(CollectionStatus)))
+                ((CollectionStatus[])Enum.GetValues(typeof(CollectionStatus)))
                 .Except(forbidStatuses)
                 .ToArray();
 
@@ -252,7 +300,7 @@ namespace ServicesLeit.Services
 
             var hasCollection = await _dbContext.Collections
                 .AsNoTracking()
-                .AnyAsync(x => 
+                .AnyAsync(x =>
                     x.Id == model.Id &&
                     x.UserId == model.UserId &&
                     allowedStatuses.Contains(x.Status));
@@ -320,9 +368,17 @@ namespace ServicesLeit.Services
             }
         }
         ////////////////////////////////////////////////////////
-        private CollectionDto CreateEmptyCollectionViewModel()
+        private CollectionDto CreateEmptyCollectionDto()
         {
             return new CollectionDto();
+        }
+        private CollectionModifyDto CreateEmptyCollectionModifyDto()
+        {
+            return new CollectionModifyDto();
+        }
+        private CollectionUnlimitedDto CreateEmptyCollectionUnlimitedDto()
+        {
+            return new CollectionUnlimitedDto();
         }
         private BoxAddDto CreateEmptyBoxAddViewModel()
         {
@@ -366,14 +422,13 @@ namespace ServicesLeit.Services
         {
             return new Collection()
             {
-                Id = collectionViewModel.Id,
                 UserId = collectionViewModel.UserId,
                 Description = collectionViewModel.Description.Trim(),
-                Status = collectionViewModel.Status ?? CollectionStatus.Draft,
+                Status = CollectionStatus.Draft,
                 Name = (collectionViewModel.Name ?? $"NewCollection{DateTime.Now.ToString("@ yy-MM-dd HH:mm")}").Trim(),
             };
         }
-        private Collection MapViewModelToCollection(CollectionEditDto collectionViewModel)
+        private Collection MapViewModelToCollection(CollectionModifyDto collectionViewModel)
         {
             return new Collection()
             {
@@ -389,13 +444,17 @@ namespace ServicesLeit.Services
         {
             var collection = await _dbContext.Collections
                 .AsNoTracking()
-                .Include(x=>x.Boxes)
-                .Select(x => new Collection { Id = x.Id, Count = x.Boxes.Count})
+                .Include(x => x.Boxes)
+                .Select(x => new Collection { Id = x.Id, Count = x.Boxes.Count })
                 .FirstOrDefaultAsync(x => x.Id == id);
             if (collection.Count > 0)
             {
                 throw new Exception(message);
             }
         }
+        private async Task<bool> IsAllCardsApprovedAsync(long id) =>
+            await _dbContext.Cards
+                .Where(x => x.CollectionId == id)
+                .AnyAsync(x => x.Status != CardStatus.Approved);
     }
 }
