@@ -12,8 +12,13 @@ using System.Data;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Web;
 
+/*/////////////
+checked Register and email is verified
+    OK => 2FA Check
+
+    NO => Go Ahead for others
+    */
 namespace ServicesLeit.Services
 {
     public class UserService : IUserService
@@ -21,10 +26,10 @@ namespace ServicesLeit.Services
         private readonly ILogger<UserService> _logger;
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<UserRole> _roleManager;
+        private readonly  SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole<long>> _roleManager;
         private readonly UrlEncoder _urlEncoder;
-        public UserService(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<UserRole> roleManager, UrlEncoder urlEncoder, ILogger<UserService> logger)
+        public UserService(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole<long>> roleManager, UrlEncoder urlEncoder, ILogger<UserService> logger)
         {
             _urlEncoder = urlEncoder;
             _dbContext = dbContext;
@@ -107,29 +112,34 @@ namespace ServicesLeit.Services
 
         public async Task<List<UserListDto>> ReadAllAsync(bool? active = null, UserType? type = null)
         {
-            if (type is null)
+            IEnumerable<ApplicationUser> users = _userManager.Users;
+
+            if (type is not null)
             {
-                var usersInRole = await _userManager.GetUsersInRoleAsync(nameof(type));
-                //use auto mapper
-                return usersInRole
-                    .Where(x => (active != null && x.Active == active))
+                users = await _userManager.GetUsersInRoleAsync(type.ToString());
+            }
+
+            if (active is null)
+            {
+                return users
                     .Select(x => new UserListDto
                     {
                         Id = x.Id,
-                        Name = x.UserName,
+                        UserName = x.UserName,
                         Email = x.Email,
                     })
                     .ToList();
             }
-            return await _userManager.Users
-                .Where(x => (active != null && x.Active == active))
+
+            return users
+                .Where(x => (x.Active == active))
                 .Select(x => new UserListDto
                 {
                     Id = x.Id,
-                    Name = x.UserName,
+                    UserName = x.UserName,
                     Email = x.Email,
                 })
-                .ToListAsync();
+                .ToList();
         }
 
         public async Task<UserDto> ReadAsync(long id)
@@ -203,26 +213,23 @@ namespace ServicesLeit.Services
                 return false;
             }
 
-            ApplicationUser userModified = new()
-            {
-                Bio = model.Bio ?? user.Bio,
-                Name = model.Name ?? user.Name,
-                TwoFactorEnabled = model.TwoFactorAuthentication ?? user.TwoFactorEnabled,
-                Active = model.Active ?? user.Active,
-                Email = model.Email ?? user.Email,
-                PhoneNumber = model.Phone ?? user.PhoneNumber,
-                UserName = model.UserName ?? user.UserName,
-                EmailConfirmed = model.EmailConfirmed ?? user.EmailConfirmed,
-                PhoneNumberConfirmed = model.PhoneConfirmed ?? user.PhoneNumberConfirmed,
-                LockoutEnabled = model.LockoutEnabled ?? user.LockoutEnabled,
-                LockoutEnd = model.LockoutEnd ?? user.LockoutEnd,
-            };
+            user.Bio = model.Bio ?? user.Bio;
+            user.Name = model.Name ?? user.Name;
+            user.TwoFactorEnabled = model.TwoFactorAuthentication;
+            user.Active = model.Active;
+            user.Email = model.Email ?? user.Email;
+            user.PhoneNumber = model.Phone ?? user.PhoneNumber;
+            user.UserName = model.UserName ?? user.UserName;
+            user.EmailConfirmed = model.EmailConfirmed;
+            user.PhoneNumberConfirmed = model.PhoneConfirmed;
+            user.LockoutEnabled = model.LockoutEnabled;
+            user.LockoutEnd = model.LockoutEnd ?? user.LockoutEnd;
 
-            var result = await _userManager.UpdateAsync(userModified);
+            var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
                 UserModifyRoleDto roleModifier = new()
-            {
+                {
                     Id = model.Id,
                     Type = model.Type,
                 };
@@ -232,6 +239,8 @@ namespace ServicesLeit.Services
         }
         public async Task<bool> ModifyRoleAsync(UserModifyRoleDto model)
         {
+            #warning Ein Problem über Role Catastrofe!!
+            return true;
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
             if (user is null)
             {
@@ -239,15 +248,36 @@ namespace ServicesLeit.Services
             }
             IdentityResult? result =new();
             var oldRoles = await _userManager.GetRolesAsync(user);
-            if (oldRoles.Any())
+            if (oldRoles.Count>0)
             {
-                result = await _userManager.RemoveFromRolesAsync(user, oldRoles);
+                try
+                {
+                    foreach (var role in oldRoles)
+                    {
+                        result = await _userManager.RemoveFromRoleAsync(user, role);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var rolesInTable = _roleManager.Roles.Select(x=> Convert.ToInt64(x.Id));
+                    var toDelUserRole = _dbContext.UserRoles.Where(x => rolesInTable.Contains(x.RoleId)  && x.UserId == user.Id);
+                    foreach (var role in toDelUserRole)
+                    {
+                         _dbContext.UserRoles.Remove(role);
+                    }
+                }
             }
             if (!result.Succeeded)
             {
                 return false;
             }
-            result = await _userManager.AddToRoleAsync(user, model.Type.ToString());
+            try
+            {
+                result = await _userManager.AddToRoleAsync(user, model.Type.ToString());
+            }
+            catch (Exception ex)
+            {
+            }
             if (!result.Succeeded)
             {
                 return false;
