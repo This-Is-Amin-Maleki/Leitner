@@ -17,6 +17,7 @@ namespace ModelsLeit.Entities
         public string Answer { get; set; }
         public string Description { get; set; }
         public bool HasMp3 { get; set; }
+        public CardStatus Status { get; set; }
 
         [ForeignKey("Collection")]
         public long CollectionId { get; set; }
