@@ -14,8 +14,6 @@ namespace ModelsLeit.DTOs.Container
         public int SlotOrder { get; set; }
         public long BoxId { get; set; }
         public ICollection<CardDto> Approved { get; set; }
-        //    public long Id { get; set; }
         public ICollection<CardDto> Rejected { get; set; }
-        //    public long Id { get; set; }
     }
 }
