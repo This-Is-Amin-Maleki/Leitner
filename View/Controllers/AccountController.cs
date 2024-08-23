@@ -22,7 +22,7 @@ namespace View.Controllers
         private readonly UrlEncoder _urlEncoder;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<UserRole> _roleManager;
+        private readonly RoleManager<IdentityRole<long>> _roleManager;
         private readonly UserService _userService;
         // ApplicationDbContext db,
 
@@ -32,7 +32,7 @@ namespace View.Controllers
             IHttpContextAccessor context,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            RoleManager<UserRole> roleManager,
+            RoleManager<IdentityRole<long>> roleManager,
             UrlEncoder urlEncoder,
           UserService userService)
         {
