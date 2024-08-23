@@ -1,21 +1,24 @@
-﻿using ModelsLeit.DTOs;
+﻿using ModelsLeit.DTOs.Box;
 using ModelsLeit.DTOs.Collection;
-using ModelsLeit.DTOs.User;
-using ModelsLeit.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServicesLeit.Interfaces
 {
     public interface ICollectionService
     {
         Task AddCollectionAsync(CollectionCreationDto collectionViewModel);
+        Task<BoxAddDto?> CheckExistCollectionAsync(long id);
+        Task CheckStatusAsync(long id, string message);
         Task DeleteCollectionAsync(CollectionDto collectionViewModel);
-        Task EditCollectionAsync(CollectionDto collectionViewModel);
-        Task<CollectionDto> ReadCollectionAsync(long id);
-        Task<List<CollectionDto>> ReadCollectionsAsync();
+        Task DeleteCollectionLimitedAsync(CollectionModifyDto model);
+        Task EditCollectionAsync(CollectionDto model);
+        Task EditCollectionLimitedAsync(CollectionModifyDto model);
+        Task<List<CollectionListDto>> ReadAllAsync();
+        Task<List<CollectionListDto>> ReadAllAsync(long userId);
+        Task<CollectionUnlimitedDto> ReadCollectionAsync(long id);
+        Task<CollectionModifyDto> ReadCollectionDataAsync(long id);
+        Task<CollectionMiniDto> ReadCollectionNameAndStatusAsync(long id);
+        Task<List<CollectionDto>> ReadPublishedCollectionsAsync();
+        Task<List<CollectionDto>> ReadUnusedPublishedCollectionsAsync(long userId);
+        Task<CollectionDto> ReadUserCollectionAsync(long id, long userId);
     }
 }
