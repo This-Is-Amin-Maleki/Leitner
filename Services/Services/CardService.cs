@@ -31,6 +31,7 @@ namespace ServicesLeit.Services
                     Id = x.Id,
                     Ask = x.Ask,
                     HasMp3 = x.HasMp3,
+                    Status = x.Status,
                     Collection = new CollectionMiniDto()
                     {
                         Id = x.Collection.Id,
@@ -118,6 +119,7 @@ namespace ServicesLeit.Services
             await _collection.CheckStatusAsync(model.Collection.Id, "Can not add any cards to the @ collection!");
             var card = MapViewModelToCard(model);
             card.Id = 0;
+            card.Status = CardStatus.Submitted;
 
             try
             {
@@ -162,9 +164,10 @@ namespace ServicesLeit.Services
         {
             await _collection.CheckStatusAsync(model.Collection.Id, "Can not update any card of the @ collection!");
             var card = MapViewModelToCard(model);
+            card.Status = CardStatus.Submitted;
 
             var oldCard = await _dbContext.Cards
-                .FirstAsync(x => x.Id == model.Id);
+                .FirstAsync(x => x.Id == model.Id && x.Status != CardStatus.Blocked);
 
             if (oldCard is null)
             {
@@ -213,7 +216,7 @@ namespace ServicesLeit.Services
             var card = MapViewModelToCard(model);
 
             var hasCard = await _dbContext.Cards
-                .AnyAsync(x => x.Id == model.Id);
+                .AnyAsync(x => x.Id == model.Id && x.Status != CardStatus.Approved);
 
             if (hasCard is false)
             {
@@ -274,6 +277,7 @@ namespace ServicesLeit.Services
                 Answer = card.Answer,
                 Description = card.Description,
                 HasMp3 = card.HasMp3,
+                Status = card.Status,
                 Collection = new CollectionMiniDto()
                 {
                     Id = card.Collection.Id,
