@@ -24,9 +24,16 @@ namespace ViewLeit.Controllers
         }
 
         // GET: CollectionController
-        public async Task<ActionResult> Index()
+        [Route("AdminCollection/{userId?}")]
+        public async Task<ActionResult> Index(long userId = 0)
         {
-            var output = await _collectionService.ReadCollectionsAsync();
+            List<CollectionListDto> output;
+            if (userId is 0)
+            {
+                output = await _collectionService.ReadAllAsync();
+                return View(output);
+            }
+            output = await _collectionService.ReadAllAsync(userId);
             return View(output);
         }
 
@@ -36,7 +43,8 @@ namespace ViewLeit.Controllers
 
         // GET: CollectionController/Edit
         public async Task<ActionResult> Edit(long id) =>
-            View(await _collectionService.ReadCollectionAsync(id));
+
+            View(await _collectionService.ReadCollectionDataAsync(id));
             
 
         // POST: CollectionController/Edit

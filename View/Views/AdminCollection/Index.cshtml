@@ -1,0 +1,91 @@
+﻿@using ModelsLeit.DTOs.Collection
+@using SharedLeit
+@model IEnumerable<CollectionListDto>
+
+@{
+    ViewData["Title"] = "Collection Index";
+    DateTime emptyDateTime = new DateTime();
+    string[] statusesIcon =
+    {
+        "<i class='bi bi-exclamation-circle me-2'></i>",     // Draft
+        "<i class='bi bi-question-circle me-2'></i>",        // Submit
+        "<i class='bi bi-check-circle me-2'></i>",           // Published
+        "<i class='bi bi-x-circle me-2'></i>",               // Rejected
+        "<i class='bi bi-ban me-2'></i>",                    // Blocked
+    };
+    @*string[] statusBg =
+    {
+        string.Empty,                // Draft
+        "bg-secondary-subtle",       // Submit
+        "bg-success-subtle",         // Published
+        "bg-warning-subtle",         // Rejected
+        "bg-danger-subtle",          // Blocked
+    };*@
+}
+
+<h2>Collections</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>User</th>
+            <th>Published Date</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                @*class="@statusBg[(int)collection.Status]"*@
+                <td>@item.Name</td>
+                <td>
+                    <a asp-action="detail" asp-controller="AdminAccount" asp-route-id="@item.User.Id" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                        @item.User.UserName
+                    </a>
+                </td>
+                <td @Html.Raw(item.Status != CollectionStatus.Published ? "class=\"text-danger\"": string.Empty)>
+                    @(item.PublishedDate == emptyDateTime ? string.Empty : item.PublishedDate)</td>
+                <td>
+                    @Html.Raw(statusesIcon[(int)item.Status])
+                    <a class="btn btn-primary position-relative float-end" asp-action="Edit" asp-route-id="@item.Id">
+                        <i class="bi bi-pencil"></i>
+                        Edit
+                    </a>
+                    <a asp-controller="AdminBox" asp-route-id="@item.Id"
+                       class="btn btn-primary position-relative float-end me-2">
+                        <i class="bi bi-inboxes"></i>
+                        Boxes
+                        @if (item.BoxCount > 0)
+                        {
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                @item.BoxCount
+                            </span>
+                        }
+                    </a>
+                    <a asp-controller="AdminCard" asp-action="Index" asp-route-id="@item.Id"
+                       class="btn btn-primary position-relative float-end me-2">
+                        <i class="bi bi-collection"></i>
+                        Cards
+                        @if (item.CardsQ > 0)
+                        {
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            @item.CardsQ
+                        </span>
+                        }
+                    </a>
+                    <a asp-controller="AdminCard" asp-action="Check" asp-route-id="@item.Id"
+                       class="btn btn-primary position-relative float-end me-2">
+                        <i class="bi bi-ui-checks-grid"></i>
+                        Check Cards
+                    </a>
+                    @*<a class="btn btn-primary" asp-action="Details" asp-route-id="@collection.Id">
+                        <i class="bi bi-file-text"></i>
+                        Details
+                    </a>*@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

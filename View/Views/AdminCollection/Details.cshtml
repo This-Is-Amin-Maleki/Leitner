@@ -1,0 +1,74 @@
+﻿@using ModelsLeit.DTOs.Collection
+
+@model CollectionUnlimitedDto
+
+@{
+    ViewData["Title"] = $"Collection {Model.Name} Details";
+}
+
+<h2>Collection <b>@Model.Name</b> Details</h2>
+
+
+<a asp-controller="Box" asp-action="List" asp-route-id="@Model.Id"
+   class="float-start btn btn-dark position-relative me-2">
+    <i class="bi bi-inboxes"></i>
+    Boxes
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+        @Model.BoxCount
+    </span>
+
+</a>
+<a asp-controller="AdminCard" asp-action="Index" asp-route-id="@Model.Id"
+   class="float-start btn btn-dark position-relative me-2">
+    <i class="bi bi-collection"></i>
+    Cards
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+        @Model.CardsQ
+    </span>
+</a>
+
+<a class="float-end btn btn-dark" asp-action="Modify"
+   asp-route-id="@Model.Id">
+    <i class="bi bi-pencil"></i>
+    Edit
+</a>
+
+<a asp-action="Index" class="float-end btn btn-dark">
+    <i class="bi bi-arrow-left-square"></i>
+    Return
+</a>
+</br></br>
+<div>
+    <dl>
+
+        <dt>Description:</dt>
+        <dd>@Model.Description</dd>
+        @if (Model.Status is SharedLeit.CollectionStatus.Published)
+        {
+            <dt>Published Date: <un>@Model.PublishedDate</un></dt>
+            @*
+            Draft,
+            Submit,
+            Published,
+            Rejected,
+            Blocked
+            *@
+            <dd></dd>
+        }
+        <dt>Status: <un>@Model.Status</un></dt>
+        <dd></dd>
+
+        <dt>
+            User: <un>
+            <a asp-action="detail" asp-controller="AdminAccount" asp-route-id="@Model.User.Id" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                @Model.User.UserName
+                </a>
+            </un>
+        </dt>
+        <dd>
+        </dd>
+
+    </dl>
+    <br />
+
+</div>
