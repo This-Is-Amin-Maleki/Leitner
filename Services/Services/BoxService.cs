@@ -1,10 +1,12 @@
 ﻿using DataAccessLeit.Context;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ModelsLeit.DTOs.Box;
 using ModelsLeit.DTOs.Card;
 using ModelsLeit.DTOs.Collection;
 using ModelsLeit.DTOs.Container;
+using ModelsLeit.DTOs.User;
 using ModelsLeit.Entities;
 using ServicesLeit.Interfaces;
 using System.Data;
@@ -17,11 +19,17 @@ namespace ServicesLeit.Services
 
         private readonly ApplicationDbContext _dbContext;
         private readonly CardService _cardService;
-        public BoxService(ApplicationDbContext dbContext, CardService cardService, ILogger<BoxService> logger)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public BoxService(
+            ApplicationDbContext dbContext,
+            CardService cardService,
+            UserManager<ApplicationUser> userManager,
+            ILogger<BoxService> logger)
         {
             _logger = logger;
             _dbContext = dbContext;
             _cardService = cardService;
+            _userManager = userManager;
         }
         public async Task<List<BoxMiniDto>> ReadAllAsync()
         {//use auto mapper
@@ -39,6 +47,11 @@ namespace ServicesLeit.Services
                     LastSlot = x.LastSlot,
                     LastCardId = x.LastCardId,
                     Completed = x.Completed,
+                    User = new UserMiniDto()
+                    {
+                        Id = x.UserId,
+                        UserName = _userManager.Users.First(y => y.Id == x.UserId).UserName,
+                    },
                     Collection = new CollectionMiniDto()
                     {
                         Id = x.Collection.Id,
@@ -50,6 +63,7 @@ namespace ServicesLeit.Services
         }
         public async Task<List<BoxMiniDto>> ReadAllAsync(long userId)
         {//use auto mapper
+            string userName = _userManager.Users.First(y => y.Id == userId).UserName!;
             return await _dbContext.Boxes
                 .AsNoTracking()
                 .Include(x => x.Collection)
@@ -65,6 +79,11 @@ namespace ServicesLeit.Services
                     LastSlot = x.LastSlot,
                     LastCardId = x.LastCardId,
                     Completed = x.Completed,
+                    User = new UserMiniDto()
+                    {
+                        Id = userId,
+                        UserName = userName,
+                    },
                     Collection = new CollectionMiniDto()
                     {
                         Id = x.Collection.Id,
@@ -89,6 +108,11 @@ namespace ServicesLeit.Services
                     LastCardId = x.LastCardId,
                     CardPerDay = x.CardPerDay,
                     Completed = x.Completed,
+                    User = new UserMiniDto()
+                    {
+                        Id = x.UserId,
+                        UserName = _userManager.Users.First(y => y.Id == x.UserId).UserName!,
+                    },
                     Collection = new CollectionMiniDto()
                     {
                         Id = x.Collection.Id,
