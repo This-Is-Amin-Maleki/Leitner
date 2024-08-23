@@ -1,0 +1,46 @@
+﻿@using SharedLeit
+@using ModelsLeit.DTOs.Box
+@model IEnumerable<BoxMiniDto>
+
+@{
+    DateTime invalidDate = new();
+    ViewData["Title"] = $"Boxes";
+    var t = DateTime.Now.Date;
+}
+
+<h2>@ViewData["Title"]</h2>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Date Added</th>
+            <th>Card Per Day</th>
+            <th>Completed</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var box in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="detail" asp-controller="AdminCollection" asp-route-id="@box.Collection.Id
+                       class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                        @box.Collection.Name
+                    </a>
+                </td>
+                <td>
+                    <a asp-action="detail" asp-controller="AdminAccount" asp-route-id="@box.User.Id" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                        @box.User.UserName
+                    </a>
+                </td>
+                <td>@box.DateAdded</td>
+                <td>@box.CardPerDay</td>
+                <td>
+                    @(box.Completed?Html.Raw ("<i class=\"bi bi-check2-square\"></i>"):"")
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
