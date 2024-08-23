@@ -240,7 +240,7 @@ namespace ServicesLeit.Services
                     {
                         Id = x.CollectionId,
                         Name = x.Collection.Name,
-                        Count = x.Collection.Count,
+                        BoxCount = x.Collection.Count,
                     },
                     Containers = new List<ContainersDto>(),
                 })
@@ -303,7 +303,7 @@ namespace ServicesLeit.Services
             if (read.AnyReqCard)
             {
                 var dropedCards = boxDto.Containers.Where(x => x.SlotOrder < -1).Select(x => x.ContainerCards.Count).ToArray().Sum();
-                if (boxDto.Collection.Count == dropedCards)
+                if (boxDto.Collection.CardsQ == dropedCards)
                 {
                     box.Completed = true;
                     _dbContext.Entry(box).Property(x => x.Completed).IsModified = true;
