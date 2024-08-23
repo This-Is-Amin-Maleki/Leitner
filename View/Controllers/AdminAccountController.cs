@@ -12,7 +12,7 @@ using SharedLeit;
 
 namespace View.Controllers
 {
-    //[Authorize]
+    [Authorize(Roles = nameof(UserType.Admin))]
     public class AdminAccountController : Controller
     {
         //private readonly ApplicationDbContext _db;
@@ -23,7 +23,7 @@ namespace View.Controllers
         private readonly UrlEncoder _urlEncoder;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<UserRole> _roleManager;
+        private readonly RoleManager<IdentityRole<long>> _roleManager;
         private readonly UserService _userService;
         // ApplicationDbContext db,
 
@@ -33,7 +33,7 @@ namespace View.Controllers
             IHttpContextAccessor context,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            RoleManager<UserRole> roleManager,
+            RoleManager<IdentityRole<long>> roleManager,
             UrlEncoder urlEncoder,
           UserService userService)
         {
@@ -50,25 +50,31 @@ namespace View.Controllers
 
         public async Task<IActionResult> Index(bool? active =null, UserType? type = null)
         {
+            ViewBag.Active = active;
+            ViewBag.UserType = type;
+
+            ViewData["Active"] = active;
+            ViewData["UserType"] =type;
+
             List<UserListDto>? user = await _userService.ReadAllAsync(active, type);
             return View(user);
         }
-        public async Task<IActionResult> Modify(bool? active = null, UserType? type = null)
-        {            
-            var user = await _userManager.GetUserAsync(User);
+        public async Task<IActionResult> Modify(long id, bool? active = null, UserType? type = null)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
             var role = await _userManager.GetRolesAsync(user);
-            if(user is null)
+            if (user is null)
             {
                 return RedirectToAction(
                     "Index",
                     "AdminAccount",
-                    new { active , type });
+                    new { active, type });
             }
             UserModifyViewModel output = new()
             {
                 Id = user.Id,
-                //Name = user.Name,
-                //Bio = user.Bio,
+                Name = user.Name,
+                Bio = user.Bio,
                 UserName = user.UserName,
                 Email = user.Email ?? string.Empty,
                 Phone = user.PhoneNumber,
@@ -78,8 +84,37 @@ namespace View.Controllers
                 LockoutEnabled = user.LockoutEnabled,
                 LockoutEnd = user.LockoutEnd,
                 PhoneConfirmed = user.PhoneNumberConfirmed,
+                ParameterActive = active ?? user.Active,
+                ParameterType = type ?? (UserType)Enum.Parse(typeof(UserType), role.First()),
 
-                IndexParameters = (active, type),
+                Type = (UserType)Enum.Parse(typeof(UserType), role.First()),
+            };
+            return View(output);
+        }
+        public async Task<IActionResult> Detail(long id)
+        {            
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            var role = await _userManager.GetRolesAsync(user);
+            if(user is null)
+            {
+                return RedirectToAction(
+                    "Index",
+                    "AdminAccount");
+            }
+            UserModifyViewModel output = new()
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Bio = user.Bio,
+                UserName = user.UserName ?? string.Empty,
+                Email = user.Email ?? string.Empty,
+                Phone = user.PhoneNumber,
+                TwoFactorAuthentication = user.TwoFactorEnabled,
+                Active = user.Active,
+                EmailConfirmed = user.EmailConfirmed,
+                LockoutEnabled = user.LockoutEnabled,
+                LockoutEnd = user.LockoutEnd ?? DateTime.Now,
+                PhoneConfirmed = user.PhoneNumberConfirmed,
 
                 Type = (UserType)Enum.Parse(typeof(UserType), role.First()),
             };
@@ -95,8 +130,7 @@ namespace View.Controllers
                 return View(model);
             }
 
-            var user = await _userManager.GetUserAsync(User);
-            model.Id = user.Id;
+            var user = await _userManager.FindByIdAsync(model.Id.ToString());
             var result = await _userService.ModifyAsync(model);
             if (!result)
             {
@@ -104,14 +138,14 @@ namespace View.Controllers
                 return View(model);
             }
 
-            TempData["Result"] = $"{model.UserName} Profile updated successfully!";
-
+            TempData["Result"] = $"{model.UserName} updated successfully!";
+            
             return RedirectToAction(
                 "Index",
-                "AdminAccount",
-                new {
-                    active = model.IndexParameters.Value.active ,
-                    type = model.IndexParameters.Value.type
+                "AdminAccount",  new
+                {
+                    active = model.ParameterActive,
+                    type = model.ParameterType
                 });
         }
     }
