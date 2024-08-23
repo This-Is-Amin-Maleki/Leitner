@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using ModelsLeit.Entities;
+﻿using ModelsLeit.Entities;
 using IronXL;
-using System.Data;
 using Microsoft.Extensions.Logging;
 using ServicesLeit.Interfaces;
+using SharedLeit;
 
 namespace ServicesLeit.Services
 {
@@ -46,6 +40,7 @@ namespace ServicesLeit.Services
                     Ask = row.Columns[0].ToString(),
                     Answer = row.Columns[1].ToString(),
                     Description = row.Columns[2].ToString(),
+                    Status = CardStatus.Submitted,
                 });
             }
             return cards;
@@ -65,6 +60,7 @@ namespace ServicesLeit.Services
                     Ask = row.Columns[0].ToString(),
                     Answer = row.Columns[1].ToString(),
                     Description = row.Columns[2].ToString(),
+                    Status=CardStatus.Submitted,
                 });
             }
             return cards;
