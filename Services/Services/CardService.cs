@@ -19,15 +19,14 @@ namespace ServicesLeit.Services
             _dbContext = dbContext;
             _collection = collection;
         }
-        public async Task<List<CardDto>> ReadCardsLimitedAsync(long collectionId, long userId)
+        public async Task<List<CardMiniDto>> ReadCardsLimitedAsync(long collectionId, long userId)
         {//use auto mapper
 #warning if invalid card send 2 save reyurn without collection
-            string collectionName = "";
-            List<CardDto> list = await _dbContext.Cards
+            return await _dbContext.Cards
                 .AsNoTracking()
                 .Include(x => x.Collection)
                 .Where(x => x.CollectionId == collectionId && x.UserId == userId)
-                .Select(x => new CardDto()
+                .Select(x => new CardMiniDto()
                 {
                     Id = x.Id,
                     Ask = x.Ask,
@@ -40,21 +39,22 @@ namespace ServicesLeit.Services
                     }
                 })
                 .ToListAsync();
-            return list;
         }
-        public async Task<List<CardDto>> ReadCardsUnlimitedAsync(long collectionId)
+        public async Task<List<CardMiniUnlimitedDto>> ReadCardsUnlimitedAsync(long collectionId, CardStatus? state = null)
         {//use auto mapper
-#warning if invalid card send 2 save reyurn without collection
-            string collectionName = "";
-            List<CardDto> list = await _dbContext.Cards
+#warning if invalid card send 2 save return without collection
+            return await _dbContext.Cards
                 .AsNoTracking()
                 .Include(x => x.Collection)
-                .Where(x => x.CollectionId == collectionId)
-                .Select(x => new CardDto()
+                .Where(x => x.CollectionId == collectionId &&
+                (state == null || x.Status == state))
+                .Select(x => new CardMiniUnlimitedDto()
                 {
                     Id = x.Id,
                     Ask = x.Ask,
+                    Answer = x.Answer,
                     HasMp3 = x.HasMp3,
+                    Status = x.Status,
                     Collection = new CollectionMiniDto()
                     {
                         Id = x.Collection.Id,
@@ -63,7 +63,6 @@ namespace ServicesLeit.Services
                     }
                 })
                 .ToListAsync();
-            return list;
         }
         public async Task<(List<CardDto>, string)> ReadCardsAsync(long collectionId)
         {//use auto mapper
@@ -80,6 +79,7 @@ namespace ServicesLeit.Services
                     Answer = x.Answer,
                     Description = x.Description,
                     HasMp3 = x.HasMp3,
+                    Status = x.Status,
                     Collection = new CollectionMiniDto()
                     {
                         Id = x.Collection.Id,
