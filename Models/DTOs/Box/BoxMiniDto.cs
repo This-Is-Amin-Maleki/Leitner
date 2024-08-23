@@ -1,4 +1,5 @@
 ﻿using ModelsLeit.DTOs.Collection;
+using ModelsLeit.DTOs.User;
 using ModelsLeit.Entities;
 
 namespace ModelsLeit.DTOs.Box
@@ -6,6 +7,7 @@ namespace ModelsLeit.DTOs.Box
     public record BoxMiniDto
     {
         public long Id { get; set; }
+        public UserMiniDto User { get; set; }
         public int CardPerDay { get; set; }
 
         public DateTime DateAdded { get; set; }
