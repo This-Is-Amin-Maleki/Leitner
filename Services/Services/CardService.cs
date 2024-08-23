@@ -178,7 +178,7 @@ namespace ServicesLeit.Services
 
         public async Task AddCardAsync(CardDto model)
         {
-            await _collection.CheckStatusAsync(model.Collection.Id, "Can not add any cards to the @ collection!");
+            await _collection.CheckStatusAsync(model.Collection.Id, "Can not add any cards to the published collection!");
             var card = MapViewModelToCard(model);
             card.Id = 0;
             card.Status = CardStatus.Submitted;
@@ -195,12 +195,12 @@ namespace ServicesLeit.Services
         }
         public async Task BulkAddCardsAsync(List<Card> model)
         {
-            await _collection.CheckStatusAsync(model.First().CollectionId, "Can not add any cards to the @ collection!");
+            await _collection.CheckStatusAsync(model.First().CollectionId, "Can not add any cards to the published collection!");
             await _dbContext.BulkInsertAsync(model);
         }
         public async Task UpdateCardLimitedAsync(CardDto model)
         {
-            await _collection.CheckStatusAsync(model.Collection.Id, "Can not update any card of the @ collection!");
+            await _collection.CheckStatusAsync(model.Collection.Id, "Can not update any card of the published collection!");
             var card = MapViewModelToCard(model);
 
             var oldCard = await _dbContext.Cards
@@ -224,7 +224,7 @@ namespace ServicesLeit.Services
         }
         public async Task UpdateCardAsync(CardDto model)
         {
-            await _collection.CheckStatusAsync(model.Collection.Id, "Can not update any card of the @ collection!");
+            await _collection.CheckStatusAsync(model.Collection.Id, "Can not update any card of the published collection!");
             var card = MapViewModelToCard(model);
             card.Status = CardStatus.Submitted;
 
@@ -249,7 +249,7 @@ namespace ServicesLeit.Services
         }
         public async Task DeleteCardLimitedAsync(CardDto model)
         {
-            await _collection.CheckStatusAsync(model.Collection.Id, "Can not delete any card of the @ collection!");
+            await _collection.CheckStatusAsync(model.Collection.Id, "Can not delete any card of the published collection!");
             var card = MapViewModelToCard(model);
 
             var hasCard = await _dbContext.Cards
@@ -274,7 +274,7 @@ namespace ServicesLeit.Services
         }
         public async Task DeleteCardAsync(CardDto model)
         {
-            await _collection.CheckStatusAsync(model.Collection.Id, "Can not delete any card of the @ collection!");
+            await _collection.CheckStatusAsync(model.Collection.Id, "Can not delete any card of the published collection!");
             var card = MapViewModelToCard(model);
 
             var hasCard = await _dbContext.Cards
