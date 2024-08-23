@@ -1,5 +1,6 @@
 ﻿using ModelsLeit.DTOs.Collection;
 using ModelsLeit.DTOs.User;
+using SharedLeit;
 
 namespace ModelsLeit.DTOs.Card
 {
@@ -11,6 +12,7 @@ namespace ModelsLeit.DTOs.Card
         public string Answer { get; set; }
         public string Description { get; set; }
         public bool HasMp3 { get; set; }
+        public CardStatus Status { get; set; }
         public CollectionMiniDto Collection { get; set; }
     }
 }
