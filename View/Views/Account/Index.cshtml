@@ -1,0 +1,28 @@
+﻿@using SharedLeit
+@{
+    ViewData["Title"] = "Users Profile";
+    bool isTwoFactorEnabled = false;// User.HasClaim("amr", "mfa");
+}
+
+<h2>@ViewData["Title"]</h2>
+<br />
+
+<a asp-action="Profile" asp-controller="Account">
+    <i class="bi bi-person-lines-fill"></i>
+    Profile
+</a>
+<a asp-action="Security" asp-controller="Account">
+    <i class="bi bi-person-fill-lock"></i>
+    Security
+</a>
+@if (isTwoFactorEnabled)
+{
+    <a asp-action="Enable2FA" asp-controller="Account">
+        <i class="bi bi-lock-fill"></i>
+        Enable 2Fa
+    </a>
+    <a asp-action="Disable2FA" asp-controller="Account">
+        <i class="bi bi-unlock-fill"></i>
+        Disable 2Fa
+    </a>
+}
