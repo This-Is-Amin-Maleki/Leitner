@@ -26,6 +26,7 @@ namespace ViewLeit.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Index()
         {
+            /*
             if(HttpContext.Response.StatusCode > 400)
             {
                 var error = new ErrorDto { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier };
@@ -36,6 +37,7 @@ namespace ViewLeit.Controllers
                 }
                 return View("Index", error);
             }
+            */
             return RedirectToAction("Index", "Page");
         }
 
