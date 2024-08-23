@@ -19,7 +19,7 @@ namespace View.Controllers
         private readonly IConfiguration _configuration;
         private readonly IEmailSender<ApplicationUser> _emailSender;
         private readonly IHttpContextAccessor _httpContext;
-        private readonly RoleManager<UserRole> _roleManager;
+        private readonly RoleManager<IdentityRole<long>> _roleManager;
         private readonly UserService _userService;
 
         /*
@@ -36,7 +36,7 @@ namespace View.Controllers
             SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration,
             IHttpContextAccessor httpContext,
-            RoleManager<UserRole> roleManager,
+            RoleManager<IdentityRole<long>> roleManager,
             UserService userService)
         {
             _userManager = userManager;
@@ -60,6 +60,9 @@ namespace View.Controllers
             TempData["LockedOutTime"] = 0;
 
             model.Mode = UserCheckMode.EmailAndUserName;
+
+            //var preLoginFakeData = await _userService.PreLoginFakeAsync(model);
+            //var res = await _userService.MyLoginAsync(preLoginFakeData, model.Password);
             var preLoginData = await _userService.PreLoginAsync(model);
             var result = await _userService.LoginAsync(preLoginData);
 
@@ -167,6 +170,10 @@ namespace View.Controllers
             UserRegisterDto result = await _userService.RegisterAsync(registerationData);
             if(result.Result is not RegisterResult.Success)
             {
+                if((int)result.Result > 7)
+                {
+#warning report!!
+                }
                 var error = result.Result.RegisterResultError();
                 ModelState.AddModelError(error.key, error.message);
                 return PartialView("Partial/User/_PartialRegisterForm", model);
