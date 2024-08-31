@@ -175,6 +175,23 @@ namespace ServicesLeit.Services
             }
             return checkList;
         }
+        public async Task<CardCheckDto> ReadCardCheck(long collectionId, CardStatus? cardStatus)
+        {
+            cardStatus = cardStatus is null or CardStatus.Approved ? CardStatus.Submitted : cardStatus;
+            var card = await _dbContext.Cards
+                .FirstOrDefaultAsync(x =>
+                    x.CollectionId == collectionId &&
+                    x.Status == cardStatus
+                );
+
+            if (card is null)
+            {
+                throw new Exception("No more cards available");
+            }
+
+            return ToCardCheckDto( card );
+        }
+
         public async Task TickAllCardsAsync(long collectionId)
         {
             var cards = await _dbContext.Cards
@@ -426,5 +443,16 @@ namespace ServicesLeit.Services
 
             return collection.Name;
         }
+
+        private CardCheckDto ToCardCheckDto(Card card) =>
+            new()
+            {
+                Id = card.Id,
+                Ask = card.Ask,
+                Answer = card.Answer,
+                Description = card.Description,
+                HasMp3 = card.HasMp3,
+                Status = card.Status,
+            };
     }
 }
