@@ -192,25 +192,37 @@ namespace ServicesLeit.Services
             return ToCardCheckDto( card );
         }
 
-        public async Task UpdateStatus(CardStatusDto model)
+        public async Task<CardCheckDto> UpdateStatusAndReadNextCardCheck(CardStatusDto model)
         {
-            Card card = new()
-            {
-                Id = model.Id,
-                Status = model.Status,
-            };
-
+            var output = new CardCheckDto();
 #warning catch!!
             try
             {
-                _dbContext.Cards.Attach(card);
-                _dbContext.Entry(card).Property(c => c.Status).IsModified = true;
+                Card[]? card = await _dbContext.Cards
+                    .Where(x => x.Id == model.Id)
+                    .Take(2)
+                    .ToArrayAsync();
+
+                if (card is null)
+                {
+                    throw new Exception("Card not found");
+                }
+
+                output.Status = card[0].Status;
+
+                card[0].Status = model.Status;
                 await _dbContext.SaveChangesAsync();
+
+                if (card[1] is not null)
+                {
+                    output = ToCardCheckDto(card[1]);
+                }
             }
             catch (Exception ex)
             {
 
             }
+            return output;
         }
 
         public async Task TickAllCardsAsync(long collectionId)
