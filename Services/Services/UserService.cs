@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using ModelsLeit.DTOs.User;
 using ModelsLeit.Entities;
 using ModelsLeit.ViewModels.User;
+using NetTopologySuite.Densify;
 using ServicesLeit.Interfaces;
 using SharedLeit;
 using System.Data;
@@ -26,10 +27,18 @@ namespace ServicesLeit.Services
         private readonly ILogger<UserService> _logger;
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly  SignInManager<ApplicationUser> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole<long>> _roleManager;
         private readonly UrlEncoder _urlEncoder;
-        public UserService(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole<long>> roleManager, UrlEncoder urlEncoder, ILogger<UserService> logger)
+        private readonly NotificationService _notificationService;
+        public UserService(
+            ApplicationDbContext dbContext,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole<long>> roleManager,
+            UrlEncoder urlEncoder,
+            ILogger<UserService> logger,
+            NotificationService notificationService)
         {
             _urlEncoder = urlEncoder;
             _dbContext = dbContext;
@@ -37,15 +46,21 @@ namespace ServicesLeit.Services
             _signInManager = signInManager;
             _logger = logger;
             _roleManager = roleManager;
+            _notificationService = notificationService;
         }
 
         public async Task<UserRegisterDto> RegisterAsync(UserRegisterViewModel model)
         {
+            model.Type = UserType.User;
+            model.Active = true;
+
             UserRegisterDto output = new();
+
             var user = await _userManager.Users
                     .FirstOrDefaultAsync(x =>
                     (model.Phone != null && x.PhoneNumber == model.Phone) ||
                     x.Email == model.Email);
+
             if (user is not null)
             {
                 output.Result = RegisterResult.EmailOrPhoneInUse;
@@ -69,31 +84,6 @@ namespace ServicesLeit.Services
                 return output;
             }
 
-            if (model.Email is not null)
-            {
-                var mailToken = await EmailTokenGeneratorAsync(model.Email);
-                if (mailToken is null)
-                {
-                    return output;
-                }
-                output.Result = RegisterResult.Success;
-                output.Email = model.Email;
-                output.EmailToken = mailToken.Token;
-            }
-
-            if (model.Phone is not null)
-            {
-                var phoneToken = await PhoneTokenGeneratorAsync(model.Phone);
-                if (phoneToken is null)
-                {
-                    return output;
-                }
-                output.Result = RegisterResult.Success;
-                output.Phone = model.Phone;
-                output.PhoneToken = phoneToken.Token;
-            }
-
-
             result = await _userManager.AddToRoleAsync(user, model.Type.ToString());
             if (!result.Succeeded)
             {
@@ -102,14 +92,23 @@ namespace ServicesLeit.Services
                 return output;
             }
 
+            if (model.Email is not null)
+            {
+                await SendEmailConfirmTokenAsync(user, model.Domain);
+            }
+
+            if (model.Phone is not null)
+            {
+                await SendPhoneConfirmTokenAsync(user);
+            }
+
             if (!result.Succeeded) //when addRole Faild and can't delete registered User 
             {
                 output.Result = RegisterResult.RoleAndDeleteFail;
             }
-
+            output.Result = RegisterResult.Success;
             return output;
         }
-
         public async Task<List<UserListDto>> ReadAllAsync(bool? active = null, UserType? type = null)
         {
             IEnumerable<ApplicationUser> users = _userManager.Users;
@@ -141,33 +140,28 @@ namespace ServicesLeit.Services
                 })
                 .ToList();
         }
-
-        public async Task<UserDto> ReadAsync(long id)
-        {//use auto mapper
-
-            //use auto mapper
-            return await _userManager.Users
-                .Select(x => new UserDto
-                {
-                    Id = x.Id,
-                    Name = x.UserName,
-                    Email = x.Email,
-                    Phone = x.PhoneNumber,
-                    TwoFactorEnabled = x.TwoFactorEnabled,
-                    LockoutEnabled = x.LockoutEnabled,
-                    AccessFailedCount = x.AccessFailedCount,
-                    Active = x.Active,
-                })
-                .FirstAsync(x => x.Id == id);
-        }
-
-        public async Task<UserModifyDto?> ModifyLimitedAsync(UserModifyLimitedViewModel model)
+        public async Task<bool?> ChangePasswordLimitedAsync(UserChangePasswordLimitedViewModel model)
         {
-            UserModifyDto? output = null;
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
             if (user is null)
             {
-                return output;
+                return null;
+            }
+
+            var passResult = await _userManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
+            
+            if (!passResult.Succeeded) {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<bool?> ModifyLimitedAsync(UserModifyLimitedViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.Id.ToString());
+            if (user is null)
+            {
+                return null;
             }
 
             ApplicationUser userModified = user;
@@ -177,33 +171,55 @@ namespace ServicesLeit.Services
             var result = await _userManager.UpdateAsync(userModified);
             if (!result.Succeeded)
             {
-                return output;
+                return false;
             }
-
-            output = new();
 
             if (user.Email != model.Email)
             {
-                output.Email = model.Email;
-                output.EmailToken = await _userManager.GenerateChangeEmailTokenAsync(user, model.Email);
+                //send Email Confirm
             }
 
             if (user.PhoneNumber != model.Phone)
             {
-                output.Phone = model.Phone;
-                output.PhoneToken = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.Phone);
+                //send Sms Confirm
             }
 
             if (!(model.Password.IsNullOrEmpty() &&
                 model.NewPassword.IsNullOrEmpty()))
             {
                 var passResult = await _userManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
-                if (passResult.Succeeded)
-                {
-                    output.PassChanged = true;
-                }
             }
-            return output;
+            return true;
+        }
+        public async Task<bool?> ModifyProfileLimitedAsync(UserModifyProfileLimitedViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.Id.ToString());
+            if (user is null)
+            {
+                return null;
+            }
+
+            ApplicationUser userModified = user;
+            userModified.Name = model.Name ?? user.Name;
+            userModified.Bio = model.Bio ?? user.Bio;
+
+            var result = await _userManager.UpdateAsync(userModified);
+            if (!result.Succeeded)
+            {
+                return false;
+            }
+
+            if (user.Email != model.Email)
+            {
+                //send Email Confirm
+            }
+
+            if (user.PhoneNumber != model.Phone)
+            {
+                //send Sms Confirm
+            }
+
+            return true;
         }
         public async Task<bool> ModifyAsync(UserModifyViewModel model)
         {
@@ -239,16 +255,16 @@ namespace ServicesLeit.Services
         }
         public async Task<bool> ModifyRoleAsync(UserModifyRoleDto model)
         {
-            #warning Ein Problem über Role Catastrofe!!
+#warning Ein Problem über Role Catastrofe!!
             return true;
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
             if (user is null)
             {
                 return false;
             }
-            IdentityResult? result =new();
+            IdentityResult? result = new();
             var oldRoles = await _userManager.GetRolesAsync(user);
-            if (oldRoles.Count>0)
+            if (oldRoles.Count > 0)
             {
                 try
                 {
@@ -259,11 +275,11 @@ namespace ServicesLeit.Services
                 }
                 catch (Exception ex)
                 {
-                    var rolesInTable = _roleManager.Roles.Select(x=> Convert.ToInt64(x.Id));
-                    var toDelUserRole = _dbContext.UserRoles.Where(x => rolesInTable.Contains(x.RoleId)  && x.UserId == user.Id);
+                    var rolesInTable = _roleManager.Roles.Select(x => Convert.ToInt64(x.Id));
+                    var toDelUserRole = _dbContext.UserRoles.Where(x => rolesInTable.Contains(x.RoleId) && x.UserId == user.Id);
                     foreach (var role in toDelUserRole)
                     {
-                         _dbContext.UserRoles.Remove(role);
+                        _dbContext.UserRoles.Remove(role);
                     }
                 }
             }
@@ -307,45 +323,13 @@ namespace ServicesLeit.Services
             return true;
         }
 
-        public async Task<EmailTokenViewModel?> PhoneTokenGeneratorAsync(string phone)
-        {
-            EmailTokenViewModel? model = null;
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == phone);
-            if (user is null)
-            {
-                return model;
-            }
-            var confirmationCode = await _userManager.GenerateChangePhoneNumberTokenAsync(user, phone);
-            model = new()
-            {
-                Identifier = phone,
-                Token = confirmationCode
-            };
-            return model;
-        }
-        public async Task<EmailTokenViewModel?> EmailTokenGeneratorAsync(string email)
-        {
-            EmailTokenViewModel? model = null;
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user is null)
-            {
-                return model;
-            }
-            var confirmationCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            model = new()
-            {
-                Identifier = email,
-                Token = confirmationCode
-            };
-            return model;
-        }
-
         /// <summary>
         /// out is null so its success, empty is fail, have char mean error
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public async Task<string?> EmailConfirmAsync(EmailTokenViewModel model)
+        /*
+        public async Task<ComfirmationResult> EmailConfirmAsync(ComfirmTokenDto model)
         {
             string output = string.Empty;
             var user = await _userManager.FindByEmailAsync(model.Identifier);
@@ -363,8 +347,30 @@ namespace ServicesLeit.Services
                 return output;
             }
             return null;
+        }*/
+        public async Task<UserComfirmResultDto> ConfirmationAsync(string input)
+        {
+            var model = await TokenReaderAsync(input);
+
+            var user = await _userManager.FindByEmailAsync(model.identifier);
+            if (user is null)
+            {
+                return new()
+                {
+                    Errors = new() { "User not found!" },
+                    Status = ComfirmationStatus.Fail,
+                };
+            }
+
+            if (!model.isPassResetRequest)
+            {
+                return await ConfirmEmailAsync(user, model.token);
+            }
+
+            return await ConfirmResetPasswordAsync(user, model.identifier, model.token);
         }
-        public async Task<bool> PhoneConfirmAsync(EmailTokenViewModel model)
+
+        public async Task<bool> PhoneConfirmAsync(UserComfirmTokenDto model)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == model.Identifier);
             if (user is null)
@@ -378,16 +384,30 @@ namespace ServicesLeit.Services
             }
             return true;
         }
-        public async Task<string?> ResetPasswordTokenGeneratorAsync(ResetPasswordRequestViewModel model)
+        public async Task SendPasswordResetTokenAsync(ResetPasswordRequestViewModel model)
         {
             string? modelView = null;
             var user = await UserGetAsync(model.Identifier, model.Mode);
             if (user is null)
             {
-                return modelView;
+                throw new Exception("Token generation failed.");
             }
+#warning REMOVE
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            return await _userManager.GeneratePasswordResetTokenAsync(user);
+            var linkToken = TokenCreator(user.Email, token);
+
+            string title = "Password Reset Confirmation for Your Leitner Account";
+            string link = $"{model.Domain}/Confirm/i{linkToken}";
+            string body =
+                $"<p>Hi Dear {user.Name},<br>" +
+                " it looks like you’ve requested a password reset. Please verify your request by clicking the link below:<br>" +
+                $"<center><a href=\"{link}\">{link}</a></center><br><br>" +
+                "<small>If the link isn’t clickable, try copying and pasting it into your browser's address bar.</small><br>" +
+                "If you didn't request a password reset, please ignore this email." +
+                "<br>Best regards,<br>Leitner Team</p>";
+
+            await _notificationService.SendEmailAsync(user.Email, title, body);
         }
         public async Task<bool> ResetPasswordConfirmAsync(UserResetPasswordViewModel model)
         {
@@ -413,24 +433,6 @@ namespace ServicesLeit.Services
             }
 
             return true;
-        }
-        public async Task<bool> ResetPasswordCheckTokenAsync(UserResetPasswordViewModel model)
-        {
-            bool output = false;
-            if (model.Mode is null)
-            {
-                return output;
-            }
-
-            var user = await UserGetAsync(model.Identifier, (UserCheckMode)model.Mode);
-            if (user is null)
-            {
-                return output;
-            }
-
-            output = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultProvider, "ResetPassword", model.Token);
-            return output;
-
         }
         public async Task LogoutAsync()
         {
@@ -486,17 +488,17 @@ namespace ServicesLeit.Services
 
             return user;
         }
-        public async Task<LoginCheckDto> PreLoginAsync(PreLoginViewModel model)
+        public async Task<UserLoginCheckDto> PreLoginAsync(PreLoginViewModel model)
         {
             var user = await UserGetAsync(model.Identifier, model.Mode);
 
-            return new LoginCheckDto
+            return new UserLoginCheckDto
             {
                 User = user,
                 Password = model.Password,
             };
         }
-        public async Task<LoginResult> LoginAsync(LoginCheckDto model)
+        public async Task<LoginResult> LoginAsync(UserLoginCheckDto model)
         {
             if (model.User is null)
             {
@@ -540,9 +542,9 @@ namespace ServicesLeit.Services
         /// </summary>
         /// <param name="principal">It's "User" that come from ControllerBase! [HttpContext?.User!]</param>
         /// <returns></returns>
-        public async Task<ActiveTFADto?> TwoFactorActivatorAsync(ClaimsPrincipal principal)
+        public async Task<UserActiveTFADto?> TwoFactorActivatorAsync(ClaimsPrincipal principal)
         {
-            ActiveTFADto? model = null;
+            UserActiveTFADto? model = null;
             var user = await _userManager.GetUserAsync(principal);
             if (user is null)
             {
@@ -688,8 +690,27 @@ namespace ServicesLeit.Services
 
             return LoginResult.TwoFactorInvalid;
         }
-
         ///////////////////////////////////
+        
+        private string TokenCreator(string email, string token) =>
+            EncodeToBase64(email + "|" + token)
+                .Replace("/", "_")
+                .Replace("+", "-")
+                .Replace("=", "!");
+        private async Task<(string identifier, string token, bool isPassResetRequest)> TokenReaderAsync(string input)
+        {
+            bool passReset = char.ToLower(input[0]) is 'i';
+            var tempA = DecodeBase64(input.
+                Substring(1)
+                .Replace("_", "/")
+                .Replace("-", "+")
+                .Replace("!", "="));
+            var tempB = tempA.Split('|');
+            string identifier = tempB[0];
+            string token = tempB[1];
+            return (identifier, token, passReset);
+        }
+
         private async Task<ApplicationUser?> UserGetAsync(string identifier, UserCheckMode mode)
         {
             var t = (int)mode;
@@ -722,6 +743,129 @@ namespace ServicesLeit.Services
             var error = errors.ToString();
             return error.Substring(0, error.Length - 2);
 
+        }
+
+        private async Task SendPhoneConfirmTokenAsync(ApplicationUser user)
+        {/*
+            EmailTokenViewModel? model = null;
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == phone);
+            if (user is null)
+            {
+                return model;
+            }*/
+
+            if (user is null || user.PhoneNumber is null)
+            {
+                throw new Exception("The phone number is not valid.");
+            }
+
+            var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
+
+            if (token is null)
+            {
+                throw new Exception("Token generation failed.");
+            }
+
+            string sms = $"Hi {user.Name}, your registration code is:\r\n{token}." +
+                "\r\n Please enter this code to complete your registration." +
+                "\r\n If you did not request this, please ignore this message.";
+
+            //await _notificationService.SendEmailAsync(user.Email, body);
+        }
+        private async Task SendEmailConfirmTokenAsync(ApplicationUser user, string domain)
+        {
+            if (user is null || user.Email is null)
+            {
+                throw new Exception("The email is not valid.");
+            }
+
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            if (token is null)
+            {
+                throw new Exception("Token generation failed.");
+            }
+            string linkToken = TokenCreator(user.Email, token);
+            string title = "Welcome to Leitner! Please Verify Your Email Address";
+            string link = $"{domain}/Confirm/t{linkToken}";
+            string body = $"<p>Hi Dear {user.Name},<br>" +
+                " welcome to Leitner! Please verify your email by clicking the link below to complete your registration:<br>" +
+                $"<center><a href=\"{link}\">{link}</a></center><br><br>" +
+                "<small>If the above link is not clickable, try copying and pasting it into the address bar of your web browser.</small><br>" +
+                "This will ensure you receive important updates and notifications.<br>If you didn't sign up, please ignore this email.<br><br>" +
+                "Thank you for joining us!<br>Best regards,<br>Leitner Team</p>";
+
+            await _notificationService.SendEmailAsync(user.Email, title, body);
+        }
+
+
+        private string DecodeBase64(string base64EncodedData)
+        {
+            byte[] base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
+            string decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+            return decodedString;
+        }
+        private string EncodeToBase64(string plainText)
+        {
+            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            string base64EncodedData = Convert.ToBase64String(plainTextBytes);
+            return base64EncodedData;
+        }
+
+        private async Task<UserComfirmResultDto> ConfirmResetPasswordAsync(ApplicationUser user, string identifier, string token)
+        {
+            UserComfirmResultDto output = new()
+            {
+                Status = ComfirmationStatus.SuccessEmail
+            };
+
+            UserResetPasswordViewModel checkData = new()
+            {
+                Identifier = identifier,
+                Token = token,
+            };
+
+            //check token for password reset, if true in controller get new password and send UserResetPasswordViewModel to ResetPasswordConfirmAsync
+            bool reset = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultProvider, "ResetPassword", token);
+
+            if (reset)
+            {
+                output.ResetPassword = new()
+                {
+                    Identifier = identifier,
+                    Token = token,
+                };
+                output.Status = ComfirmationStatus.PasswordReset;
+                return output;
+            }
+
+            output.Status = ComfirmationStatus.Fail;
+            return output;
+        }
+
+        private async Task<UserComfirmResultDto> ConfirmEmailAsync(ApplicationUser user, string token)
+        {
+            UserComfirmResultDto output = new()
+            {
+                Status = ComfirmationStatus.SuccessEmail
+            };
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+
+            if (result.Errors.Any())
+            {
+                output.Errors = result.Errors.Select(x => x.Description).ToList<string>();
+                output.Status = ComfirmationStatus.Fail;
+                return output;
+            }
+
+            if (!result.Succeeded)
+            {
+                output.Status = ComfirmationStatus.Fail;
+                return output;
+            }
+
+            return output;
         }
     }
 }
