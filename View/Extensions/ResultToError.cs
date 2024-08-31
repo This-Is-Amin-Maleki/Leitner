@@ -37,7 +37,7 @@ namespace ViewLeit.Extensions
 
             return result switch
             {
-                LoginResult.Deactive => ("Disabled", "User account is not activated by admin."),
+                LoginResult.Deactive => ("Disabled", "Your account is blocked."),// not activated by admin."),
                 LoginResult.EmailNotConfirmed => ("NotConfirmed", "Your email not confirmed!"),
                 LoginResult.LockedOut => ("LockOut", $"User account is locked out{lockoutTimeString}."),
                 LoginResult.NotFound => ("Invalid", "Invalid login attempt!"),
