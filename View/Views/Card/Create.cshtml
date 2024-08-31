@@ -8,7 +8,9 @@
 <h2>@ViewData["Title"]</h2>
 <a asp-action="Index" asp-route-id="@ViewData["CollectionId"]" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
 <br />
+<br />
 <form asp-action="Create" method="post">
+    <div asp-validation-summary="All" class="float-end"></div>
     <div class="form-group">
         <label asp-for="Ask"></label>
         <input asp-for="Ask" class="form-control" />
