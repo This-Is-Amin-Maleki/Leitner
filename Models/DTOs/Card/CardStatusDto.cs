@@ -6,5 +6,7 @@ namespace ModelsLeit.DTOs.Card
     {
         public long Id { get; set; }
         public CardStatus Status { get; set; }
+        public long CollectionId { get; set; }
+
     }
 }
