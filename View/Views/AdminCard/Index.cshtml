@@ -32,9 +32,13 @@
 
 <h2>@ViewData["CollectionName"] Cards</h2>
 
-<a class="float-start btn btn-dark me-5" asp-action="Check" asp-route-id="@ViewData["CollectionId"]">
+<a class="float-start btn btn-dark me-3" asp-action="Check" asp-route-id="@ViewData["CollectionId"]">
     <i class="bi bi-ui-checks-grid"></i>
     Check Cards
+</a>
+<a class="float-start btn btn-dark me-5" asp-action="TickAll" asp-route-id="@ViewData["CollectionId"]">
+    <i class="bi bi-ui-checks"></i>
+    Tick All
 </a>
 
 @foreach (var item in Enum.GetValues(typeof(CardStatus)).Cast<CardStatus>())
