@@ -189,7 +189,7 @@ namespace ServicesLeit.Services
                 throw new Exception("No more cards available");
             }
 
-            return ToCardCheckDto( card );
+            return ToCardCheckDto(card);
         }
 
         public async Task<CardCheckDto> UpdateStatusAndReadNextCardCheck(CardStatusDto model)
@@ -231,7 +231,7 @@ namespace ServicesLeit.Services
                 .AsNoTracking()
                 .Where(x => x.CollectionId == collectionId)
                 .ToListAsync();
-            if(cards is null)
+            if (cards is null)
             {
                 throw new Exception("No cards were found.");
             }
