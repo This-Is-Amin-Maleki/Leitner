@@ -7,7 +7,7 @@ using SharedLeit;
 using ViewLeit.Extensions;
 using ServicesLeit.Services;
 using ModelsLeit.ViewModels.User;
-using Microsoft.IdentityModel.Tokens;
+using System.Text.Json;
 
 namespace View.Controllers
 {
@@ -17,7 +17,7 @@ namespace View.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
-        private readonly IEmailSender<ApplicationUser> _emailSender;
+        private readonly NotificationService _notificationService;
         private readonly IHttpContextAccessor _httpContext;
         private readonly RoleManager<IdentityRole<long>> _roleManager;
         private readonly UserService _userService;
@@ -37,13 +37,14 @@ namespace View.Controllers
             IConfiguration configuration,
             IHttpContextAccessor httpContext,
             RoleManager<IdentityRole<long>> roleManager,
-            UserService userService)
+            UserService userService,
+            NotificationService notificationService)
         {
+            _notificationService = notificationService;
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _httpContext = httpContext;
-            _emailSender = new EmailSender();
             _roleManager = roleManager;
             _userService = userService;
         }
