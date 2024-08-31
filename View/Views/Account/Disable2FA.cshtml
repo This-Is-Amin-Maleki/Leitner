@@ -1,13 +1,12 @@
 ﻿@using ModelsLeit.DTOs.User
 
-@model ActiveTFADto
+@model UserActiveTFADto
 
 @{
     ViewData["Title"] = "2FA Deactivation";
 }
 
 <h2>@ViewData["Title"]</h2>
-<a asp-controller="Page" asp-action="Index" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
 @if (TempData.Any(x => x.Key is "Twofactor"))
 {
     <p class="text-warning">@TempData["Twofactor"]</p>
