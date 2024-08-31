@@ -216,6 +216,7 @@ namespace ServicesLeit.Services
         public async Task TickAllCardsAsync(long collectionId)
         {
             var cards = await _dbContext.Cards
+                .AsNoTracking()
                 .Where(x => x.CollectionId == collectionId)
                 .ToListAsync();
             if(cards is null)
