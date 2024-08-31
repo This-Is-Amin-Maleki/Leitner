@@ -475,6 +475,7 @@ namespace ServicesLeit.Services
                 Description = card.Description,
                 HasMp3 = card.HasMp3,
                 Status = card.Status,
+                CollectionId = card.Collection.Id,
             };
     }
 }
