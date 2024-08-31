@@ -6,6 +6,7 @@ using SharedLeit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using ServicesLeit.Interfaces;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ViewLeit.Controllers
 {
@@ -112,7 +113,7 @@ namespace ViewLeit.Controllers
                 ViewData["Error"] = "No file uploaded!";
                 return View(id);
             }
-
+            bool error = false;
             int processed = 0;
             var extension = Path.GetExtension(sheet.FileName).ToLower();
             var tempFilePath = Path.GetTempFileName() + extension;
@@ -136,6 +137,7 @@ namespace ViewLeit.Controllers
             }
             catch (Exception ex)
             {
+                error = true;
                 ViewData["Error"] = ex.Message;
             }
             finally
@@ -144,6 +146,10 @@ namespace ViewLeit.Controllers
                 {
                     System.IO.File.Delete(tempFilePath);
                 }
+            }
+            if (error)
+            {
+                return View();
             }
             return RedirectToAction(nameof(Index), new { id });
         }
