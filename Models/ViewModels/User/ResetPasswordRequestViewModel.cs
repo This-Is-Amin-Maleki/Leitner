@@ -9,5 +9,7 @@ namespace ModelsLeit.ViewModels.User
         [Required]
         [EmailAddress]
         public string Identifier { get; set; }
+        [Required]
+        public string Domain { get; set; }
     }
 }
