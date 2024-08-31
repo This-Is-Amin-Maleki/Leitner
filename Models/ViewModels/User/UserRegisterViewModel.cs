@@ -22,5 +22,6 @@ namespace ModelsLeit.ViewModels.User
         public bool Active { get; set; }
         [Required]
         public UserType Type { get; set; }
+        public string? Domain { get; set; }
     }
 }
