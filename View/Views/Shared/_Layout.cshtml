@@ -2,6 +2,7 @@
 @{
     bool isUserLoggedIn = User.Identity.IsAuthenticated;
     bool isAdmin = User.IsInRole(UserType.Admin.ToString());
+    //bool isTwoFactorEnabled = User.HasClaim("amr", "mfa");
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -23,67 +24,120 @@
         <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark" data-bs-theme="dark">
             <div class="container-fluid">
                 <div id="brandL" class="w-100! mx-5 text-md-start text-center">
-                    <a href="/">
+                    <a href="/" class="ms-4">
                         <img src="/logo.png" />
                     </a>
                 </div>
-                <button id="my-menu" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                @if (isUserLoggedIn)
+                {
+                    <button id="my-menu" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                }
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav ms-xxl-auto ms-xl-auto ms-lg-auto ms-md-auto mb-2 mb-lg-0">
                         <li class="nav-item"> </li>
                         @if (isAdmin)
                         {
-                            <a class="navbar-brand p-1" asp-action="Index" asp-controller="AdminAccount">
-                        <li class="nav-item">
-                            
-                                <i class="bi bi-people"></i>
-                                Users
-                            </li> </a>
-                            <li class="nav-item"> </li>
-                            <a class="navbar-brand p-1" asp-action="Index" asp-controller="AdminCollection">
-                        <li class="nav-item">
-                           
-                                <i class="bi bi-folder"></i>
-                                Collections
-                            </li> </a>
-                            <li class="nav-item"> </li>
+                            <li class="nav-item d-sm-grid d-xs-grid">
+                                <a class="navbar-brand pb-1 px-2" asp-action="Index" asp-controller="AdminAccount">
+                                    <i class="bi bi-people"></i>
+                                    Users
+                                </a>
+                            </li>
+
+                            <li class="nav-item d-sm-grid d-xs-grid">
+                                <a class="navbar-brand pb-1 px-2" asp-action="Index" asp-controller="AdminCollection">
+                                    <i class="bi bi-folder"></i>
+                                    Collections
+                                </a>
+                            </li>
                         }
                         @if (isUserLoggedIn)
                         {
-                            <a class="navbar-brand p-1" asp-action="Index" asp-controller="Box">
-                        <li class="nav-item">
-                            
-                                <i class="bi bi-inboxes"></i>
-                                My Boxes
-                            </li> </a>
-                            <li class="nav-item"> </li>
-                            <a class="navbar-brand p-1" asp-action="Index" asp-controller="Collection">
-                        <li class="nav-item">
-                            
-                                <i class="bi bi-folder"></i>
-                                My Collections
-                            </li> </a>
-                            <li class="nav-item"> </li>
-                            <a class="navbar-brand p-1" asp-action="Profile" asp-controller="Account">
-                        <li class="nav-item">
-                            
-                                <i class="bi bi-person-gear"></i>
-                                Profile
-                            </li> </a>
-                            <li class="nav-item"> </li>
-                            <a class="navbar-brand p-1" asp-action="Logout" asp-controller="Account">
-                        <li class="nav-item">
-                           
-                                <i class="bi bi-box-arrow-right"></i>
-                                Sign out
+                            <li class="nav-item d-sm-grid d-xs-grid">
+                                <a class="navbar-brand pb-1 px-2" asp-action="Index" asp-controller="Box">
+                                    <i class="bi bi-inboxes"></i>
+                                    My Boxes
+                                </a>
+                            </li>
 
-                            </li> </a>
-                            <li class="nav-item"> </li>
+                            <li class="nav-item d-sm-grid d-xs-grid">
+                                <a class="navbar-brand pb-1 px-2" asp-action="Index" asp-controller="Collection">
+
+                                    <i class="bi bi-folder"></i>
+                                    My Collections
+                                </a>
+                            </li>
+
+                            <li class="nav-item dropdown d-sm-grid d-xs-grid">
+                                <a class="dropdown-toggle navbar-brand pb-1 px-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="true">
+                                    <i class="bi bi-person"></i>
+                                    User
+                                </a>
+
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a asp-action="Profile" asp-controller="Account" class="dropdown-item navbar-brand p-1 px-3 mb-3">
+                                            <i class="bi bi-person-lines-fill"></i>
+                                            Modify Profile
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a asp-action="ChangePassword" asp-controller="Account" class="dropdown-item navbar-brand p-1 px-3 mb-3">
+                                            <i class="bi bi-person-fill-lock"></i>
+                                            Change Password
+                                        </a>
+                                    </li>
+                                @*
+                                    @if (isTwoFactorEnabled)
+                                    {
+                                        <li>
+                                            <a asp-action="Enable2FA" asp-controller="Account" class="dropdown-item navbar-brand p-1 px-3 mb-3">
+                                                <i class="bi bi-lock-fill"></i>
+                                                Enable 2FA
+                                            </a>
+                                        </li>
+                                    }
+
+                                    @if (!isTwoFactorEnabled)
+                                    {
+                                        <li>
+                                            <a asp-action="Disable2FA" asp-controller="Account" class="dropdown-item navbar-brand p-1 px-3 mb-3">
+                                                <i class="bi bi-unlock-fill"></i>
+                                                Disable 2FA
+                                            </a>
+                                        </li>
+                                    }
+                                *@
+                                    <li>
+                                        <a asp-action="Logout" asp-controller="Account" class="dropdown-item navbar-brand p-1 px-3">
+                                            <i class="bi bi-box-arrow-right"></i>
+                                            Sign out
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                         }
                     </ul>
                 </div>
+
+                <label id="modeArea">
+                        <input id="modeChanger" class='toggle-checkbox' type='checkbox'></input>
+                        <div class='toggle-slot'>
+                            <div class='sun-icon-wrapper'>
+                                <div class="iconify sun-icon" data-icon="feather-sun" data-inline="false"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" class="iconify sun-icon" data-icon="feather-sun" data-inline="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></g></svg></div>
+                            </div>
+                            <div class='toggle-button'></div>
+                            <div class='moon-icon-wrapper'>
+                                <div class="iconify moon-icon" data-icon="feather-moon" data-inline="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" class="iconify moon-icon" data-icon="feather-moon" data-inline="false"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+
             </div>
         </nav>
 
@@ -99,7 +153,7 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="navbar-collapse collapse d-sm-inline-grid justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -158,6 +212,7 @@
         </div>
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" onerror="this.onerror=null;this.src='/js/jquery/3.7.1/jquery.min.js';"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js" onerror="this.onerror=null;this.src='/js/bootstrap/5.3.3/js/bootstrap.min.js';"></script>
     @await RenderSectionAsync("Scripts", required: false)
     <script src="~/js/site.js"></script>
