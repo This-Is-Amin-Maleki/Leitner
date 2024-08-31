@@ -2,7 +2,9 @@ using DataAccessLeit.Context;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using ModelsLeit.DTOs.Notification;
 using ModelsLeit.Entities;
 using ServicesLeit.Interfaces;
 using ServicesLeit.Services;
@@ -36,13 +38,20 @@ namespace ViewLeit
                 .AddIdentity<ApplicationUser, IdentityRole<long>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-            
+
             builder.Services.AddScoped<CollectionService>();
             builder.Services.AddScoped<CardService>();
             builder.Services.AddScoped<BoxService>();
             builder.Services.AddScoped<UserService>();
             builder.Services.AddTransient<FileService>();//stateless Service
-            
+            // using Notification Service 
+            builder.Services.Configure<SmtpServiceDto>(builder.Configuration.GetSection("Smtp"));
+            builder.Services.AddTransient<NotificationService>(serviceProvider =>
+            {
+                var smtpServiceDto = serviceProvider.GetRequiredService<IOptions<SmtpServiceDto>>().Value;
+                return new NotificationService(smtpServiceDto);
+            });
+
             // using Microsoft.AspNetCore.Identity;
 
             builder.Services.Configure<PasswordHasherOptions>(option =>
