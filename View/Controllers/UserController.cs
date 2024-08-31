@@ -244,40 +244,34 @@ namespace View.Controllers
             return Redirect("/");
         }
 
-        [HttpGet] //index
-        public async Task<IActionResult> ResetPassword(UserConfirmViewModel model)
+        [HttpPost]// p
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Forgot(string identifier)
         {
-            model.Mode = UserCheckMode.EmailOnly;
-            TryValidateModel(model);
-
-            if (ModelState.IsValid)
+            LoginResultViewModel output = new()
             {
-                TempData["Message"] = "Invalid token. Please try again or request a new one.";
-                return View("Index");
-            }
-            UserResetPasswordViewModel checkData = new()
-            {
-                Identifier = model.Identifier,
-                Token = model.Token,
+                Id = "ForgotSent",
+                Title = "Failed to send the password reset email.",
+                Message = "An error has occurred while processing your request! Please try again later.",
             };
 
-            var check = await _userService.ResetPasswordCheckTokenAsync(checkData);
-            if (!check)
-            {
-                TempData["Message"] = "Invalid token. Please try again or request a new one!";
-                return View("Index");
-            }
-
-            HomePageViewModel outModel = new()
-            {
-                PasswordReset = new UserResetPasswordViewModel()
+            try{
+                var model = new ResetPasswordRequestViewModel
                 {
-                    Identifier = model.Identifier,
-                    Token = model.Token,
-                },
-                Type = UserFormType.PasswordReset,
-            };
-            return View("Index", outModel);
+                    Mode = UserCheckMode.EmailOnly,
+                    Identifier = identifier,
+                    Domain = $"{_httpContext.HttpContext.Request.Scheme}://{_httpContext.HttpContext.Request.Host.Value}",
+                };
+                await _userService.SendPasswordResetTokenAsync(model);
+            }
+            catch
+            {
+                return PartialView("Partial/User/_PartialResultDialog", output);
+            }
+
+            output.Title = "Password Reset Email Sent";
+            output.Message = "Password reset instructions have been sent to your email. Please check your inbox to proceed with resetting your password.";
+            return PartialView("Partial/User/_PartialResultDialog", output);
         }
 
         [HttpPost]// p
