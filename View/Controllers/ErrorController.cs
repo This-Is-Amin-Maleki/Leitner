@@ -38,7 +38,7 @@ namespace ViewLeit.Controllers
                 return View("Index", error);
             }
             */
-            return RedirectToAction("Index", "Page");
+            return Redirect("/");
         }
 
     }
