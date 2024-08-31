@@ -10,6 +10,7 @@ namespace ServicesLeit.Services
     {
         private readonly SmtpClient _smtpClient;
         private readonly string? _emailAddress;
+        private readonly string _smsClient;
 
         public NotificationService(SmtpServiceDto smtpService)
         {
@@ -21,6 +22,7 @@ namespace ServicesLeit.Services
                 EnableSsl = smtpService.EnableSsl,
             };
             _emailAddress = smtpService.Address ?? smtpService.Username;
+            _smsClient = "any";
         }
 
         public async Task SendEmailAsync(string recipients, string subject, string body, [Optional] string from)
@@ -47,6 +49,15 @@ namespace ServicesLeit.Services
             await _smtpClient.SendMailAsync(message);
         }
 
+        public async Task SendSMSAsync(string recipients, string? from, string? subject, string? body)
+        {
+            throw new Exception("SMS SERVICE NOT IMPLIMENT");
+        }
+
+        public async Task SendSMSAsync()
+        {
+            throw new Exception("SMS SERVICE NOT IMPLIMENT");
+        }
     }
 
 }

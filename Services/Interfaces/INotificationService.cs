@@ -9,5 +9,7 @@ namespace ServicesLeit.Interfaces
     {
         Task SendEmailAsync(MailMessage message);
         Task SendEmailAsync(string recipients, string subject, string body, string from);
+        Task SendSMSAsync();
+        Task SendSMSAsync(string recipients, string? subject, string? body, string? from);
     }
 }
