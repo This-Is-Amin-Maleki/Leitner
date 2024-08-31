@@ -123,6 +123,18 @@ namespace ViewLeit.Controllers
                 return RedirectToAction(nameof(Index), new { id });
             }
         }
+        public async Task<ActionResult> TickAll(long id)
+        {
+            try
+            {
+                await _cardService.TickAllCardsAsync(id);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return RedirectToAction(nameof(Index), new { id });
+        }
 
         public async Task<ActionResult> Check(long id)
         {
