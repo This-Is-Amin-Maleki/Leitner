@@ -192,6 +192,27 @@ namespace ServicesLeit.Services
             return ToCardCheckDto( card );
         }
 
+        public async Task UpdateStatus(CardStatusDto model)
+        {
+            Card card = new()
+            {
+                Id = model.Id,
+                Status = model.Status,
+            };
+
+#warning catch!!
+            try
+            {
+                _dbContext.Cards.Attach(card);
+                _dbContext.Entry(card).Property(c => c.Status).IsModified = true;
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
         public async Task TickAllCardsAsync(long collectionId)
         {
             var cards = await _dbContext.Cards
