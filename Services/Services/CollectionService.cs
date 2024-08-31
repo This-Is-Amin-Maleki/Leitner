@@ -462,5 +462,9 @@ namespace ServicesLeit.Services
             await _dbContext.Cards
                 .Where(x => x.CollectionId == id)
                 .AnyAsync(x => x.Status != CardStatus.Approved);
+        private async Task<bool> IsAnyCardsAsync(long id) =>
+            await _dbContext.Cards
+                .AsNoTracking()
+                .AnyAsync(x => x.CollectionId == id);
     }
 }
