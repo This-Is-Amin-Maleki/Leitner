@@ -204,24 +204,6 @@ namespace View.Controllers
             return PartialView("Partial/User/_PartialResultDialog", outModel);
         }
 
-        [HttpGet] //index
-        public async Task<IActionResult> ConfirmEmail(EmailTokenViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                TempData["Message"] = "An error has occurred!";
-                return View("Index");
-            }
-
-            var result = await _userService.EmailConfirmAsync(model);
-
-            TempData["Message"] = result.IsNullOrEmpty() ?
-                "Invalid token. Please try again or request a new one." :
-                result ?? "Email confirmed successfully. Now you can log in to your account.";
-
-            return View("Index");
-        }
-        
             //email or phone in use
             if ((int)result.Result is 7)
             {
@@ -232,44 +214,34 @@ namespace View.Controllers
             return PartialView("Partial/User/_PartialResultDialog", outModel);
         }
 
-
-        [HttpPost]// p
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Forgot(ResetPasswordRequestViewModel model)
+        [HttpGet] //index
+        [Route("Confirm/{input}")]
+        public async Task<IActionResult> Confirmation(string input)
         {
-            LoginResultViewModel outModel = new()
+            var result = await _userService.ConfirmationAsync(input);
+
+            //error
+            if (result.Status is ComfirmationStatus.Fail)
             {
-                Id = "ForgotSent",
-                Title = "Password Reset Email Sending Failed",
-                Message = "An error has occurred while processing your request. Please try again later.",
-            };
-            if (!ModelState.IsValid)
-            {
-                return PartialView("Partial/User/_PartialResultDialog", outModel);
-            }
-            model.Mode = UserCheckMode.EmailOnly;
-            var token = await _userService.ResetPasswordTokenGeneratorAsync(model);
-            if (token is null)
-            {
-                outModel.Message = "An error has occurred while processing your request! Please try again later.";
-                return PartialView("Partial/User/_PartialResultDialog", outModel);
+                TempData["Error"] = "Invalid token. Please try again or request a new one!";
+                return Redirect("/");
             }
 
-            EmailTokenViewModel confirmModel = new()
+            //email confirmed
+            if (result.Status is ComfirmationStatus.SuccessEmail) //just email confirm
             {
-                Identifier = model.Identifier,
-                Token = token,
-            };
-            var confirmLink = Url.Action("ConfirmEmail", "UserName", confirmModel, HttpContext.Request.Scheme);
-            var siteDomain = _httpContext.HttpContext!.Request.Host.ToString();
-            var sitenNme = _configuration.GetValue("SiteName", siteDomain);
-            var confirmText = _configuration.GetValue("ConfirmRegisterEmail", "Hi Dear User<br> Please confirm your model by clicking on below link:<br><center><a href=\"{0}\">{0}</a></center>");
-#warning x_Need Email Sender
-            // var emailContent = await _emailSender.SendEmailAsync(model.Email, $"Confirm Password Reset - {sitenNme}", string.Format(confirmText, confirmLink));
+                TempData["Message"] = "Email confirmed successfully. Now you can log in to your account.";
+                return Redirect("/");
+            }
 
-            outModel.Title = "Password Reset Email Sent";
-            outModel.Message = "Password reset instructions have been sent to your email. Please check your inbox to proceed with resetting your password.";
-            return PartialView("Partial/User/_PartialResultDialog", outModel);
+            //reset password
+            HomePageViewModel output = new()
+            {
+                PasswordReset = result.ResetPassword,
+                Type = UserFormType.PasswordReset,
+            };
+            TempData["Model"] = JsonSerializer.Serialize(output);
+            return Redirect("/");
         }
 
         [HttpGet] //index
