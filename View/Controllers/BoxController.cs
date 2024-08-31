@@ -60,11 +60,12 @@ namespace ViewLeit.Controllers
         // GET: BoxController/Add
         public async Task<ActionResult> Add(long id)
         {
-            var model = await _collectionService.CheckExistCollectionAsync(id);
+            long userId = long.Parse(_userManager.GetUserId(User)!);
+            var model = await _collectionService.CheckExistCollectionAsync(id, userId);
             if(model is null)
             {
                 ModelState.AddModelError("XX", "Not Allow!");
-                return RedirectToAction("Index", "Page");
+                return Redirect("/");
             }
             return View(model);
         }
@@ -80,14 +81,16 @@ namespace ViewLeit.Controllers
                 return View(model);
             }
 
-            var collection = await _collectionService.CheckExistCollectionAsync(model.CollectionId);
+            long userId = long.Parse(_userManager.GetUserId(User)!);
+            var collection = await _collectionService
+                .CheckExistCollectionAsync(model.CollectionId, userId);
             if(collection is null)
             {
                 ModelState.AddModelError("XX", "Not Allow!");
-                return RedirectToAction("Index", "Page");
+                return Redirect("/");
             }
             collection.CardPerDay= model.CardPerDay;
-            collection.UserId = long.Parse(_userManager.GetUserId(User)!);
+            collection.UserId = userId;
 #warning catch!!
             try
             { 
