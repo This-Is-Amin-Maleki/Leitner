@@ -3,8 +3,9 @@
 @using SharedLeit
 @using Newtonsoft.Json
 @model HomePageViewModel
-
+ 
 @{
+    var message = ViewData["Message"] is not null && !string.IsNullOrEmpty(ViewData["Message"].ToString());
     var error = ViewData["Error"] is not null && !string.IsNullOrEmpty(ViewData["Error"].ToString());
     ViewData["Title"] = "Leitner";
     var userSigned = User.Identity.IsAuthenticated;
@@ -18,14 +19,14 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body">
-                     <h1 class="modal-title fs-5 mb-3" id="errorDialogLabel" style="line-height:1.5em;font-size:1.5em !important">
+                     <h1 class="modal-title fs-5 mb-3 ps-2 pt-2" id="errorDialogLabel" style="line-height:1.5em;font-size:1.5em !important">
                        <i style="font-size:1.2em" class="bi bi-exclamation-diamond text-danger pe-3 float-start"></i>
                        @ViewData["ErrorTitle"]
                     </h1>
                     <h5 class="p-3 mb-5">
                        @ViewData["Error"]
                     </h5>
-                    <button type="button" class="btn btn-warning float-end m-2" data-bs-dismiss="modal" style="font-size:1.2em !important">
+                    <button type="button" class="btn btn-outline-danger float-end m-2" data-bs-dismiss="modal" style="font-size:1.2em !important">
                        <b>OK</b>
                     </button>
                 </div>
@@ -33,6 +34,23 @@
         </div>
     </div>
 
+}
+@if(message)
+{
+    <div class="modal fade show" id="messageDialog" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body">
+            <h5 class="p-3 mt-3 mb-4">
+              <center>@ViewData["Message"]</center>
+            </h5>
+            <button type="button" class="btn btn-outline-success float-end m-2" data-bs-dismiss="modal" style="font-size:1.2em !important">
+              <b>OK</b>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 }
 <div class="container-fluid">
     <div class="row fixedPage">
@@ -203,11 +221,17 @@
                     });
                 }
             });
-            @if (TempData["Message"] is not null or "")
+            @if (error)
             {
-                <text>
-                    alert(@TempData["Message"]);
-                </text>
+                    <text>
+                $('#errorDialog').modal('show');
+                    </text>
+            }
+            @if (message)
+            {
+                    <text>
+                $('#messageDialog').modal('show');
+                    </text>
             }
             @if (Model is not null && (int)Model.Type > 0 )
             {
@@ -217,11 +241,5 @@
             }
         });
     </script>
-    }
-    @if (error)
-    {
-        <script>
-        $(document).ready(function() {$('#errorDialog').modal('show');});
-        </script>
     }
 }
