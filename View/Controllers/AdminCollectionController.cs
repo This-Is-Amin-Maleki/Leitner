@@ -50,7 +50,7 @@ namespace ViewLeit.Controllers
         // POST: CollectionController/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(CollectionDto model)
+        public async Task<ActionResult> Edit(CollectionModifyDto model)
         {
             if (!ModelState.IsValid)
             {

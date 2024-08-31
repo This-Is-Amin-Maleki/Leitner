@@ -248,16 +248,22 @@ namespace ServicesLeit.Services
 
             }
         }
-        public async Task EditCollectionAsync(CollectionDto model)
+        public async Task EditCollectionAsync(CollectionModifyDto model)
         {
             bool allCardsApproved = true;
+            bool anyCardsIn = true;
             if (model.Status == CollectionStatus.Published)
             {
+                anyCardsIn = await IsAnyCardsAsync(model.Id);
                 allCardsApproved = await IsAllCardsApprovedAsync(model.Id);
             }
-            if (allCardsApproved is false)
+            if (anyCardsIn is false)
             {
-                throw new Exception("Not all cards have been checked");
+                throw new Exception("No cards available for publication");
+            }
+            if (allCardsApproved is true)
+            {
+                throw new Exception("All cards must be approved before publication");
             }
             var oldCollection = await _dbContext.Collections
                 .AsNoTracking()
@@ -265,7 +271,7 @@ namespace ServicesLeit.Services
 
             if (oldCollection is null)
             {
-                throw new Exception("Not Found");
+                throw new Exception("Collection not found");
             }
             var collection = MapViewModelToCollection(model);
 
