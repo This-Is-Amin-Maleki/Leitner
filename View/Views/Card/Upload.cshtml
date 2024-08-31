@@ -13,6 +13,7 @@
         <input class="form-control" type="file" id="sheet" name="sheet">
         <span class="text-danger">@ViewData["Error"]</span>
     </div>
+    <div asp-validation-summary="All" class="float-end"></div>
     <input type="hidden" id="id" name="id" value="@ViewData["CollectionId"]" />
     <br />
     <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i> Save</button>
