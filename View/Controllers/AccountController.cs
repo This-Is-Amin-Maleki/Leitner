@@ -51,82 +51,116 @@ namespace View.Controllers
         public async Task<IActionResult> Logout()
         {
             await _userService.LogoutAsync();
-            return RedirectToAction("Index", "Page");
+            return Redirect("/");
         }
 
-        public async Task<IActionResult> Profile()
-        {            
+        /*
+        public async Task<IActionResult> Index()
+        {
             var user = await _userManager.GetUserAsync(User);
-            if(user is null)
-            {
-                return RedirectToAction("Index", "Page");
+            if (user is null)
+            {   
+                return Redirect("/");
             }
+
             UserModifyLimitedViewModel output = new()
             {
                 Bio = user.Bio,
                 Name = user.Name,
             };
+
             return View(output);
         }
+        */
 
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user is null)
+            {
+                return Redirect("/");
+            }
+
+            UserModifyProfileLimitedViewModel output = new()
+            {   
+                Id = user.Id,
+                Bio = user.Bio,
+                Name = user.Name,
+            };
+
+            return View(output);
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Profile(UserModifyLimitedViewModel model)
+        public async Task<IActionResult> Profile(UserModifyProfileLimitedViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var user = await _userManager.GetUserAsync(User);
-            model.Id = user.Id;
-            var result = await _userService.ModifyLimitedAsync(model);
+            model.Id = Convert.ToInt64(
+                _userManager.GetUserId(User));
+            
+            var result = await _userService.ModifyProfileLimitedAsync(model);
+
             if (result is null)
             {
+                return Redirect("/");
+            }
+
+            if(result is false) { 
                 ModelState.AddModelError("Fail", "Failed to update profile. Please try again later!");
                 return View(model);
             }
 
-            if (result.Email is not null)
-            {
-                EmailTokenViewModel confirmModel = new()
-                {
-                    Identifier = result.Email,
-                    Token = result.EmailToken,
-                };
-                var confirmLink = Url.Action("ConfirmEmail", "UserName", confirmModel, HttpContext.Request.Scheme);
-                var siteDomain = _httpContext.HttpContext!.Request.Host.ToString();
-                var sitenNme = _configuration.GetValue("SiteName", siteDomain);
-                var confirmText = _configuration.GetValue("ConfirmRegisterEmail", "Hi Dear User<br> Please confirm your model by clicking on below link:<br><center><a href=\"{0}\">{0}</a></center>");
-#warning x_Need Email Sender
-                // var emailContent = await _emailSender.SendEmailAsync(model.Email, $"Confirm Password Reset - {sitenNme}", string.Format(confirmText, confirmLink));
+            TempData["Message"] = "Profile updated successfully!";
+            return Redirect("/");
+        }
 
-
-                TempData["Email"] = "Please check your email and confirm your email address!";
-            }
-
-            if (result.PassChanged)
-            {
-                TempData["Password"] = "Password updated successfully!";
-            }
-
-            TempData["Result"] = "Profile updated successfully!";
+        public IActionResult ChangePassword()
+        {
+            ViewData["userId"] = _userManager.GetUserId(User);
             return View();
         }
-        /*
-        public IActionResult ConfirmAuthenticator() => View();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(UserChangePasswordLimitedViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            model.Id = Convert.ToInt64(
+                _userManager.GetUserId(User));
+            
+            var result = await _userService.ChangePasswordLimitedAsync(model);
+
+            if (result is null)
+            {
+                return Redirect("/");
+            }
+
+            if(result is false) { 
+                ModelState.AddModelError("Fail", "Failed to update password. Please try again later!");
+                return View(model);
+            }
+
+            ViewData["userId"] = "Password updated successfully!";
+            return Redirect("/");
+        }
 
         public async Task<IActionResult> Enable2FA()
         {
             var result = await _userService.TwoFactorActivatorAsync(User);
             if(result is null)
             {
-                ModelState.AddModelError("AnyUser", "User not found.");
-                return View();
+                return Redirect("/");
             }
+
             return View(result);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Enable2FA(string model)
@@ -149,9 +183,9 @@ namespace View.Controllers
 
             return View("Confirm2FA");
         }
+        public IActionResult ConfirmAuthenticator() => View();
 
-        public async Task<IActionResult> Disable2FA() => View();
-
+        public IActionResult Disable2FA() => View();
         public async Task<IActionResult> Deactivate2FA()
         {
             var result = await _userService.TwoFactorDeactivatorAsync(User);
@@ -163,6 +197,6 @@ namespace View.Controllers
             }
             return View();
         }
-        */
+        
     }
 }
