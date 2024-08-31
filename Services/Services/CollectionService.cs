@@ -460,6 +460,7 @@ namespace ServicesLeit.Services
         }
         private async Task<bool> IsAllCardsApprovedAsync(long id) =>
             await _dbContext.Cards
+                .AsNoTracking()
                 .Where(x => x.CollectionId == id)
                 .AnyAsync(x => x.Status != CardStatus.Approved);
         private async Task<bool> IsAnyCardsAsync(long id) =>
