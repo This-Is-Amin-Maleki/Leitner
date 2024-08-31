@@ -175,6 +175,19 @@ namespace ServicesLeit.Services
             }
             return checkList;
         }
+        public async Task TickAllCardsAsync(long collectionId)
+        {
+            var cards = await _dbContext.Cards
+                .Where(x => x.CollectionId == collectionId)
+                .ToListAsync();
+            if(cards is null)
+            {
+                throw new Exception("No cards were found.");
+            }
+            cards.ForEach(x => x.Status = CardStatus.Approved);
+
+            await _dbContext.SaveChangesAsync();
+        }
 
         public async Task AddCardAsync(CardDto model)
         {
