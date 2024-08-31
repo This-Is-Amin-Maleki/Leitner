@@ -145,6 +145,14 @@ namespace ServicesLeit.Services
 
         public async Task AddAsync(BoxAddDto model)
         {
+            bool isExistBox = _dbContext.Boxes
+                .Any(x =>
+                    x.UserId == model.UserId &&
+                    x.CollectionId == model.CollectionId);
+
+            if (isExistBox) {
+                throw new Exception("Each user can only have one box from each collection");
+            }
             //just 
             Box box = new()
             {
