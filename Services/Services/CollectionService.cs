@@ -186,11 +186,14 @@ namespace ServicesLeit.Services
                 new CollectionMiniDto() :
                 model;
         }
-        public async Task<BoxAddDto?> CheckExistCollectionAsync(long id)//pre add to box form
+        public async Task<BoxAddDto?> CheckExistCollectionAsync(long id, long userId)//pre add to box form
         {
             var model = await _dbContext.Collections
                 .AsNoTracking()
-                .Where(x => x.Id == id && x.Status == CollectionStatus.Published)
+                .Where(x => x.Id == id &&
+                    (x.Status == CollectionStatus.Published ||
+                     x.UserId == userId
+                ))
                 .Select(x => new BoxAddDto()
                 {
                     Name = x.Name,
@@ -215,8 +218,15 @@ namespace ServicesLeit.Services
                     .Count();
             }
 
-            await _dbContext.Collections.AddAsync(collection);
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+                await _dbContext.Collections.AddAsync(collection);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
         public async Task EditCollectionLimitedAsync(CollectionModifyDto model)
         {
