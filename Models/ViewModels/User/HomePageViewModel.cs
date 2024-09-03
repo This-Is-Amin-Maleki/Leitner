@@ -12,6 +12,6 @@ namespace ModelsLeit.ViewModels.User
         public ResetPasswordRequestViewModel? Forgot { get; set; } = new();
         public UserResetPasswordViewModel? PasswordReset { get; set; } = new();
         public ResendEmailViewModel? ResendEmail { get; set; } = new();
-        public IEnumerable<CollectionDto> Collections { get; set; }
+        public IEnumerable<CollectionShowDto> Collections { get; set; }
     }
 }

@@ -61,7 +61,7 @@ namespace View.Controllers
             return View("Index", model);
         }
 
-        private async Task<IEnumerable<CollectionDto>> ReadCollections()
+        private async Task<IEnumerable<CollectionShowDto>> ReadCollections()
         {
             if (_signInManager.IsSignedIn(User))
             {

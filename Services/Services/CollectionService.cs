@@ -8,10 +8,11 @@ using ModelsLeit.DTOs.Collection;
 using ModelsLeit.DTOs.Box;
 using Microsoft.AspNetCore.Identity;
 using ModelsLeit.DTOs.User;
+using System.Collections.Generic;
 
 namespace ServicesLeit.Services
 {
-    public class CollectionService : ICollectionService
+    public class CollectionService// : ICollectionService
     {
         private readonly ILogger<BoxService> _logger;
         private readonly ApplicationDbContext _dbContext;
@@ -69,38 +70,44 @@ namespace ServicesLeit.Services
                 })
                 .ToListAsync();
         }
-        public async Task<List<CollectionDto>> ReadPublishedCollectionsAsync()
+        public async Task<List<CollectionShowDto>> ReadPublishedCollectionsAsync()
         {
             return await _dbContext.Collections
                 .AsNoTracking()
+                .Include(x => x.User)
                 .Where(x => x.Status == CollectionStatus.Published)
-                .Select(x => new CollectionDto()
+                .Select(x => new CollectionShowDto()
                 {
                     Id = x.Id,
                     Name = x.Name,
                     Description = x.Description,
-                    CardsQ = x.Cards.Count
+                    CardsQ = x.Cards.Count,
+                    UserName = x.User.UserName,
+                    UserFullName = x.User.Name,
                 })
                 .ToListAsync();
         }
-        public async Task<List<CollectionDto>> ReadUnusedPublishedCollectionsAsync(long userId)
+        public async Task<List<CollectionShowDto>> ReadUnusedPublishedCollectionsAsync(long userId)
         {
             var boxes = await _dbContext.Boxes
+                .AsNoTracking()
                 .Where(x => x.UserId == userId)
                 .Select(x => x.CollectionId)
                 .ToArrayAsync();
             return await _dbContext.Collections
                 .AsNoTracking()
+                .Include(x => x.User)
                 .Where(x =>
                     !boxes.Contains(x.Id) &&
                     x.Status == CollectionStatus.Published)
-                .Select(x => new CollectionDto()
+                .Select(x => new CollectionShowDto()
                 {
                     Id = x.Id,
                     Name = x.Name,
                     Description = x.Description,
-                    CardsQ = x.Cards.Count
-
+                    CardsQ = x.Cards.Count,
+                    UserName = x.User.UserName,
+                    UserFullName = x.User.Name,
                 })
                 .ToListAsync();
         }
@@ -271,7 +278,7 @@ namespace ServicesLeit.Services
             {
                 throw new Exception("No cards available for publication");
             }
-            if (allCardsApproved is true)
+            if (allCardsApproved is false)
             {
                 throw new Exception("All cards must be approved before publication");
             }
