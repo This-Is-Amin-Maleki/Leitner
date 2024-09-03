@@ -75,6 +75,7 @@ namespace ViewLeit.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ViewData["CollectionId"] = model.Collection.Id;
                 ModelState.AddModelError("XX", "Not Valid!");
                 return View(model);
             }
@@ -82,7 +83,7 @@ namespace ViewLeit.Controllers
             model.UserId = long.Parse(_userManager.GetUserId(User)!);
 #warning catch!!
             try
-            { 
+            {
                await _cardService.AddCardAsync(model);
                return RedirectToAction(nameof(Index), new { id = model.Collection.Id });
             }
