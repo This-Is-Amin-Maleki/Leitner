@@ -164,7 +164,7 @@
                     data: form.serialize(),
                     success: function (status) {
                         console.log(status);
-                        if (status.startsWith('/')) {
+                            if (Array.from(status)[0] == "/") {
                             $('body').fadeOut('fast', function () {
                                 window.location.href = status;
                             });
