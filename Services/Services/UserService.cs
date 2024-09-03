@@ -126,6 +126,9 @@ namespace ServicesLeit.Services
                         Id = x.Id,
                         UserName = x.UserName,
                         Email = x.Email,
+                        EmailConfirmed = x.EmailConfirmed,
+                        Phone= x.PhoneNumber,
+                        PhoneConfirmed = x.PhoneNumberConfirmed,
                     })
                     .ToList();
             }
@@ -137,6 +140,9 @@ namespace ServicesLeit.Services
                     Id = x.Id,
                     UserName = x.UserName,
                     Email = x.Email,
+                    EmailConfirmed = x.EmailConfirmed,
+                    Phone = x.PhoneNumber,
+                    PhoneConfirmed = x.PhoneNumberConfirmed,
                 })
                 .ToList();
         }

@@ -17,6 +17,7 @@
         <tr>
             <th>User Name</th>
             <th>Email</th>
+            <th>Phone</th>
             <th>
                 @if (!isAdmin)
                 {
@@ -62,7 +63,12 @@
         {
             <tr>
                 <td>@item.UserName</td>
-                <td>@item.Email</td>
+                <td class="@(item.EmailConfirmed ? string.Empty : "text-danger")">
+                    @item.Email
+                </td>
+                <td class="@(item.PhoneConfirmed ? string.Empty : "text-danger")">
+                    @item.Phone
+                </td>
                 <td>
                     <a class="btn btn-primary me-2" asp-controller="AdminBox" asp-action="Index"
                        asp-route-userId="@item.Id">
