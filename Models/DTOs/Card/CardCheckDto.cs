@@ -1,4 +1,5 @@
-﻿using SharedLeit;
+﻿using ModelsLeit.DTOs.Collection;
+using SharedLeit;
 
 namespace ModelsLeit.DTOs.Card
 {
@@ -10,6 +11,8 @@ namespace ModelsLeit.DTOs.Card
         public string Description { get; set; }
         public bool HasMp3 { get; set; }
         public CardStatus Status { get; set; }
-        public long CollectionId { get; set; }
+        public CollectionMiniDto Collection { get; set; }
+
+        public int Skip { get; set; }
     }
 }
