@@ -23,5 +23,6 @@ namespace ModelsLeit.Entities
 
         [Required]
         public long UserId { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

@@ -17,5 +17,7 @@ namespace ModelsLeit.Entities
 
         [MaxLength(500)]
         public string Bio { get; set; }
+
+        public ICollection<Collection> Collections { get; set; }
     }
 }
