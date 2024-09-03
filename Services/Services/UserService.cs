@@ -235,12 +235,13 @@ namespace ServicesLeit.Services
                 return false;
             }
 
-            user.Bio = model.Bio ?? user.Bio;
+            user.Bio = model.Bio is "0" ? string.Empty : model.Bio ?? user.Bio;
+            user.Email = model.Email is "0@0.0" ? string.Empty : model.Email ?? user.Email;
+            user.PhoneNumber = model.Phone is "0" ? string.Empty : model.Phone ?? user.PhoneNumber;
+
             user.Name = model.Name ?? user.Name;
             user.TwoFactorEnabled = model.TwoFactorAuthentication;
             user.Active = model.Active;
-            user.Email = model.Email ?? user.Email;
-            user.PhoneNumber = model.Phone ?? user.PhoneNumber;
             user.UserName = model.UserName ?? user.UserName;
             user.EmailConfirmed = model.EmailConfirmed;
             user.PhoneNumberConfirmed = model.PhoneConfirmed;
