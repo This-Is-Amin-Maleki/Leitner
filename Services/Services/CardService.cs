@@ -143,39 +143,6 @@ namespace ServicesLeit.Services
                 .Where(x => cards.Contains(x.Id))
                 .ToListAsync();
         }
-        public async Task<CardsListStatusDto> ReadCardsByStatusAsync(long id)
-        {
-            CardsListStatusDto? checkList = await _dbContext.Cards
-                .AsNoTracking()
-                .Include(x => x.Collection)
-                .Where(x => x.CollectionId == id && x.Status == CardStatus.Submitted)
-                .GroupBy(x => new { x.Collection.Id, x.Collection.Name })
-                .Select(group => new CardsListStatusDto
-                {
-                    CollectionName = group.Key.Name,
-                    Id = group.Key.Id,
-                    Submitted = group.Select(x => new CardCheckDto
-                    {
-                        Id = x.Id,
-                        Answer = x.Answer,
-                        Description = x.Description,
-                        Ask = x.Ask,
-                        HasMp3 = x.HasMp3,
-                        Status = x.Status,
-                    }).ToList()
-                })
-                .FirstOrDefaultAsync();
-
-            if (checkList is null)
-            {
-                throw new Exception("Collection Not Found");
-            }
-            if (checkList.Submitted.Count is 0)
-            {
-                throw new Exception("Any Cards to Check");
-            }
-            return checkList;
-        }
         public async Task<CardCheckDto> ReadCardCheck(long collectionId, CardStatus? cardStatus, int skip = 0)
         {
             cardStatus = cardStatus is null or CardStatus.Approved ? CardStatus.Submitted : cardStatus;
@@ -371,72 +338,6 @@ namespace ServicesLeit.Services
             {
 
             }
-        }
-        public async Task<CardCheckedResultDto> BulkUpdateCardsStatusAsync(CardsArrayStatusDto model)
-        {
-            var allCards = (model.Rejected ?? [])
-                .Concat(model.Approved ?? [])
-                .Concat(model.Blocked ?? [])
-                .ToArray();
-
-            var cards = await _dbContext.Cards
-                .AsNoTracking()
-                .Include(x => x.Collection)
-                .Where(x => allCards.Contains(x.Id))
-                /*.Select(x=> new CardForCheckDto
-                {
-                     Id = x.Id,
-                      Status = x.Status,
-                      Collection = new CollectionMiniDto
-                      {
-                           Id = x.CollectionId,
-                           Name = x.Collection.Name
-                      }
-                })*/
-                .ToListAsync();
-
-            if (cards is null)
-            {
-                throw new Exception("Not Found");
-            }
-
-            if (cards.Count is 0)
-            {
-                throw new Exception("Any Cards");
-            }
-
-            if (model.Approved != null && model.Approved.Length > 0)
-                cards.Where(x => model.Approved.Contains(x.Id)).ToList().ForEach(x => x.Status = CardStatus.Approved);
-
-            if (model.Rejected != null && model.Approved.Length > 0)
-                cards.Where(x => model.Rejected.Contains(x.Id)).ToList().ForEach(x => x.Status = CardStatus.Rejected);
-
-            if (model.Blocked != null && model.Approved.Length > 0)
-                cards.Where(x => model.Blocked.Contains(x.Id)).ToList().ForEach(x => x.Status = CardStatus.Blocked);
-            /*
-            List<Card> updateCards = cards
-                .Select(x => new Card
-                    {
-                        Id = x.Id,
-                        Status = x.Status
-                    })
-                .ToList();
-            */
-            await _dbContext.BulkUpdateAsync(cards);
-
-            var firstCard = cards.FirstOrDefault();
-
-            CardCheckedResultDto output = new()
-            {
-                CheckedCards = allCards.Length,
-                Collection = new CollectionMiniDto
-                {
-                    Id = firstCard.Collection.Id,
-                    Name = firstCard.Collection.Name,
-                }
-            };
-
-            return output;
         }
         ////////////////////////////////////////////////////////
         private CardDto CreateEmptyCardViewModel() => new();
