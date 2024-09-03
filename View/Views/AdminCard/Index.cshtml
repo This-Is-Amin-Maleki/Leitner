@@ -32,7 +32,7 @@
 
 <h2>@ViewData["CollectionName"] Cards</h2>
 
-<a class="float-start btn btn-dark me-3" asp-action="Check" asp-route-id="@ViewData["CollectionId"]">
+<a class="float-start btn btn-dark me-3" asp-action="check" asp-route-status="@state" asp-route-id="@ViewData["CollectionId"]">
     <i class="bi bi-ui-checks-grid"></i>
     Check Cards
 </a>
