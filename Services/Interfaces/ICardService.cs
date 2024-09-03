@@ -12,7 +12,7 @@ namespace ServicesLeit.Interfaces
         Task DeleteCardAsync(CardDto model);
         Task DeleteCardLimitedAsync(CardDto model);
         Task<CardDto> ReadCardAsync(long id);
-        Task<CardCheckDto> ReadCardCheck(long collectionId, CardStatus? cardStatus);
+        Task<CardCheckDto> ReadCardCheck(long collectionId, CardStatus? cardStatus, int skip = 0);
         Task<CardDto> ReadCardLimitedAsync(long id, long userId);
         Task<List<Card>> ReadCardsAsync(IEnumerable<long> cards);
         Task<(List<CardDto>, string)> ReadCardsAsync(long collectionId);
@@ -23,6 +23,6 @@ namespace ServicesLeit.Interfaces
         Task TickAllCardsAsync(long collectionId);
         Task UpdateCardAsync(CardDto model);
         Task UpdateCardLimitedAsync(CardDto model);
-        Task<CardCheckDto> UpdateStatusAndReadNextCardCheck(CardStatusDto model);
+        Task<CardCheckDto> UpdateStatusAndReadNextCardCheck(CardCheckStatusDto model);
     }
 }
