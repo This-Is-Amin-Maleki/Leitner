@@ -132,8 +132,7 @@ namespace View.Controllers
                 return View(model);
             }
 
-            model.Id = Convert.ToInt64(
-                _userManager.GetUserId(User));
+            model.Id = Convert.ToInt64(_userManager.GetUserId(User));
             
             var result = await _userService.ChangePasswordLimitedAsync(model);
 
