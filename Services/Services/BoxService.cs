@@ -91,6 +91,16 @@ namespace ServicesLeit.Services
                 })
                 .ToListAsync();
         }
+        public async Task<long[]> GetAllCollectionIdAsync(long userId)
+        {
+            return await _dbContext.Boxes
+                .AsNoTracking()
+                .Where(x => x.UserId == userId)
+                .Select(x => 
+                    x.CollectionId
+                )
+                .ToArrayAsync();
+        }
         public async Task<List<BoxMiniDto>> ReadByCollectionAsync(long id)
         {//use auto mapper
             return await _dbContext.Boxes
