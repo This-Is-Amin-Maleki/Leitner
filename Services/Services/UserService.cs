@@ -146,7 +146,7 @@ namespace ServicesLeit.Services
                 })
                 .ToList();
         }
-        public async Task<bool?> ChangePasswordLimitedAsync(UserChangePasswordLimitedViewModel model)
+        public async Task<IdentityResult?> ChangePasswordLimitedAsync(UserChangePasswordLimitedViewModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
             if (user is null)
@@ -154,12 +154,7 @@ namespace ServicesLeit.Services
                 return null;
             }
 
-            var passResult = await _userManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
-            
-            if (!passResult.Succeeded) {
-                return false;
-            }
-            return true;
+            return await _userManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
         }
 
         public async Task<bool?> ModifyLimitedAsync(UserModifyLimitedViewModel model)
