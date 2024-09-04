@@ -172,6 +172,26 @@ namespace ServicesLeit.Services
                 CreateEmptyCollectionModifyDto() :
                 collection;
         }
+        public async Task<CollectionModifyDto> ReadCollectionDataAsync(long id, long userId)
+        {
+            var collection = await _dbContext.Collections
+                .AsNoTracking()
+                .Include(x => x.Boxes)
+                .Where(x => x.UserId == userId && x.Id == id)
+                .Select(x => new CollectionModifyDto
+                {
+                    BoxCount = x.Boxes.Count,
+                    Description = x.Description,
+                    Id = x.Id,
+                    Name = x.Name,
+                    Status = x.Status,
+                })
+                .FirstOrDefaultAsync();
+
+            return collection is null ?
+                CreateEmptyCollectionModifyDto() :
+                collection;
+        }
         public async Task<CollectionDto> ReadUserCollectionAsync(long id, long userId)
         {
             var collection = await _dbContext.Collections
