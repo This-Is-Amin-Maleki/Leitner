@@ -161,6 +161,7 @@ namespace ServicesLeit.Services
                 .Include(x => x.Boxes)
                 .Select(x => new CollectionModifyDto
                 {
+                    BoxCount = x.Boxes.Count,
                     Description = x.Description,
                     Id = x.Id,
                     Name = x.Name,
@@ -207,7 +208,7 @@ namespace ServicesLeit.Services
                     PublishedDate = x.PublishedDate,
                     Status = x.Status,
                 })
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync();
 
             return collection is null ?
                 CreateEmptyCollectionDto() :
@@ -276,12 +277,27 @@ namespace ServicesLeit.Services
         {
             var oldCollection = await _dbContext.Collections
                 .AsNoTracking()
+                .Include(x => x.Cards)
+                .Select(x => new Collection
+                {
+                    Id = x.Id,
+                    Status = x.Status,
+                    Count = x.Cards.Count,
+                    UserId = x.UserId,
+                    PublishedDate = x.PublishedDate,
+                })
                 .FirstOrDefaultAsync(x => x.Id == model.Id && x.UserId == model.UserId);
 
             if (oldCollection is null)
             {
                 throw new Exception("Not Found");
             }
+
+            if (oldCollection.Count == 0 && model.Status > 0)
+            {
+                throw new Exception("The collection does not contain any cards");
+            }
+
             var collection = MapViewModelToCollection(model);
 
             //add published date Time
