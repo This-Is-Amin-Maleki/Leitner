@@ -53,6 +53,35 @@ namespace View.Controllers
             return View(model);
         }
 
+        [Route("Users/{username}")]
+        public async Task<IActionResult> UserDetail(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+
+            if (user is null)
+            {
+                return Redirect("/");
+            }
+
+            var collections = await _collectionService.ReadPublishedCollectionsAsync(user.Id);
+
+            if (collections is null || collections.Count is 0)
+            {
+                return Redirect("/");
+            }
+
+            var boxes = await _boxService.GetAllCollectionIdAsync(user.Id);
+
+            (string Bio, long[] boxes, ICollection<CollectionShowDto> Collections) model =
+            (
+                user.Bio,
+                boxes,
+                collections
+            );
+
+            return View(model);
+        }
+
         [Route("AccessDenied")]
         public async Task<IActionResult> Error(string? title, string? returnUrl)
         {
