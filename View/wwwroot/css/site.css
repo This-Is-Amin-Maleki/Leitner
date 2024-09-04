@@ -322,3 +322,6 @@ html.change * {
     opacity: 0;
     transform: translate(3em, 2em) rotate(0deg);
 }
+.text-justify {
+    text-align: justify !important;
+}
