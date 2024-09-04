@@ -21,7 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.102.3" />
     <PackageReference Include="EFCore.BulkExtensions" Version="8.1.0" />
+    <PackageReference Include="ExcelMapper" Version="5.2.592" />
     <PackageReference Include="IronXL.Excel" Version="2024.8.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />

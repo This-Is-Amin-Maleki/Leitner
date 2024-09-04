@@ -1,8 +1,8 @@
 ﻿using ModelsLeit.Entities;
-using IronXL;
 using Microsoft.Extensions.Logging;
 using ServicesLeit.Interfaces;
 using SharedLeit;
+using Ganss.Excel;
 
 namespace ServicesLeit.Services
 {
@@ -23,46 +23,45 @@ namespace ServicesLeit.Services
         }
         public List<Card> ReadCardsFromExcelFile(string filePath,long collectionId,int max)
         {
-            WorkBook workBook = WorkBook.Load(filePath);
-            WorkSheet workSheet = workBook.WorkSheets.First();
+            var tt = File.Exists(filePath);
+            var excel = new ExcelMapper(filePath);
+            excel.AddMapping<Card>(1, p => p.Ask);
+            excel.AddMapping<Card>(2, p => p.Answer);
+            excel.AddMapping<Card>(3, p => p.Description);
 
-            List<Card> cards = new();
-            workSheet.Rows.FirstOrDefault().RemoveRow();
-            foreach (var row in workSheet.Rows)
+            var cards = excel.Fetch<Card>().Take(max+1).ToList();
+            cards.ForEach(x => x.CollectionId = collectionId);
+
+            var surplusCard = cards.First();
+            bool isFirstSurplus = surplusCard.Ask.Equals("ask", StringComparison.OrdinalIgnoreCase);
+            if (isFirstSurplus is false)
             {
-                if (max-- is 0 || row.Columns[0].IsEmpty)
-                {
-                    break;
-                }
-                cards.Add(new Card()
-                {
-                    CollectionId = collectionId,
-                    Ask = row.Columns[0].ToString(),
-                    Answer = row.Columns[1].ToString(),
-                    Description = row.Columns[2].ToString(),
-                    Status = CardStatus.Submitted,
-                });
+                surplusCard = cards.Last();
             }
+            if (isFirstSurplus || cards.Count > max)
+            {
+                cards.Remove(surplusCard);
+            }
+            
             return cards;
         }
         public List<Card> ReadCardsFromExcelFile(string filePath, long collectionId)
         {
-            WorkBook workBook = WorkBook.Load(filePath);
-            WorkSheet workSheet = workBook.WorkSheets.First();
+            var excel = new ExcelMapper(filePath);
+            excel.AddMapping<Card>(1, p => p.Ask);
+            excel.AddMapping<Card>(2, p => p.Answer);
+            excel.AddMapping<Card>(3, p => p.Description);
 
-            List<Card> cards = new();
-            workSheet.Rows.FirstOrDefault().RemoveRow();
-            foreach (var row in workSheet.Rows)
+            var cards = excel.Fetch<Card>().ToList();
+            cards.ForEach(x => x.CollectionId = collectionId);
+
+            var firstCard = cards.First();
+            bool isFirstHeader = firstCard.Ask.Equals("ask", StringComparison.OrdinalIgnoreCase);
+            if (isFirstHeader)
             {
-                cards.Add(new Card()
-                {
-                    CollectionId = collectionId,
-                    Ask = row.Columns[0].ToString(),
-                    Answer = row.Columns[1].ToString(),
-                    Description = row.Columns[2].ToString(),
-                    Status=CardStatus.Submitted,
-                });
+                cards.Remove(firstCard);
             }
+
             return cards;
         }
     }
