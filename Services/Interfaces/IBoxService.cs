@@ -8,6 +8,7 @@ namespace ServicesLeit.Interfaces
     {
         Task AddAsync(BoxAddDto model);
         Task DeleteAsync(long id, long userId);
+        Task<long[]> GetAllCollectionIdAsync(long userId);
         Task<List<BoxMiniDto>> ReadAllAsync();
         Task<List<BoxMiniDto>> ReadAllAsync(long userId);
         Task<List<BoxMiniDto>> ReadByCollectionAsync(long id);
