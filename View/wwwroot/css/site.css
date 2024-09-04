@@ -142,12 +142,12 @@ body div main{
 @media (min-width: 960px) {
     .pageSizeDetail {
         max-height: 100%;
-        overflow: hidden scroll;
+        overflow-y: auto;
     }
 
-    .fixedPage {
+    /*.fixedPage {
         height: calc(100vh - 150px)
-    }
+    }*/
 }
 #overlay {
     width: 100%;
