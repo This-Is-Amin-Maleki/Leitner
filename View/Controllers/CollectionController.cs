@@ -71,10 +71,9 @@ namespace ViewLeit.Controllers
         public async Task<ActionResult> Edit(long id)
         {
             var userId = long.Parse(_userManager.GetUserId(User)!);
-
-            return View(await _collectionService.ReadUserCollectionAsync(id, userId));
+            var collection = await _collectionService.ReadCollectionDataAsync(id, userId);
+            return View(collection);
         }
-            
 
         // POST: CollectionController/Edit
         [HttpPost]
