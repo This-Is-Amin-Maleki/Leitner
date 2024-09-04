@@ -1,0 +1,89 @@
+﻿@using ModelsLeit.DTOs.Collection
+@using ModelsLeit.Entities
+
+@model (string Bio, long[] boxes, ICollection<CollectionShowDto> Collections)
+ 
+@{
+    var user = Model.Collections.First();
+    ViewData["Title"] = $"{user.UserName} - Leitner";
+    var userSigned = User.Identity.IsAuthenticated;
+}
+
+<div class="container-fluid">
+    <div class="row fixedPage">
+        <div class="col-12">
+            <div class="container-fluid">
+                <div class="w-100">
+                    <p class="display-6 mt-3">@user.UserFullName <small class="h5 muted">@user.UserName</small></p>
+                    <p class="my-3 text-justify">@Model.Bio</p>
+                    <hr />
+                </div>
+                @if (!(Model.Collections.Any()))
+                {
+                    <br />
+                    <br />
+                    <blockquote class="blockquote">
+                        <p class="mb-0">"Learning something new every day enhances the power of the mind."</p><br>
+                        <footer class="float-end blockquote-footer">Albert Einstein</footer>
+                    </blockquote>
+                    <br />
+                    <br />
+                    @if (userSigned)
+                    {
+                        <center><a class="btn btn-outline-dark" asp-controller="Collection" asp-action="Create">Create your Collection</a></center>
+                    }
+                    else
+                    {
+                        <center><button class="btn btn-dark" disabled>Create your Collection</button></center>
+                    }
+                    <br />
+                    <br />
+                }
+                <div class="row row-cols-1 g-4 row-cols-md-2 row-cols-lg-3">
+                @foreach (var collection in Model.Collections)
+                {
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body d-flex flex-column">
+                                <h5>@collection.Name</h5>
+                                <p>
+                                    <small class="text-body-secondary float-end">@collection.CardsQ Cards</small>
+                                    <br />
+                                    @collection.Description
+                                </p>
+                                @Html.Raw(
+                                    Model.boxes.Length > 0 ?
+                                    Model.boxes.Contains(collection.Id) ?
+        "<div class=\"mt-auto d-flex justify-content-start\"><span class=\"text-primary\">Owned</span></div>"
+        : string.Empty
+                                             :
+                                            collection.Id != 0 // price is Zero
+                                            ?
+                                            "<div class=\"mt-auto d-flex justify-content-" +
+                                             (userSigned ?
+                                                 "end\"><a href=\"/Box/Add/" + collection.Id + "\" class=\"btn btn-outline-danger\"><i class=\"bi bi-plus-circle\"></i> Free</a>" :
+                                                "start\"><span class=\"text-danger\">Free</span>") +
+                                             "</div>"
+
+                                            :
+                                            "<div class=\"mt-auto d-flex justify-content-between\">" +
+                                            $"<span>{collection.Id}$</span>" +
+                                             (userSigned ? "<a href=\"/Box/Add/" + +collection.Id + "\" class=\"btn btn-outline-primary\"><i class=\"bi bi-cart3\"></i> Buy</a>" : string.Empty) +
+                                            "</div>"
+                                            )
+                            </div>
+                        </div>
+                    </div>
+                }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+        
+    </div>
+</div>
+@*
+    <input name="__RequestVerificationToken" type="hidden" value="CfDJ8GuJe7bQOfZGlbPnFKZXxXF1nWuvTgYTtMuKrEJJ6Luvlqf8ZvOegT6IKlaUVmk_QzBvL8d7M4KUNpgaUbKMPH7NVYHOaSk8Z0e_-osr-f51mp2KspsZCb7_SGeL1HgmNf3vagjdcc8PLb89jrpD2KQ">
+*@
