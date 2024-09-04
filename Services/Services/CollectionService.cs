@@ -87,6 +87,23 @@ namespace ServicesLeit.Services
                 })
                 .ToListAsync();
         }
+        public async Task<List<CollectionShowDto>> ReadPublishedCollectionsAsync(long userId)
+        {
+            return await _dbContext.Collections
+                .AsNoTracking()
+                .Include(x => x.User)
+                .Where(x => x.Status == CollectionStatus.Published && x.UserId == userId)
+                .Select(x => new CollectionShowDto()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description,
+                    CardsQ = x.Cards.Count,
+                    UserName = x.User.UserName,
+                    UserFullName = x.User.Name,
+                })
+                .ToListAsync();
+        }
         public async Task<List<CollectionShowDto>> ReadUnusedPublishedCollectionsAsync(long userId)
         {
             var boxes = await _dbContext.Boxes
