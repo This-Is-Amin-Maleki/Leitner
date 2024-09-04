@@ -142,8 +142,12 @@ namespace View.Controllers
                 return Redirect("/");
             }
 
-            if(result is false) { 
-                ModelState.AddModelError("Fail", "Failed to update password. Please try again later!");
+            if (result.Errors.Any())
+            {
+                foreach(var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.Code, error.Description);
+                }
                 return View(model);
             }
 
