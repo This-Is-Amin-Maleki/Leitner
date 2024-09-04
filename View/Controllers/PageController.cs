@@ -15,14 +15,17 @@ namespace View.Controllers
     public class PageController : Controller
     {
         private readonly CollectionService _collectionService;
+        private readonly BoxService _boxService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
         public PageController(
             CollectionService collectionService,
+            BoxService boxService,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager)
         {
+            _boxService = boxService;
             _collectionService = collectionService;
             _userManager = userManager;
             _signInManager = signInManager;
