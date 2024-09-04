@@ -1,4 +1,5 @@
 ﻿$(document).ready(function () {
+    $("#brandC").addClass("d-block");
     var changeMode = function (e) {
         $("html").addClass("change");
         var mode = $("html").attr("data-bs-theme");
