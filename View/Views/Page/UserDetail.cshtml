@@ -1,7 +1,7 @@
 ﻿@using ModelsLeit.DTOs.Collection
 @using ModelsLeit.Entities
 
-@model (string Bio, long[] boxes, ICollection<CollectionShowDto> Collections)
+@model CollectionOfUserDetailDto
  
 @{
     var user = Model.Collections.First();
@@ -52,8 +52,8 @@
                                     @collection.Description
                                 </p>
                                 @Html.Raw(
-                                    Model.boxes.Length > 0 ?
-                                    Model.boxes.Contains(collection.Id) ?
+                                    Model.Boxes.Length > 0 ?
+                                    Model.Boxes.Contains(collection.Id) ?
         "<div class=\"mt-auto d-flex justify-content-start\"><span class=\"text-primary\">Owned</span></div>"
         : string.Empty
                                              :

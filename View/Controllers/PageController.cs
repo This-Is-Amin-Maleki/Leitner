@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using ModelsLeit.Entities;
 using ServicesLeit.Services;
-using ViewLeit.Extensions;
-using ServicesLeit.Services;
 using ModelsLeit.ViewModels.User;
 using Microsoft.AspNetCore.Authorization;
 using ModelsLeit.DTOs.Collection;
@@ -63,7 +61,7 @@ namespace View.Controllers
                 return Redirect("/");
             }
 
-            var collections = await _collectionService.ReadPublishedCollectionsAsync(user.Id);
+            List<CollectionShowDto> collections = await _collectionService.ReadPublishedCollectionsAsync(user.Id);
 
             if (collections is null || collections.Count is 0)
             {
@@ -72,12 +70,12 @@ namespace View.Controllers
 
             var boxes = await _boxService.GetAllCollectionIdAsync(user.Id);
 
-            (string Bio, long[] boxes, ICollection<CollectionShowDto> Collections) model =
-            (
-                user.Bio,
-                boxes,
-                collections
-            );
+            CollectionOfUserDetailDto model = new()
+            {
+                Bio= user.Bio,
+                Boxes= boxes,
+                Collections = collections,
+            };
 
             return View(model);
         }
