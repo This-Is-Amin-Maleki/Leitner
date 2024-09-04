@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace ServicesLeit.Services
 {
-    public class CollectionService// : ICollectionService
+    public class CollectionService : ICollectionService
     {
         private readonly ILogger<BoxService> _logger;
         private readonly ApplicationDbContext _dbContext;
