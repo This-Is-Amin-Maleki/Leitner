@@ -9,6 +9,7 @@ using ModelsLeit.DTOs.Box;
 using Microsoft.AspNetCore.Identity;
 using ModelsLeit.DTOs.User;
 using System.Collections.Generic;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ServicesLeit.Services
 {
@@ -320,18 +321,18 @@ namespace ServicesLeit.Services
         }
         public async Task EditCollectionAsync(CollectionModifyDto model)
         {
-            bool allCardsApproved = true;
+            bool anyCardUnapproved = false;
             bool anyCardsIn = true;
             if (model.Status == CollectionStatus.Published)
             {
                 anyCardsIn = await IsAnyCardsAsync(model.Id);
-                allCardsApproved = await IsAllCardsApprovedAsync(model.Id);
+                anyCardUnapproved = await IsAnyCardsUnapprovedAsync(model.Id);
             }
             if (anyCardsIn is false)
             {
                 throw new Exception("No cards available for publication");
             }
-            if (allCardsApproved is false)
+            if (anyCardUnapproved)
             {
                 throw new Exception("All cards must be approved before publication");
             }
