@@ -528,11 +528,12 @@ namespace ServicesLeit.Services
                 throw new Exception(message);
             }
         }
-        private async Task<bool> IsAllCardsApprovedAsync(long id) =>
-            await _dbContext.Cards
+
+        private async Task<bool> IsAnyCardsUnapprovedAsync(long id) =>
+            await  _dbContext.Cards
                 .AsNoTracking()
-                .Where(x => x.CollectionId == id)
-                .AnyAsync(x => x.Status != CardStatus.Approved);
+                .AnyAsync(x => x.CollectionId == id && x.Status != CardStatus.Approved);
+
         private async Task<bool> IsAnyCardsAsync(long id) =>
             await _dbContext.Cards
                 .AsNoTracking()
