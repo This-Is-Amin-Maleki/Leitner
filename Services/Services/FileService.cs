@@ -29,6 +29,9 @@ namespace ServicesLeit.Services
             }
 
             var excel = new ExcelMapper(filePath);
+            excel.SkipBlankCells = false;
+            excel.SkipBlankRows = false;
+            excel.HeaderRow = false;
             excel.AddMapping<Card>(1, p => p.Ask);
             excel.AddMapping<Card>(2, p => p.Answer);
             excel.AddMapping<Card>(3, p => p.Description);
@@ -62,6 +65,9 @@ namespace ServicesLeit.Services
             }
 
             var excel = new ExcelMapper(filePath);
+            excel.SkipBlankCells = false;
+            excel.SkipBlankRows = false;
+            excel.HeaderRow = false;
             excel.AddMapping<Card>(1, p => p.Ask);
             excel.AddMapping<Card>(2, p => p.Answer);
             excel.AddMapping<Card>(3, p => p.Description);
