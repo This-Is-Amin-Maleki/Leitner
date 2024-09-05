@@ -9,7 +9,7 @@
 <form method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label for="sheet" class="form-label">Spreadsheet File:</label>
-        <span class="float-end">Just add the first 1000 rows of the file!</span>
+        <span class="float-end">Add only the first 1000 rows of the file, with the first row not being a header!</span>
         <input class="form-control" type="file" id="sheet" name="sheet">
         <span class="text-danger">@ViewData["Error"]</span>
     </div>
