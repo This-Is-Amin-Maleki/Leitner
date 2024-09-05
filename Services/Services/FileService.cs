@@ -23,11 +23,20 @@ namespace ServicesLeit.Services
         }
         public List<Card> ReadCardsFromExcelFile(string filePath,long collectionId,int max)
         {
-            var tt = File.Exists(filePath);
+            if (!File.Exists(filePath))
+            {
+                throw new Exception("The specified file does not exist");
+            }
+
             var excel = new ExcelMapper(filePath);
             excel.AddMapping<Card>(1, p => p.Ask);
             excel.AddMapping<Card>(2, p => p.Answer);
             excel.AddMapping<Card>(3, p => p.Description);
+
+            if (excel is null || excel.Fetch<Card>().Count() is 0)
+            {
+                throw new Exception("The file is empty or the first row is empty");
+            }
 
             var cards = excel.Fetch<Card>().Take(max+1).ToList();
             cards.ForEach(x => x.CollectionId = collectionId);
@@ -47,10 +56,20 @@ namespace ServicesLeit.Services
         }
         public List<Card> ReadCardsFromExcelFile(string filePath, long collectionId)
         {
+            if (!File.Exists(filePath))
+            {
+                throw new Exception("The specified file does not exist");
+            }
+
             var excel = new ExcelMapper(filePath);
             excel.AddMapping<Card>(1, p => p.Ask);
             excel.AddMapping<Card>(2, p => p.Answer);
             excel.AddMapping<Card>(3, p => p.Description);
+
+            if (excel is null || excel.Fetch<Card>().Count() is 0)
+            {
+                throw new Exception("The file is empty or the first row is empty");
+            }
 
             var cards = excel.Fetch<Card>().ToList();
             cards.ForEach(x => x.CollectionId = collectionId);
