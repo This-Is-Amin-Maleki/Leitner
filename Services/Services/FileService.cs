@@ -39,7 +39,7 @@ namespace ServicesLeit.Services
 
             if (excel is null || excel.Fetch<Card>().Count() is 0)
             {
-                throw new Exception("The file is empty or the first row is empty");
+                throw new Exception("The file is empty");
             }
 
             var cards = excel.Fetch<Card>().ToList();
@@ -75,7 +75,7 @@ namespace ServicesLeit.Services
 
             if (excel is null || excel.Fetch<Card>().Count() is 0)
             {
-                throw new Exception("The file is empty or the first row is empty");
+                throw new Exception("The file is empty");
             }
 
             var cards = excel.Fetch<Card>().ToList();
