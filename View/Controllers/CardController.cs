@@ -139,7 +139,7 @@ namespace ViewLeit.Controllers
             catch (Exception ex)
             {
                 error = true;
-                ViewData["Error"] = ex.Message;
+                ModelState.AddModelError("XX", ex.Message);
             }
             finally
             {
