@@ -32,6 +32,7 @@ namespace ServicesLeit.Services
             excel.SkipBlankCells = false;
             excel.SkipBlankRows = false;
             excel.HeaderRow = false;
+            excel.MaxRowNumber = max;
             excel.AddMapping<Card>(1, p => p.Ask);
             excel.AddMapping<Card>(2, p => p.Answer);
             excel.AddMapping<Card>(3, p => p.Description);
@@ -41,7 +42,7 @@ namespace ServicesLeit.Services
                 throw new Exception("The file is empty or the first row is empty");
             }
 
-            var cards = excel.Fetch<Card>().Take(max+1).ToList();
+            var cards = excel.Fetch<Card>().ToList();
             cards.ForEach(x => x.CollectionId = collectionId);
 
             var surplusCard = cards.First();
