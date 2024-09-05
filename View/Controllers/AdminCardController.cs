@@ -100,7 +100,7 @@ namespace ViewLeit.Controllers
             try
             {
                 output = await _cardService.ReadCardCheck(id, status, skip);
-                output.Skip = skip + 1;
+                output.Skip = skip;
             }
             catch (Exception ex)
             {
