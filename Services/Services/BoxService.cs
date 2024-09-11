@@ -526,12 +526,12 @@ namespace ServicesLeit.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<CardDto> ReadNextCardAsync(long boxId, int num)
+        public async Task<CardDto> ReadNextCardAsync(long boxId, int num, long userId)
         {
             //check box
             var box = await _dbContext.Boxes
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == boxId);
+                .FirstOrDefaultAsync(x => x.Id == boxId && x.UserId == userId);
 
             if (box is null)
             {
