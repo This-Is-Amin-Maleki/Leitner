@@ -204,7 +204,8 @@ namespace ViewLeit.Controllers
             CardDto card = new();
             try
             {
-                card = await _boxService.ReadNextCardAsync(id,num);
+                var userId = long.Parse(_userManager.GetUserId(User)!);
+                card = await _boxService.ReadNextCardAsync(id, num, userId);
             }
             catch (Exception ex)
             {
