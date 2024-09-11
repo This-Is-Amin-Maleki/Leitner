@@ -110,11 +110,11 @@ namespace ViewLeit.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(long id)
         {
+            try
+            {
             var userId = long.Parse(_userManager.GetUserId(User)!);
 
             await _boxService.DeleteAsync(id, userId);
-            try
-            {
                 return Content("OK");
             }
             catch (Exception ex)
