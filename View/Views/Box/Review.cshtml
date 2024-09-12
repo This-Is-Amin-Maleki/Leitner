@@ -8,10 +8,10 @@
     var itemz = Model.Cards.Count;
 
 }
-<div id="reviewCounter" class="btn-dark">0</div>
+<div id="reviewCounter" class="btn-primary">0</div>
 <div id="cardInfo">
     <h2>@ViewData["Title"]</h2>
-    <a asp-action="Index" class="float-end btn btn-dark"><i class="bi bi-arrow-left-square"></i> Return</a>
+    <a asp-action="Index" class="float-end btn btn-primary"><i class="bi bi-arrow-left-square"></i> Return</a>
     <br /><br />
 </div>
 
@@ -42,7 +42,7 @@
                 @if(i!=1){
                     <button type="button" item="@card.Id" class="btn btn-outline-primary float-start btn-v"><i class="bi bi-arrow-left-circle"></i> Previous</button>
                 }
-                <button class="btn align-middle btn-outline-dark accordion-btn collapsed float-end" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse@(i)" aria-expanded="false" aria-controls="flush-collapse@(i)">
+                <button class="btn align-middle btn-outline-primary accordion-btn collapsed float-end" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse@(i)" aria-expanded="false" aria-controls="flush-collapse@(i)">
                     <i class="bi bi-lightbulb"></i>
                     Answer
                 </button>

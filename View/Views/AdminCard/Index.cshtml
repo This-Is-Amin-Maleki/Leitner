@@ -32,29 +32,29 @@
 
 <h2>@ViewData["CollectionName"] Cards</h2>
 
-<a class="float-start btn btn-dark me-3" asp-action="check" asp-route-status="@state" asp-route-id="@ViewData["CollectionId"]">
+<a class="float-start btn btn-primary me-3" asp-action="check" asp-route-status="@state" asp-route-id="@ViewData["CollectionId"]">
     <i class="bi bi-ui-checks-grid"></i>
     Check Cards
 </a>
-<a class="float-start btn btn-dark me-5" asp-action="TickAll" asp-route-id="@ViewData["CollectionId"]">
+<a class="float-start btn btn-primary me-5" asp-action="TickAll" asp-route-id="@ViewData["CollectionId"]">
     <i class="bi bi-ui-checks"></i>
     Tick All
 </a>
 
 @foreach (var item in Enum.GetValues(typeof(CardStatus)).Cast<CardStatus>())
 {
-    <a class="float-start btn me-3 @(state==item.ToString() ? "btn-primary" : "btn-dark")" asp-route-id="@ViewData["CollectionId"]" asp-route-state="@item">
+    <a class="float-start btn me-3 @(state==item.ToString() ? "btn-primary" : "btn-primary")" asp-route-id="@ViewData["CollectionId"]" asp-route-state="@item">
         @Html.Raw(statusesIcons[(int)item])
         @item
     </a>
 }
 
-<a class="float-start btn me-5 @(string.IsNullOrEmpty(state) ? "btn-primary":"btn-dark")" asp-route-id="@ViewData["CollectionId"]">
+<a class="float-start btn me-5 @(string.IsNullOrEmpty(state) ? "btn-primary":"btn-primary")" asp-route-id="@ViewData["CollectionId"]">
     <i class="bi bi-circle"></i>
     All
 </a>
 
-<a asp-controller="AdminCollection" asp-action="Index" class="float-end btn btn-dark">
+<a asp-controller="AdminCollection" asp-action="Index" class="float-end btn btn-primary">
     <i class="bi bi-arrow-left-square"></i>
     Return
 </a>

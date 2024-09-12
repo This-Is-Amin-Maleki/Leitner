@@ -6,7 +6,7 @@
     ViewData["Title"] = $"Check {Model.Collection.Name}";
 }
 
-@*<div id="cardCounter" class="btn-dark">0</div>*@
+@*<div id="cardCounter" class="btn-primary">0</div>*@
 <form id="checkCards" method="post">
 <div id="cardInfo">
     <h2>@ViewData["Title"]</h2>
@@ -14,7 +14,7 @@
         <i class="bi bi-fast-forward-circle"></i>
         Next
     </button>
-    <a asp-action="Index" asp-route-id="@Model.Collection.Id" class="float-end btn btn-dark">
+    <a asp-action="Index" asp-route-id="@Model.Collection.Id" class="float-end btn btn-primary">
         <i class="bi bi-arrow-left-square"></i>
         Return
     </a>
