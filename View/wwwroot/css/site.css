@@ -201,8 +201,7 @@ header nav{
     height: 0;
 }*/
 .navbar-brand:hover {
-    background: var(--bs-body-color);
-    color: var(--bs-body-bg);
+    background: #7051a5;
     border-radius: 3px;
 }
 
