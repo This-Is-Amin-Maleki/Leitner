@@ -17,10 +17,10 @@
 <h2>@ViewData["CollectionName"] Cards</h2>
 @if (!noEdit)
 {
-    <a asp-action="Create" asp-route-id="@ViewData["CollectionId"]" class="font-14 menu btn btn-outline-info">
+    <a asp-action="Create" asp-route-id="@ViewData["CollectionId"]" class="font-14 menu btn btn-outline-primary">
     <i class="bi bi-plus-square"></i> Add
     </a>
-    <a asp-action="Upload" asp-route-id="@ViewData["CollectionId"]" class="font-14 menu btn btn-outline-info">
+    <a asp-action="Upload" asp-route-id="@ViewData["CollectionId"]" class="font-14 menu btn btn-outline-primary">
     <i class="bi bi-cloud-arrow-up"></i> Upload
     </a>
 }
