@@ -13,7 +13,7 @@ namespace ServicesLeit.Interfaces
         Task<List<BoxMiniDto>> ReadAllAsync(long userId);
         Task<List<BoxMiniDto>> ReadByCollectionAsync(long id);
         Task<List<BoxMiniDto>> ReadByCollectionAsync(long id, long userId);
-        Task<CardDto> ReadNextCardAsync(long boxId, int num);
+        Task<CardDto> ReadNextCardAsync(long boxId, int num, long userId);
         Task<BoxReviewDto> ReviewAsync(long id, long userId);
         Task<ContainerStudyDto> StudyAsync(long id, long userId);
         Task<ContainerStudyDto> StudyFailAsync(ContainerStudiedDto model);
