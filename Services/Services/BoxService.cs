@@ -96,9 +96,7 @@ namespace ServicesLeit.Services
             return await _dbContext.Boxes
                 .AsNoTracking()
                 .Where(x => x.UserId == userId)
-                .Select(x => 
-                    x.CollectionId
-                )
+                .Select(x => x.CollectionId)
                 .ToArrayAsync();
         }
         public async Task<List<BoxMiniDto>> ReadByCollectionAsync(long id)
@@ -160,7 +158,8 @@ namespace ServicesLeit.Services
                     x.UserId == model.UserId &&
                     x.CollectionId == model.CollectionId);
 
-            if (isExistBox) {
+            if (isExistBox)
+            {
                 throw new Exception("Each user can only have one box from each collection");
             }
             //just 
