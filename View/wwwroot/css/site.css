@@ -326,3 +326,38 @@ html.change * {
 .text-justify {
     text-align: justify !important;
 }
+
+:root {
+    --bs-primary-rgb: 112, 81, 165;
+.btn-primary
+
+{
+    --bs-btn-bg: #7051A5;
+    --bs-btn-border-color: #7051A5;
+    --bs-btn-hover-bg: #5E3F93;
+    --bs-btn-hover-border-color: #593A8E;
+    --bs-btn-active-border-color: #55368A;
+    --bs-btn-focus-shadow-rgb: 132,101,185;
+    --bs-btn-active-bg: #593A8E;
+    --bs-btn-disabled-bg: #7051A5;
+    --bs-btn-disabled-border-color: #7051A5;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: #7051A5;
+    --bs-btn-border-color: #7051A5;
+    --bs-btn-hover-bg: #7051A5;
+    --bs-btn-hover-border-color: #7051A5;
+    --bs-btn-focus-shadow-rgb: 112, 81, 165;
+    --bs-btn-active-bg: #7051A5;
+    --bs-btn-active-border-color: #7051A5;
+    --bs-btn-disabled-color: #7051A5;
+    --bs-btn-disabled-border-color: #7051A5;
+}
+
+.link-primary:focus, .link-primary:hover {
+    color: RGBA(var(--bs-btn-active-bg),var(--bs-link-opacity,1)) !important;
+    -webkit-text-decoration-color: RGBA(var(--bs-btn-active-bg),var(--bs-link-underline-opacity,1)) !important;
+    text-decoration-color: RGBA(var(--bs-btn-active-bg),var(--bs-link-underline-opacity,1)) !important;
+}
+}
