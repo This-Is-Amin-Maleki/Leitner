@@ -6,7 +6,7 @@
  
 @{
     ViewData["Title"] = "Leitner";
-    var userSigned = User.Identity.IsAuthenticated;
+    bool isSignedIn = User.Identity.IsAuthenticated;
     var json = JsonConvert.SerializeObject(Enum.GetNames(typeof(UserFormType)));
 }
 
@@ -51,7 +51,7 @@
 }
 <div class="container-fluid">
     <div class="row fixedPage">
-        <div class="col-12@(userSigned ? string.Empty : " col-sm-12 col-md-5 col-lg-7 col-xl-8 pageSizeDetail") order-2 order-md-1">
+        <div class="col-12@(isSignedIn ? string.Empty : " col-sm-12 col-md-5 col-lg-7 col-xl-8 pageSizeDetail") order-2 order-md-1">
             <div class="container-fluid">
                 @if (!(Model.Collections.Any()))
                 {
@@ -63,7 +63,7 @@
                     </blockquote>
                     <br />
                     <br />
-                    @if (userSigned)
+                    @if (isSignedIn)
                     {
                         <center><a class="btn btn-outline-primary" asp-controller="Collection" asp-action="Create">Create your Collection</a></center>
                     }
@@ -76,7 +76,7 @@
                     <br />
                     <br />
                 }
-                <div class="row row-cols-1 g-4@(userSigned ? " row-cols-lg-2 row-cols-xl-3" :  " row-cols-lg-1 row-cols-xl-2")">
+                <div class="row row-cols-1 g-4@(isSignedIn ? " row-cols-lg-2 row-cols-xl-3" :  " row-cols-lg-1 row-cols-xl-2")">
                 @foreach (var collection in Model.Collections)
                 {
                     <div class="col">
@@ -93,7 +93,7 @@
                                             collection.Id != 0 // price is Zero
                                             ?
                                             "<div class=\"mt-auto d-flex justify-content-" +
-                                             (userSigned ?
+                                             (isSignedIn ?
                                                  "end\"><a href=\"/Box/Add/" + collection.Id + "\" class=\"btn btn-outline-danger\"><i class=\"bi bi-plus-circle\"></i> Free</a>" :
                                                 "start\"><span class=\"text-danger\">Free</span>") +
                                              "</div>"
@@ -101,7 +101,7 @@
                                             :
                                             "<div class=\"mt-auto d-flex justify-content-between\">" +
                                             $"<span>{collection.Id}$</span>" +
-                                             (userSigned ? "<a href=\"/Box/Add/" + +collection.Id + "\" class=\"btn btn-outline-primary\"><i class=\"bi bi-cart3\"></i> Buy</a>" : string.Empty) +
+                                             (isSignedIn ? "<a href=\"/Box/Add/" + +collection.Id + "\" class=\"btn btn-outline-primary\"><i class=\"bi bi-cart3\"></i> Buy</a>" : string.Empty) +
                                             "</div>"
                                             )
                             </div>
@@ -121,7 +121,7 @@
                 </div>
             </div>
         </div>
-        @if (userSigned is false)
+        @if (isSignedIn is false)
         {
             <div class="col-1 col-sm-2 d-md-none d-lg-none d-xl-none"></div>
             <div id="supForm" class="col-10 col-sm-8 col-md-7 col-lg-5 col-xl-4 pb-5 pt-0 mt-0 pt-lg-5 pt-lx-5 pageSizeDetail order-1 order-md-2">
@@ -153,7 +153,7 @@
 *@
 
 @section Scripts {
-    @if (!userSigned)
+    @if (!isSignedIn)
     {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
