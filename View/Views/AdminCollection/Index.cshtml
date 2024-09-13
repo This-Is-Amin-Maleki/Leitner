@@ -41,7 +41,7 @@
                 @*class="@statusBg[(int)collection.Status]"*@
                 <td>@item.Name</td>
                 <td>
-                    <a asp-action="detail" asp-controller="AdminAccount" asp-route-id="@item.User.Id" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                    <a asp-action="details" asp-controller="AdminAccount" asp-route-id="@item.User.Id" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
                         @item.User.UserName
                     </a>
                 </td>
