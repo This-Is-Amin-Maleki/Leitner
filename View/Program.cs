@@ -61,11 +61,11 @@ namespace ViewLeit
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
-                options.AccessDeniedPath = "/AccessDenied";
+                options.AccessDeniedPath = "/";
                 options.Cookie.Name = "Leitner";
                 options.Cookie.HttpOnly = true;
                 options.ExpireTimeSpan = TimeSpan.FromDays(1);
-                options.LoginPath = "/Page";
+                options.LoginPath = "/";
                 // ReturnUrlParameter requires 
                 //using Microsoft.AspNetCore.Authentication.Cookies;
                 options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
@@ -118,7 +118,7 @@ namespace ViewLeit
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
