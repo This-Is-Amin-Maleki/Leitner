@@ -59,6 +59,11 @@ namespace View.Controllers
             int maxUnsignedCollectionsCount = 6;
             model.Login.ReturnUrl = returnUrl ?? string.Empty;
             model.Collections = await ReadCollections(maxUnsignedCollectionsCount);
+            if(model.Collections.Count == maxUnsignedCollectionsCount)
+            {
+                model.Collections.RemoveAt(maxUnsignedCollectionsCount - 1);
+                ViewData["ShowMore"]=true;
+            }
             return View(model);
         }
 
@@ -81,6 +86,12 @@ namespace View.Controllers
             }
 
             var collections = _collectionService.ReadPublishedCollections(maxUnsignedCollectionsCount, user.Id).ToList();
+
+            if (collections.Count == maxUnsignedCollectionsCount)
+            {
+                collections.RemoveAt(maxUnsignedCollectionsCount - 1);
+                ViewData["ShowMore"] = true;
+            }
 
             if (collections is null || collections.Count is 0)
             {
