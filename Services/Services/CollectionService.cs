@@ -35,6 +35,7 @@ namespace ServicesLeit.Services
         {//use auto mapper
             return await _dbContext.Collections
                 .AsNoTracking()
+                .OrderByDescending(x => x.PublishedDate)
                 .Select(x => new CollectionListDto()
                 {
                     Id = x.Id,
@@ -56,6 +57,7 @@ namespace ServicesLeit.Services
             return await _dbContext.Collections
                 .AsNoTracking()
                 .Where(x => x.UserId == userId)
+                .OrderByDescending(x => x.PublishedDate)
                 .Select(x => new CollectionListDto()
                 {
                     Id = x.Id,
@@ -130,6 +132,7 @@ namespace ServicesLeit.Services
                 .Where(x =>
                     !boxes.Contains(x.Id) &&
                     x.Status == CollectionStatus.Published)
+                .OrderByDescending(x => x.PublishedDate)
                 .Select(x => new CollectionShowDto()
                 {
                     Id = x.Id,
