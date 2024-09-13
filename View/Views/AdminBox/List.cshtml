@@ -1,0 +1,49 @@
+﻿@using SharedLeit
+@using ModelsLeit.DTOs.Box
+@model IEnumerable<BoxMiniDto>
+
+@{
+    ViewData["Title"] = "No Boxes";
+    if (Model.Any())
+    {
+        var user = Model.FirstOrDefault().User;
+        ViewData["Title"] = $"@{user.UserName} Boxes";
+    }
+}
+
+<h2>@ViewData["Title"]</h2>
+<a class="btn btn-primary float-end" asp-controller="AdminAccount" asp-action="Details"
+   asp-route-id="@ViewData["userId"]">
+    <i class="bi bi-arrow-left-square"></i>
+    Return
+</a>
+<br />
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date Added</th>
+            <th>Card Per Day</th>
+            <th>Completed</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var box in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="details" asp-controller="AdminCollection" asp-route-id="@box.Collection.Id"
+                       class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                        @box.Collection.Name
+                    </a>
+                </td>
+                <td>@box.DateAdded</td>
+                <td>@box.CardPerDay</td>
+                <td>
+                    @(box.Completed?Html.Raw ("<i class=\"bi bi-check2-square\"></i>"):"")
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

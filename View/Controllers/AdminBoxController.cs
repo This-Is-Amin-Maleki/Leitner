@@ -26,8 +26,8 @@ namespace ViewLeit.Controllers
         }
 
         // GET: BoxController
-        [Route("AdminBox/{userId?}")]
-        public async Task<ActionResult> Index(long userId = 0)
+        [Route("AdminBox/User/{userId?}")]
+        public async Task<ActionResult> List(long userId = 0)
         {
             ViewData["userId"] = userId;
             List<BoxMiniDto> output;
