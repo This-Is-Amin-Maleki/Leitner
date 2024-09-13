@@ -121,6 +121,7 @@ namespace ServicesLeit.Services
             if (active is null)
             {
                 return users
+                    .OrderByDescending(x=> x.Id)
                     .Select(x => new UserListDto
                     {
                         Id = x.Id,
@@ -135,6 +136,7 @@ namespace ServicesLeit.Services
 
             return users
                 .Where(x => (x.Active == active))
+                .OrderByDescending(x => x.Id)
                 .Select(x => new UserListDto
                 {
                     Id = x.Id,
