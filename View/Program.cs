@@ -63,18 +63,19 @@ namespace ViewLeit
             {
                 options.AccessDeniedPath = "/";
                 options.Cookie.Name = "Leitner";
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromDays(1);
                 options.LoginPath = "/";
                 // ReturnUrlParameter requires 
                 //using Microsoft.AspNetCore.Authentication.Cookies;
+                options.ExpireTimeSpan = TimeSpan.FromDays(1);
                 options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                 options.SlidingExpiration = true;
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
             
-            // Force Identity's security stamp to be validated every minute.
+            // Force Identity's security stamp to be validated every hour.
             builder.Services.Configure<SecurityStampValidatorOptions>(options => 
-                               options.ValidationInterval = TimeSpan.FromMinutes(1));
+                               options.ValidationInterval = TimeSpan.FromHours(1));
 
             builder.Services.Configure<IdentityOptions>(options =>
             {
@@ -107,13 +108,13 @@ namespace ViewLeit
 
             }
             );
+            //token validation duration
             builder.Services.Configure<DataProtectionTokenProviderOptions>( options => 
-                options.TokenLifespan = TimeSpan.FromMinutes(3));
+                options.TokenLifespan = TimeSpan.FromDays(1));
 
 
             var app = builder.Build();
 
-            
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -123,7 +124,7 @@ namespace ViewLeit
                 app.UseHsts();
             }
 
-           app.AutoMigrationAndSeedDataAsync<ApplicationDbContext>(
+            app.AutoMigrationAndSeedDataAsync<ApplicationDbContext>(
                 builder.Configuration["Admin:Email"],
                 builder.Configuration["Admin:Password"]
             );
@@ -134,12 +135,10 @@ namespace ViewLeit
             app.UseRouting();
 
             app.UseAuthentication();
-
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default", 
-                //pattern: "{controller=Collection}/{action=Index}/{id?}");
                 pattern: "{controller=Page}/{action=Index}/{id?}");
 
             app.Run();
