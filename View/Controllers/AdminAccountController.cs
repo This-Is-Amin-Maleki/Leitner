@@ -91,7 +91,7 @@ namespace View.Controllers
             };
             return View(output);
         }
-        public async Task<IActionResult> Detail(long id)
+        public async Task<IActionResult> Details(long id)
         {            
             var user = await _userManager.FindByIdAsync(id.ToString());
             var role = await _userManager.GetRolesAsync(user);
