@@ -98,7 +98,7 @@ namespace View.Controllers
                 var user = long.Parse(_userManager.GetUserId(User)!);
                 return await _collectionService.ReadUnusedPublishedCollectionsAsync(user);
             }
-            return await _collectionService.ReadPublishedCollectionsAsync();
+            return  _collectionService.ReadPublishedCollections(5);
         }
     }
 }
