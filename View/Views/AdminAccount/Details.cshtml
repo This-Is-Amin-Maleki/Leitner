@@ -13,13 +13,8 @@
         $"<i class=\"bi bi-person{roleColor}\"></i>" :
         $"<i class=\"bi bi-person-gear{roleColor}\"></i>")
 </h2>
-<a class="float-start btn btn-primary me-3" asp-action="Index" asp-route-type="@Model.Type" asp-route-active="@Model.Active">
-    <i class="bi bi-people"></i>
-    Users
-</a>
 
-<a class="float-start btn btn-primary me-3" asp-controller="AdminBox" asp-action="Index"
-   asp-route-userId="@Model.Id">
+<a class="float-start btn btn-primary me-3" asp-controller="AdminBox" asp-action="List" asp-route-userId="@Model.Id">
     <i class="bi bi-inboxes"></i>
     Boxes
 </a>
@@ -30,11 +25,16 @@
     Collections
 </a>
 
-<a class="float-end btn btn-primary" asp-action="Modify"
+<a class="float-end btn btn-primary" asp-route-type="@Model.Type" asp-route-active="@Model.Active">
+    <i class="bi bi-arrow-left-square"></i>
+    Return
+</a>
+<a class="float-end btn btn-primary me-3" asp-action="Modify"
    asp-route-id="@Model.Id">
     <i class="bi bi-pencil"></i>
     Edit
 </a>
+
 </br></br>
 <div>
     <dl>
