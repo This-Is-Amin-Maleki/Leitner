@@ -90,17 +90,6 @@ namespace View.Controllers
             return View(model);
         }
 
-        [Route("AccessDenied")]
-        public async Task<IActionResult> Error(string? title, string? returnUrl)
-        {
-            HomePageViewModel model = new();
-            model.Login.ReturnUrl = returnUrl ?? string.Empty;
-            model.Collections = await ReadCollections();
-            ViewData["ErrorTitle"] = "Access Denied";
-            ViewData["Error"] = "You do not have permission to access!";
-            return View("Index", model);
-        }
-
         private async Task<IEnumerable<CollectionShowDto>> ReadCollections()
         {
             if (_signInManager.IsSignedIn(User))
