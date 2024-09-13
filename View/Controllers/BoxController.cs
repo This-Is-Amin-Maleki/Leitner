@@ -34,7 +34,7 @@ namespace ViewLeit.Controllers
         public async Task<ActionResult> Index()
         {
             var userId = long.Parse(_userManager.GetUserId(User)!);
-            List<BoxMiniDto> model = await _boxService.ReadAllAsync(userId);
+            List<BoxMiniDto> model = await _boxService.ReadAll4UserAsync(userId);
             return View(model);
         }
 
