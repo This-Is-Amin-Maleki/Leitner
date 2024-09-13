@@ -6,7 +6,7 @@
 @{
     var user = Model.Collections.First();
     ViewData["Title"] = $"{user.UserName} - Leitner";
-    var userSigned = User.Identity.IsAuthenticated;
+    var isSignedIn = User.Identity.IsAuthenticated;
 }
 
 <div class="container-fluid">
@@ -28,7 +28,7 @@
                     </blockquote>
                     <br />
                     <br />
-                    @if (userSigned)
+                    @if (isSignedIn)
                     {
                         <center><a class="btn btn-outline-primary" asp-controller="Collection" asp-action="Create">Create your Collection</a></center>
                     }
@@ -60,7 +60,7 @@
                                             collection.Id != 0 // price is Zero
                                             ?
                                             "<div class=\"mt-auto d-flex justify-content-" +
-                                             (userSigned ?
+                                             (isSignedIn ?
                                                  "end\"><a href=\"/Box/Add/" + collection.Id + "\" class=\"btn btn-outline-danger\"><i class=\"bi bi-plus-circle\"></i> Free</a>" :
                                                 "start\"><span class=\"text-danger\">Free</span>") +
                                              "</div>"
@@ -68,7 +68,7 @@
                                             :
                                             "<div class=\"mt-auto d-flex justify-content-between\">" +
                                             $"<span>{collection.Id}$</span>" +
-                                             (userSigned ? "<a href=\"/Box/Add/" + +collection.Id + "\" class=\"btn btn-outline-primary\"><i class=\"bi bi-cart3\"></i> Buy</a>" : string.Empty) +
+                                             (isSignedIn ? "<a href=\"/Box/Add/" + +collection.Id + "\" class=\"btn btn-outline-primary\"><i class=\"bi bi-cart3\"></i> Buy</a>" : string.Empty) +
                                             "</div>"
                                             )
                             </div>
