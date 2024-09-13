@@ -6,6 +6,7 @@ using ModelsLeit.ViewModels.User;
 using Microsoft.AspNetCore.Authorization;
 using ModelsLeit.DTOs.Collection;
 using System.Text.Json;
+using ViewLeit.Constants;
 
 namespace View.Controllers
 {
@@ -32,19 +33,28 @@ namespace View.Controllers
         public async Task<IActionResult> Index(string? returnUrl)
         {
             HomePageViewModel model = new();
-            //HomePageViewModel model = input ?? new();
-            if (TempData["Message"] is not null)
-            {
-                ViewData["Message"] = TempData["Message"] as string;
-            }
-            if (TempData["Error"] is not null)
-            {
-                ViewData["ErrorTitle"] = "Error";
-                ViewData["Error"] = TempData["Error"] as string;
-            }
+
             if (TempData["Model"] is not null)
             {
                 model = JsonSerializer.Deserialize<HomePageViewModel>(TempData["Model"] as string);
+            }
+
+            if (HttpContext.Response.StatusCode is 302 or >= 400)
+            {
+                model.ErrorTitle =  "Error " + HttpContext.Response.StatusCode;
+                model.Error = HttpStatus
+                    .FromCode(HttpContext.Response.StatusCode)
+                    .Description;
+            }
+            if (TempData["Error"] is not null)
+            {
+                model.ErrorTitle = (TempData["ErrorTitle"] ?? "Error").ToString();
+                model.Error = (TempData["Error"]).ToString();
+            }
+
+            if (TempData["Message"] is not null)
+            {
+                model.Message = TempData["Message"] as string;
             }
             model.Login.ReturnUrl = returnUrl ?? string.Empty;
             model.Collections = await ReadCollections();
