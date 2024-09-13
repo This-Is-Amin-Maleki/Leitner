@@ -18,7 +18,7 @@ namespace ServicesLeit.Interfaces
         Task<CollectionModifyDto> ReadCollectionDataAsync(long id);
         Task<CollectionModifyDto> ReadCollectionDataAsync(long id, long userId);
         Task<CollectionMiniDto> ReadCollectionNameAndStatusAsync(long id);
-        Task<List<CollectionShowDto>> ReadPublishedCollectionsAsync();
+        IEnumerable<CollectionShowDto> ReadPublishedCollections(int count);
         Task<List<CollectionShowDto>> ReadPublishedCollectionsAsync(long userId);
         Task<List<CollectionShowDto>> ReadUnusedPublishedCollectionsAsync(long userId);
         Task<CollectionDto> ReadUserCollectionAsync(long id, long userId);

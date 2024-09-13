@@ -71,12 +71,19 @@ namespace ServicesLeit.Services
                 })
                 .ToListAsync();
         }
-        public async Task<List<CollectionShowDto>> ReadPublishedCollectionsAsync()
+        public IEnumerable<CollectionShowDto> ReadPublishedCollections(int count)
         {
-            return await _dbContext.Collections
+            if (count is 0)
+            {
+                return new List<CollectionShowDto>();
+            }
+
+            IQueryable<CollectionShowDto> collections = _dbContext.Collections
                 .AsNoTracking()
                 .Include(x => x.User)
                 .Where(x => x.Status == CollectionStatus.Published)
+                .OrderByDescending(x => x.PublishedDate)
+                .Take(count)
                 .Select(x => new CollectionShowDto()
                 {
                     Id = x.Id,
@@ -85,8 +92,13 @@ namespace ServicesLeit.Services
                     CardsQ = x.Cards.Count,
                     UserName = x.User.UserName,
                     UserFullName = x.User.Name,
-                })
-                .ToListAsync();
+                });
+
+            if (collections is null)
+            {
+                return new List<CollectionShowDto>();
+            }
+            return collections;
         }
         public async Task<List<CollectionShowDto>> ReadPublishedCollectionsAsync(long userId)
         {
