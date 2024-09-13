@@ -129,6 +129,8 @@ namespace ViewLeit
                 builder.Configuration["Admin:Password"]
             );
 
+            app.UseStatusCodePagesWithReExecute("/");
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
