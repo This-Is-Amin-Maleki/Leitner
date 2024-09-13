@@ -56,8 +56,9 @@ namespace View.Controllers
             {
                 model.Message = TempData["Message"] as string;
             }
+            int maxUnsignedCollectionsCount = 6;
             model.Login.ReturnUrl = returnUrl ?? string.Empty;
-            model.Collections = await ReadCollections();
+            model.Collections = await ReadCollections(maxUnsignedCollectionsCount);
             return View(model);
         }
 
