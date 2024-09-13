@@ -78,12 +78,17 @@ namespace View.Controllers
                 return Redirect("/");
             }
 
-            var boxes = await _boxService.GetAllCollectionIdAsync(user.Id);
-
+            long[]? boxes = [];
+            if (isSignedIn)
+            {
+                var userId = long.Parse(_userManager.GetUserId(User)!);
+                boxes = await _boxService.GetAllCollectionIdAsync(userId);
+            }
+                
             CollectionOfUserDetailDto model = new()
             {
-                Bio= user.Bio,
-                Boxes= boxes,
+                Bio = user.Bio,
+                Boxes = boxes,
                 Collections = collections,
             };
 
