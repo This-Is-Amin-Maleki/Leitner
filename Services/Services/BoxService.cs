@@ -60,6 +60,41 @@ namespace ServicesLeit.Services
                 })
                 .ToListAsync();
         }
+        public async Task<List<BoxMiniDto>> ReadAll4UserAsync(long userId)
+        {//use auto mapper
+            string userName = _userManager.Users.First(y => y.Id == userId).UserName!;
+            return await _dbContext.Boxes
+                .AsNoTracking()
+                .Include(x => x.Collection)
+                .ThenInclude(x => x.Cards)
+                .ThenInclude(x => x.ContainerCards)
+                .Where(x => x.UserId == userId)
+                .OrderBy(x => x.Completed)
+                .ThenBy(x => x.DateStudied)
+                .ThenBy(x => x.DateAdded)
+                .Select(x => new BoxMiniDto()
+                {
+                    Id = x.Id,
+                    DateAdded = x.DateAdded,
+                    DateStudied = x.DateStudied,
+                    CardPerDay = x.CardPerDay,
+                    LastSlot = x.LastSlot,
+                    LastCardId = x.LastCardId,
+                    Completed = x.Completed,
+                    User = new UserMiniDto()
+                    {
+                        Id = userId,
+                        UserName = userName,
+                    },
+                    Collection = new CollectionMiniDto()
+                    {
+                        Id = x.Collection.Id,
+                        Name = x.Collection.Name,
+
+                    },
+                })
+                .ToListAsync();
+        }
         public async Task<List<BoxMiniDto>> ReadAllAsync(long userId)
         {//use auto mapper
             string userName = _userManager.Users.First(y => y.Id == userId).UserName!;
