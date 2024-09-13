@@ -52,7 +52,7 @@ namespace View.Controllers
         }
 
         [Route("Users/{username}")]
-        public async Task<IActionResult> UserDetail(string username)
+        public async Task<IActionResult> UserDetails(string username)
         {
             var user = await _userManager.FindByNameAsync(username);
 
