@@ -38,6 +38,7 @@ namespace ServicesLeit.Services
                 .Include(x => x.Collection)
                 .ThenInclude(x => x.Cards)
                 .ThenInclude(x => x.ContainerCards)
+                .OrderByDescending(x => x.DateAdded)
                 .Select(x => new BoxMiniDto()
                 {
                     Id = x.Id,
@@ -104,6 +105,7 @@ namespace ServicesLeit.Services
                 .ThenInclude(x => x.Cards)
                 .ThenInclude(x => x.ContainerCards)
                 .Where(x => x.UserId == userId)
+                .OrderByDescending(x => x.DateAdded)
                 .Select(x => new BoxMiniDto()
                 {
                     Id = x.Id,
