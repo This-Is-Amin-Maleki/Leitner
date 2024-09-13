@@ -8,8 +8,7 @@ using ModelsLeit.DTOs.Collection;
 using ModelsLeit.DTOs.Box;
 using Microsoft.AspNetCore.Identity;
 using ModelsLeit.DTOs.User;
-using System.Collections.Generic;
-using Microsoft.IdentityModel.Tokens;
+using System.Runtime.InteropServices;
 
 namespace ServicesLeit.Services
 {
@@ -73,51 +72,16 @@ namespace ServicesLeit.Services
                 })
                 .ToListAsync();
         }
-        public IEnumerable<CollectionShowDto> ReadPublishedCollections(int count)
+        public IEnumerable<CollectionShowDto> ReadPublishedCollections(int count,[Optional] long? userId )
         {
-            if (count is 0)
-            {
-                return new List<CollectionShowDto>();
-            }
-
-            IQueryable<CollectionShowDto> collections = _dbContext.Collections
-                .AsNoTracking()
-                .Include(x => x.User)
-                .Where(x => x.Status == CollectionStatus.Published)
-                .OrderByDescending(x => x.PublishedDate)
-                .Take(count)
-                .Select(x => new CollectionShowDto()
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Description = x.Description,
-                    CardsQ = x.Cards.Count,
-                    UserName = x.User.UserName,
-                    UserFullName = x.User.Name,
-                });
+            IQueryable<CollectionShowDto> collections = GetPublishedCollections(count, userId);
 
             if (collections is null)
             {
                 return new List<CollectionShowDto>();
             }
+
             return collections;
-        }
-        public async Task<List<CollectionShowDto>> ReadPublishedCollectionsAsync(long userId)
-        {
-            return await _dbContext.Collections
-                .AsNoTracking()
-                .Include(x => x.User)
-                .Where(x => x.Status == CollectionStatus.Published && x.UserId == userId)
-                .Select(x => new CollectionShowDto()
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Description = x.Description,
-                    CardsQ = x.Cards.Count,
-                    UserName = x.User.UserName,
-                    UserFullName = x.User.Name,
-                })
-                .ToListAsync();
         }
         public async Task<List<CollectionShowDto>> ReadUnusedPublishedCollectionsAsync(long userId)
         {
@@ -546,7 +510,7 @@ namespace ServicesLeit.Services
         }
 
         private async Task<bool> IsAnyCardsUnapprovedAsync(long id) =>
-            await  _dbContext.Cards
+            await _dbContext.Cards
                 .AsNoTracking()
                 .AnyAsync(x => x.CollectionId == id && x.Status != CardStatus.Approved);
 
@@ -554,5 +518,44 @@ namespace ServicesLeit.Services
             await _dbContext.Cards
                 .AsNoTracking()
                 .AnyAsync(x => x.CollectionId == id);
+
+        private IQueryable<CollectionShowDto> GetPublishedCollections(int count, long? userId) {
+
+            var collections =
+            _dbContext.Collections
+            .AsNoTracking()
+            .Include(x => x.User)
+            .Where(x =>
+                x.Status == CollectionStatus.Published &&
+                (userId == null || x.UserId == userId)
+            )
+            .OrderByDescending(x => x.PublishedDate);
+
+            if (count > 0)
+            {
+                return collections
+                    .Take(count)
+                    .Select(x => new CollectionShowDto()
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Description = x.Description,
+                        CardsQ = x.Cards.Count,
+                        UserName = x.User.UserName,
+                        UserFullName = x.User.Name,
+                    });
+            }
+
+            return collections
+                .Select(x => new CollectionShowDto()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description,
+                    CardsQ = x.Cards.Count,
+                    UserName = x.User.UserName,
+                    UserFullName = x.User.Name,
+                });
+        }
     }
 }
