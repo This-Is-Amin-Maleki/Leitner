@@ -71,7 +71,15 @@ namespace View.Controllers
                 return Redirect("/");
             }
 
-            List<CollectionShowDto> collections = await _collectionService.ReadPublishedCollectionsAsync(user.Id);
+            var isSignedIn = _signInManager.IsSignedIn(User);
+
+            var maxUnsignedCollectionsCount = 9;
+            if (isSignedIn)
+            {
+                maxUnsignedCollectionsCount = 0;
+            }
+
+            var collections = _collectionService.ReadPublishedCollections(maxUnsignedCollectionsCount, user.Id).ToList();
 
             if (collections is null || collections.Count is 0)
             {
