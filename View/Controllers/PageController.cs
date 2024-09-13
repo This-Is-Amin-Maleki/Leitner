@@ -103,14 +103,14 @@ namespace View.Controllers
             return View(model);
         }
 
-        private async Task<IEnumerable<CollectionShowDto>> ReadCollections()
+        private async Task<IList<CollectionShowDto>> ReadCollections(int count)
         {
             if (_signInManager.IsSignedIn(User))
             {
                 var user = long.Parse(_userManager.GetUserId(User)!);
                 return await _collectionService.ReadUnusedPublishedCollectionsAsync(user);
             }
-            return  _collectionService.ReadPublishedCollections(5);
+            return  _collectionService.ReadPublishedCollections(count).ToList();
         }
     }
 }
