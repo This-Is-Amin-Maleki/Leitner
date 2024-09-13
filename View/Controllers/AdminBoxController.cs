@@ -39,5 +39,12 @@ namespace ViewLeit.Controllers
             output = await _boxService.ReadAllAsync(userId);
             return View(output);
         }
+
+        [Route("AdminBox/{id?}")]
+        public async Task<ActionResult> Index(long id)
+        {
+            List<BoxMiniDto> output = await _boxService.ReadByCollectionAsync(id);
+            return View(output);
+        }
     }
 }
