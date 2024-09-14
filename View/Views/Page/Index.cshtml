@@ -8,6 +8,7 @@
     ViewData["Title"] = "Leitner";
     bool isSignedIn = User.Identity.IsAuthenticated;
     var json = JsonConvert.SerializeObject(Enum.GetNames(typeof(UserFormType)));
+    bool showMore = (ViewData["ShowMore"] != null && (bool)ViewData["ShowMore"] == true);
 }
 
 @if (Model.Error is not null)
@@ -108,7 +109,7 @@
                         </div>
                     </div>
                 }
-                @if (!userSigned)
+                @if (!isSignedIn && showMore)
                 {
                     <div class="col">
                         <div class="card h-100">
