@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViewLeit", "View\ViewLeit.c
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesLeit", "Services\ServicesLeit.csproj", "{07C353A1-0575-43BC-8FA6-5AC1962D60B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APILeit", "APILeit\APILeit.csproj", "{61AB6D73-7967-454D-B154-FD330408B677}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{07C353A1-0575-43BC-8FA6-5AC1962D60B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07C353A1-0575-43BC-8FA6-5AC1962D60B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07C353A1-0575-43BC-8FA6-5AC1962D60B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61AB6D73-7967-454D-B154-FD330408B677}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61AB6D73-7967-454D-B154-FD330408B677}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61AB6D73-7967-454D-B154-FD330408B677}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61AB6D73-7967-454D-B154-FD330408B677}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

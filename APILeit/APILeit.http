@@ -1,0 +1,6 @@
+@APILeit_HostAddress = http://localhost:5248
+
+GET {{APILeit_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
