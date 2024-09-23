@@ -10,6 +10,7 @@ namespace ServicesLeit.Interfaces
     {
         Task<UserComfirmResultDto> ConfirmationAsync(string input);
         Task<LoginResult> LoginAsync(UserLoginCheckDto model);
+        Task<LoginApiReposponseDto> LoginApiAsync(UserLoginCheckDto model);
         Task<LoginResult> LoginTwoFactorAsync(PreLoginViewModel model);
         Task LogoutAsync();
         Task<bool> ModifyAsync(UserModifyViewModel model);
