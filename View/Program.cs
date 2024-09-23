@@ -2,13 +2,10 @@ using DataAccessLeit.Context;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using ModelsLeit.DTOs.Notification;
 using ModelsLeit.Entities;
-using ServicesLeit.Interfaces;
 using ServicesLeit.Services;
-using System.Diagnostics;
 using ServicesLeit.Extensions;
 
 namespace ViewLeit
