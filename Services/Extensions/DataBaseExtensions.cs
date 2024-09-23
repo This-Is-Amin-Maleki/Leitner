@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using ModelsLeit.Entities;
 using SharedLeit;
-using System;
-using System.Data;
 
-namespace ViewLeit.Extensions
+namespace ServicesLeit.Extensions
 {
     public static class DataBaseExtensions
     {
