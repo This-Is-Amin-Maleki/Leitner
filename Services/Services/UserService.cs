@@ -116,14 +116,14 @@ namespace ServicesLeit.Services
             if (active is null)
             {
                 return users
-                    .OrderByDescending(x=> x.Id)
+                    .OrderByDescending(x => x.Id)
                     .Select(x => new UserListDto
                     {
                         Id = x.Id,
                         UserName = x.UserName,
                         Email = x.Email,
                         EmailConfirmed = x.EmailConfirmed,
-                        Phone= x.PhoneNumber,
+                        Phone = x.PhoneNumber,
                         PhoneConfirmed = x.PhoneNumberConfirmed,
                     })
                     .ToList();
@@ -143,6 +143,7 @@ namespace ServicesLeit.Services
                 })
                 .ToList();
         }
+
         public async Task<IdentityResult?> ChangePasswordLimitedAsync(UserChangePasswordLimitedViewModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
@@ -690,7 +691,7 @@ namespace ServicesLeit.Services
             return LoginResult.TwoFactorInvalid;
         }
         ///////////////////////////////////
-        
+
         private string TokenCreator(string email, string token) =>
             EncodeToBase64(email + "|" + token)
                 .Replace("/", "_")
