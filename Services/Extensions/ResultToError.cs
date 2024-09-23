@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SharedLeit;
-using System.Text;
+﻿using SharedLeit;
 
-namespace ViewLeit.Extensions
+namespace ServicesLeit.Extensions
 {
     public static class ResultToError
     {

@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Authorization;
 using ModelsLeit.Entities;
 using ModelsLeit.DTOs.User;
 using SharedLeit;
-using ViewLeit.Extensions;
 using ServicesLeit.Services;
 using ModelsLeit.ViewModels.User;
 using System.Text.Json;
+using ServicesLeit.Extensions;
 
 namespace View.Controllers
 {
