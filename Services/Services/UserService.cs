@@ -111,12 +111,7 @@ namespace ServicesLeit.Services
         }
         public async Task<List<UserListDto>> ReadAllAsync(bool? active = null, UserType? type = null)
         {
-            IEnumerable<ApplicationUser> users = _userManager.Users;
-
-            if (type is not null)
-            {
-                users = await _userManager.GetUsersInRoleAsync(type.ToString());
-            }
+            IEnumerable<ApplicationUser> users = await AllUsersOrUsersInRole(type);
 
             if (active is null)
             {
@@ -870,6 +865,15 @@ namespace ServicesLeit.Services
             }
 
             return output;
+        }
+        private async Task<IEnumerable<ApplicationUser>> AllUsersOrUsersInRole(UserType? type)
+        {
+            if (type is not null)
+            {
+                return await _userManager.GetUsersInRoleAsync(type.ToString());
+            }
+
+            return _userManager.Users;
         }
     }
 }
