@@ -2,14 +2,19 @@
 @{
     bool isUserLoggedIn = User.Identity.IsAuthenticated;
     bool isAdmin = User.IsInRole(UserType.Admin.ToString());
+    var title = "Leitner";
     //bool isTwoFactorEnabled = User.HasClaim("amr", "mfa");
+    if (ViewData["Title"] is not null || ViewData["Title"] is not "Leitner")
+    {
+        title = $"{ViewData["Title"]} - Leitner";
+    }
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Leitner</title>
+    <title>@title</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" onerror="this.onerror=null;this.href='/js/bootstrap/5.3.3/css/bootstrap.min.css';">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" onerror="this.onerror=null;this.href='/css/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css';">
     @* RTL
