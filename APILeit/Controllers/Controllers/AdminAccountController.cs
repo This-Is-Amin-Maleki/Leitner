@@ -79,5 +79,30 @@ namespace APILeit.Controllers
             };
             return Ok(output);
         }
+
+        [HttpPut]
+        [Route("api/[controller]/[action]")]
+        public async Task<IActionResult> Update([FromBody] UserModifyViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userManager.FindByIdAsync(model.Id.ToString());
+            var result = await _userService.ModifyAsync(model);
+            if (!result)
+            {
+                ModelState.AddModelError("Fail", $"Failed to update {model.UserName} profile. Please try again later!");
+                return BadRequest(ModelState);
+            }
+
+            return CreatedAtAction(
+                nameof(GetAll),
+                new { active = model.ParameterActive, type = model.ParameterType },
+                new { message = $"{model.UserName} updated successfully!" }
+            );
+
+        }
     }
 }
