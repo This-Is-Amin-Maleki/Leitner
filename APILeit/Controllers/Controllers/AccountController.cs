@@ -114,5 +114,19 @@ namespace APILeit.Controllers
 
             return Ok(new { message = "Password updated successfully!" });
         }
+
+        [HttpGet]
+        [Route("api/[controller]/[action]")]
+        public async Task<IActionResult> Enable2FA()
+        {
+            var result = await _userService.TwoFactorActivatorAsync(User);
+            if (result is null)
+            {
+                ModelState.AddModelError("XX", "User Not Valid!");
+                return BadRequest(ModelState);
+            }
+
+            return Ok(result);
+        }
     }
 }
