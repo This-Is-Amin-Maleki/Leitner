@@ -137,5 +137,35 @@ namespace APILeit.Controllers
                 new { message = "Cards upload successfully!" }
             );
         }
+
+        // POST: CardController/Edit
+        [HttpPut]
+        [Route("api/[controller]/[action]")]
+        public async Task<ActionResult> Edit([FromBody] CardDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("XX", "Not Valid!");
+                return BadRequest(ModelState);
+            }
+            model.UserId = long.Parse(_userManager.GetUserId(User)!);
+
+#warning catch!!
+            try
+            {
+                await _cardService.UpdateCardLimitedAsync(model);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("xx", ex.Message);
+                return BadRequest(ModelState);
+            }
+
+            return CreatedAtAction(
+                nameof(GetAll),
+                new { id = model.Id },
+                new { message = "Card updated successfully!" }
+            );
+        }
     }
 }
