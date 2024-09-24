@@ -13,4 +13,11 @@ namespace ModelsLeit.ViewModels.User
         public string? Token { get; set; }
         public string? ReturnUrl { get; set; }
     }
+    public record LoginApiDto
+    {
+        [Required]
+        public string Identifier { get; set; }
+        [Required]
+        public string Password { get; set; }
+    }
 }
