@@ -29,6 +29,43 @@ namespace APILeit
             // Add services to the container.
             builder.Services.AddControllers();
 
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
+
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Leitner", Version = "1" });
+
+                options.AddSecurityDefinition(
+                    JwtBearerDefaults.AuthenticationScheme,//"Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Type =   SecuritySchemeType.ApiKey,//SecuritySchemeType.Http,
+                        Scheme =   JwtBearerDefaults.AuthenticationScheme,//"Bearer", //
+                        BearerFormat = "JWT",
+                        Description = "Enter 'Bearer' [space] and then your token in the text input below.\n\nExample: \"Bearer abcdef12345\""
+                    });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme ,
+                            Id = JwtBearerDefaults.AuthenticationScheme
+                        },
+                        Scheme =   "Oauth2" ,//"Bearer",
+                        Name = JwtBearerDefaults.AuthenticationScheme,
+                        In=ParameterLocation.Header
+                    },
+                    new List <string> ()
+                }
+                });
+            });
             // Configure services and DI
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<CollectionService>();
@@ -55,6 +92,15 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+            var app = builder.Build();
+
+            // Enable Swagger in Development
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+            // Middleware for request pipeline
             app.UseHttpsRedirection();
 
                     app.UseRouting();
