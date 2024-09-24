@@ -40,5 +40,35 @@ namespace APILeit.Controllers
             var output = await _collectionService.ReadUserCollectionAsync(id, userId);
             return Ok(output);
         }
+
+        // POST: CollectionController/Create
+        [HttpPost]
+        [Route("api/[controller]/[action]")]
+        public async Task<ActionResult> Create([FromBody] CollectionCreationDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("XX", "Not Valid!");
+                return BadRequest(ModelState);
+            }
+
+            model.UserId =long.Parse(_userManager.GetUserId(User)!);
+#warning catch!!
+            try
+            { 
+               await _collectionService.AddCollectionAsync(model);
+            }
+            catch( Exception ex)
+            {
+                ModelState.AddModelError("xx", ex.Message);
+                return BadRequest(ModelState);
+            }
+
+            return CreatedAtAction(
+                nameof(Index),
+                new { },
+                new { message = $"{model.Name} created successfully!" }
+            );
+        }
     }
 }
