@@ -29,6 +29,21 @@ namespace APILeit
             // Add services to the container.
             builder.Services.AddControllers();
 
+            // Configure services and DI
+            builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<CollectionService>();
+            builder.Services.AddScoped<CardService>();
+            builder.Services.AddScoped<BoxService>();
+            builder.Services.AddScoped<UserService>();
+            builder.Services.AddTransient<FileService>(); // Stateless service
+
+            // using Notification Service 
+            builder.Services.Configure<SmtpServiceDto>(builder.Configuration.GetSection("Smtp"));
+            builder.Services.AddTransient<NotificationService>(serviceProvider =>
+            {
+                var smtpServiceDto = serviceProvider.GetRequiredService<IOptions<SmtpServiceDto>>().Value;
+                return new NotificationService(smtpServiceDto);
+            });
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
