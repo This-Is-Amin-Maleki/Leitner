@@ -85,5 +85,27 @@ namespace APILeit.Controllers
                 new { message = $"{model.Name}'s Box created successfully!" }
             );
         }
+
+        // POST: BoxController/Delete
+        [HttpDelete]
+        [Route("api/[controller]/[action]/{id}")]
+        public async Task<ActionResult> Delete(long id)
+        {
+            try
+            {
+                var userId = long.Parse(_userManager.GetUserId(User)!);
+                await _boxService.DeleteAsync(id, userId);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+
+            return CreatedAtAction(
+                nameof(GetAll),
+            new { },
+                new { message = $"Box removed!" }
+            );
+        }
     }
 }
