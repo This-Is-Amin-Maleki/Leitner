@@ -129,5 +129,33 @@ namespace APILeit.Controllers
             output.Message = "Password reset instructions have been sent to your email. Please check your inbox to proceed with resetting your password.";
             return Ok(output);
         }
+
+        [HttpPost]
+        [Route("api/[controller]/[action]")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto input)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            UserResetPasswordViewModel model = new()
+            {
+                Password = input.Password,
+                Identifier = input.Identifier,
+                Token = input.Token,
+                Mode = UserCheckMode.EmailOnly
+            };
+
+            var result = await _userService.ResetPasswordConfirmAsync(model);
+
+            if (!result)
+            {
+                return BadRequest("There was an issue resetting your password! Please try again or contact our support team if the problem persists.");
+            }
+
+            return Ok("Your password has been successfully reset.You can now log in using your new password.Please ensure to keep your password secure and do not share it with anyone.");
+        }
     }
 }
