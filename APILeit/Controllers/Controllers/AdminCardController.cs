@@ -156,5 +156,35 @@ namespace APILeit.Controllers
                 new { message = content ?? "Profile updated successfully!" }
             );
         }
+
+        [HttpPut]
+        [Route("api/[controller]/[action]")]
+        public async Task<ActionResult> CheckNext([FromBody] CardCheckStatusDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            CardCheckDto output;
+            try
+            {
+                output = await _cardService.ReadCardCheck(model.Id, model.Status, model.Skip);
+                output.Skip = model.Skip + 1;
+            }
+            catch (Exception ex)
+            {
+                return CreatedAtAction(
+                    nameof(GetAll),
+                    new
+                    {
+                        collectionId = model.CollectionId,
+                    },
+                    new { message = ex.Message }
+                );
+            }
+            return Ok(output);
+        }
+
     }
 }
