@@ -35,5 +35,11 @@ namespace APILeit.Controllers
             List<CardMiniUnlimitedDto> output = await _cardService.ReadCardsUnlimitedAsync(collectionId, state);
             return Ok(output);
         }
+
+        // GET: CardController/Details/5
+        [HttpGet]
+        [Route("api/[controller]/[action]/{id}")]
+        public async Task<ActionResult> Get(long id) =>
+            Ok(await _cardService.ReadCardAsync(id));
     }
 }
