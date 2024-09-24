@@ -35,5 +35,18 @@ namespace APILeit.Controllers
             _pageSize = _configuration.GetValue<int>("Configuration:ItemsInList");
             _userService = userService;
         }
+
+        [HttpGet]
+        [Route("api/[controller]/All")]
+        public async Task<IActionResult> GetAll(bool? active = null, UserType? type = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            List<UserListDto> user = await _userService.ReadAllAsync(active, type);
+            return Ok(user);
+        }
     }
 }
