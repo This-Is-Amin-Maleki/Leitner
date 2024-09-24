@@ -152,5 +152,18 @@ namespace APILeit.Controllers
 
             return Ok(new { message = "Two-factor authentication has been enabled successfully." });
         }
+
+        [HttpPut]
+        [Route("api/[controller]/[action]")]
+        public async Task<IActionResult> Deactivate2FA()
+        {
+            var result = await _userService.TwoFactorDeactivatorAsync(User);
+            if (!result)
+            {
+                return BadRequest(new { message = "Failed to disable two-factor authentication! Please try again later or contact support." });
+            }
+            return Ok(new { message = "Two-factor authentication has been disabled successfully." });
+        }
+
     }
 }
