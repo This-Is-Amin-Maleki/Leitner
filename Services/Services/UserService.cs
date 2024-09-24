@@ -1,6 +1,7 @@
 ﻿using DataAccessLeit.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using ModelsLeit.DTOs.User;
@@ -11,6 +12,7 @@ using RTools_NTS.Util;
 using ServicesLeit.Interfaces;
 using SharedLeit;
 using System.Data;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -32,7 +34,7 @@ namespace ServicesLeit.Services
         private readonly RoleManager<IdentityRole<long>> _roleManager;
         private readonly UrlEncoder _urlEncoder;
         private readonly NotificationService _notificationService;
-        private readonly ITokenService _tokenService;
+        private readonly IConfiguration _configuration;
         public UserService(
             ApplicationDbContext dbContext,
             UserManager<ApplicationUser> userManager,
@@ -41,7 +43,7 @@ namespace ServicesLeit.Services
             UrlEncoder urlEncoder,
             ILogger<UserService> logger,
             NotificationService notificationService,
-            ITokenService tokenService)
+            IConfiguration configuration)
         {
             _urlEncoder = urlEncoder;
             _dbContext = dbContext;
@@ -50,7 +52,7 @@ namespace ServicesLeit.Services
             _logger = logger;
             _roleManager = roleManager;
             _notificationService = notificationService;
-            _tokenService = tokenService;
+            _configuration = configuration;
         }
 
         public async Task<UserRegisterDto> RegisterAsync(UserRegisterViewModel model)
@@ -583,7 +585,7 @@ namespace ServicesLeit.Services
 
                 List<string> roles = _roleManager.Roles.Select(x => x.Name).ToList();
 
-                var jwsToken = _tokenService.CreateJWTToken(model.User, roles);
+                var jwsToken = CreateJWTToken(model.User, roles);
 
                 responce.JwtToken = jwsToken;
                 responce.Result = LoginResult.Success;
@@ -930,6 +932,28 @@ namespace ServicesLeit.Services
             }
 
             return _userManager.Users;
+        }
+        private string CreateJWTToken(ApplicationUser user, List<string> roles)
+        {
+            var claims = new List<Claim>();
+
+            claims.Add(new Claim(ClaimTypes.Email, user.Email));
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var jwtToken = new JwtSecurityToken(
+                _configuration["Jwt:Issuer"],
+                _configuration["Jwt:Audience"],
+                claims,
+                expires: DateTime.Now.AddMinutes(15),
+                signingCredentials: credentials);
+
+            var token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+            return token;
         }
     }
 }
