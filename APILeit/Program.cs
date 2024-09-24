@@ -1,13 +1,34 @@
-var builder = WebApplication.CreateBuilder(args);
+using DataAccessLeit.Context;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using ServicesLeit.Interfaces;
+using ServicesLeit.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using ModelsLeit.DTOs.Notification;
+using ModelsLeit.Entities;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+namespace APILeit
+{
+    internal class Program
+    {
+        private static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+            // Logging configuration            Just One Of Two
+            builder.Logging.AddDebug();
+            //builder.Host.ConfigureLogging(l =>
+            //{
+            //    l.AddDebug();
+            //});
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+            // Add services to the container.
+            builder.Services.AddControllers();
 
-var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -19,7 +40,14 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+            app.UseHttpsRedirection();
 
-app.MapControllers();
+                    app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
-app.Run();
+            app.MapControllers();
+            app.Run();
+        }
+    }
+}
