@@ -30,5 +30,11 @@ namespace APILeit.Controllers
         [Route("api/[controller]/[action]/{id}")]
         public async Task<ActionResult> GetDetails(long id) =>
             Ok(await _collectionService.ReadCollectionAsync(id));
+
+        // GET: CollectionController/Edit
+        [HttpGet]
+        [Route("api/[controller]/[action]/{id}")]
+        public async Task<ActionResult> Get(long id) =>
+            Ok(await _collectionService.ReadCollectionDataAsync(id));
     }
 }
