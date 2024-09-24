@@ -107,5 +107,23 @@ namespace APILeit.Controllers
                 new { message = $"Box removed!" }
             );
         }
+
+        // GET: BoxController/Add
+        [HttpGet]
+        [Route("api/[controller]/[action]/{id}")]
+        public async Task<ActionResult> Review(long id)
+        {
+            BoxReviewDto model;
+            try
+            {
+                var userId = long.Parse(_userManager.GetUserId(User)!);
+                model = await _boxService.ReviewAsync(id, userId);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            return Ok(model);
+        }
     }
 }
