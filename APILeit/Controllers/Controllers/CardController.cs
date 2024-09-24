@@ -27,5 +27,15 @@ namespace APILeit.Controllers
             _collectionService = collectionService;
             _userManager = userManager;
         }
+
+        // GET: CardController
+        [HttpGet]
+        [Route("api/[controller]/[action]/{id}")]
+        public async Task<ActionResult> GetAll(long id)
+        {
+            var userId = long.Parse(_userManager.GetUserId(User)!);
+            List<CardMiniDto> model = await _cardService.ReadCardsLimitedAsync(id, userId);
+            return Ok(model);
+        }
     }
 }
