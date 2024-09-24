@@ -125,5 +125,28 @@ namespace APILeit.Controllers
             }
             return Ok(model);
         }
+
+        // GET: BoxController/Add
+        [HttpGet]
+        [Route("api/[controller]/[action]/{id}")]
+        public async Task<ActionResult> Study(long id)
+        {
+            ContainerStudyDto model;
+            try
+            {
+                var userId = long.Parse(_userManager.GetUserId(User)!);
+                 model = await _boxService.StudyAsync(id, userId);
+                if(/*model is null || */model.Approved.Count is 0 && model.Rejected.Count is 0)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch(Exception ex)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return Ok(model);
+        }
     }
 }
