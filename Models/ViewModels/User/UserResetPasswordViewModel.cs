@@ -15,4 +15,10 @@ namespace ModelsLeit.ViewModels.User
         //[StringLength(100, MinimumLength = 8, ErrorMessage = "{0} - {1} - {2} Characters")]
         public string Token { get; set; }
     }
+    public record ResetPasswordDto
+    {
+        public string Identifier { get; set; }
+        public string Password { get; set; }
+        public string Token { get; set; }
+    }
 }
