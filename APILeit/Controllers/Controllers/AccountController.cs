@@ -50,5 +50,38 @@ namespace APILeit.Controllers
 
             return Ok(output);
         }
+
+        [HttpPut]
+        [Route("api/[controller]/[action]")]
+        public async Task<IActionResult> Update([FromBody] UserModifyProfileLimitedViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            model.Id = Convert.ToInt64(
+                _userManager.GetUserId(User));
+
+            var result = await _userService.ModifyProfileLimitedAsync(model);
+
+            if (result is null)
+            {
+                ModelState.AddModelError("XX", "User Not Valid!");
+                return BadRequest(ModelState);
+            }
+
+            if (result is false)
+            {
+                ModelState.AddModelError("Fail", "Failed to update profile. Please try again later!");
+                return BadRequest(ModelState);
+            }
+
+            return CreatedAtAction(
+                nameof(Get),
+                new { },
+                new { message = "Profile updated successfully!" }
+            );
+        }
     }
 }
