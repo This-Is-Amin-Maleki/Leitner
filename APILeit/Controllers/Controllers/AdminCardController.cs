@@ -70,5 +70,31 @@ namespace APILeit.Controllers
                 new { message = "Card updated successfully!" }
             );
         }
+
+        [HttpPut]
+        [Route("api/[controller]/[action]/{id}")]
+        public async Task<ActionResult> TickAll(long id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                await _cardService.TickAllCardsAsync(id);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("xx", ex.Message);
+                return BadRequest(ModelState);
+            }
+
+            return CreatedAtAction(
+            nameof(GetAll),
+                new { id },
+                new { message = "Card updated successfully!" }
+            );
+        }
     }
 }
