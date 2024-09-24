@@ -95,5 +95,39 @@ namespace APILeit.Controllers
 
             return Ok("/Password reset successful! You can now log in.");
         }
+
+        [HttpPost]
+        [Route("api/[controller]/[action]")]
+        public async Task<IActionResult> Forgot([FromBody] string identifier)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            LoginResultViewModel output = new()
+            {
+                Id = "ForgotSent",
+                Title = "Failed to send the password reset email.",
+                Message = "An error has occurred while processing your request! Please try again later.",
+            };
+
+            try {
+                var model = new ResetPasswordRequestViewModel
+                {
+                    Mode = UserCheckMode.EmailOnly,
+                    Identifier = identifier,
+                    Domain = $"{_httpContext.HttpContext.Request.Scheme}://{_httpContext.HttpContext.Request.Host.Value}",
+                };
+                await _userService.SendPasswordResetTokenAsync(model);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(output);
+            }
+
+            output.Title = "Password Reset Email Sent";
+            output.Message = "Password reset instructions have been sent to your email. Please check your inbox to proceed with resetting your password.";
+            return Ok(output);
+        }
     }
 }
