@@ -113,5 +113,48 @@ namespace APILeit.Controllers
             }
             return Ok(output);
         }
+
+        [HttpPut]
+        [Route("api/[controller]/[action]")]
+        public async Task<ActionResult> CheckList([FromBody] CardCheckStatusDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            string? content = null;
+            try
+            {
+                var output = await _cardService.UpdateStatusAndReadNextCardCheck(model);
+                if (output.Id is not 0)
+                {
+                    return Ok(output);
+                }
+
+                return CreatedAtAction(
+                nameof(Index),
+                new
+                {
+                    id = model.CollectionId,
+                    state = output.Status
+                });
+
+            }
+            catch (Exception ex)
+            {
+                content = ex.Message;
+            }
+
+            return CreatedAtAction(
+                nameof(GetAll),
+                new
+                {
+                    collectionId = model.CollectionId,
+                    CardStatus = model.Status
+                },
+                new { message = content ?? "Profile updated successfully!" }
+            );
+        }
     }
 }
