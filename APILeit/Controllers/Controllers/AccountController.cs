@@ -83,5 +83,36 @@ namespace APILeit.Controllers
                 new { message = "Profile updated successfully!" }
             );
         }
+
+        [HttpPut]
+        [Route("api/[controller]/[action]")]
+        public async Task<IActionResult> ChangePassword([FromBody] UserChangePasswordLimitedViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            model.Id = Convert.ToInt64(_userManager.GetUserId(User));
+
+            var result = await _userService.ChangePasswordLimitedAsync(model);
+
+            if (result is null)
+            {
+                ModelState.AddModelError("XX", "User Not Valid!");
+                return BadRequest(ModelState);
+            }
+
+            if (result.Errors.Any())
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.Code, error.Description);
+                }
+                return BadRequest(ModelState);
+            }
+
+            return Ok(new { message = "Password updated successfully!" });
+        }
     }
 }
