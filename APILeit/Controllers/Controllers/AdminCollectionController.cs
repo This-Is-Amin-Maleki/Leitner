@@ -24,5 +24,11 @@ namespace APILeit.Controllers
             Ok(userId is 0 ?
                 await _collectionService.ReadAllAsync() :
                 await _collectionService.ReadAllAsync(userId));
+
+        // GET: CollectionController/Details/5
+        [HttpGet]
+        [Route("api/[controller]/[action]/{id}")]
+        public async Task<ActionResult> GetDetails(long id) =>
+            Ok(await _collectionService.ReadCollectionAsync(id));
     }
 }
