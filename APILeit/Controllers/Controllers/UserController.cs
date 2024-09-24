@@ -74,5 +74,26 @@ namespace APILeit.Controllers
             }
             return Ok(outModel);
         }
+
+        [HttpGet]
+        [Route("api/[controller]/[action]/{input}")]
+        public async Task<IActionResult> Confirmation(string input)
+        {
+            var result = await _userService.ConfirmationAsync(input);
+
+            //error
+            if (result.Status is ComfirmationStatus.Fail)
+            {
+                return BadRequest("Invalid token. Please try again or request a new one!");
+            }
+
+            //email confirmed
+            if (result.Status is ComfirmationStatus.SuccessEmail) //just email confirm
+            {
+                return Ok("Email confirmed successfully. Now you can log in to your account.");
+            }
+
+            return Ok("/Password reset successful! You can now log in.");
+        }
     }
 }
