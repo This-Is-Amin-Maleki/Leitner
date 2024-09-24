@@ -100,5 +100,36 @@ namespace APILeit.Controllers
                 new { message = $"{model.Name} modified successfully!" }
             );
         }
+
+        // POST: CollectionController/Delete
+        [HttpDelete]
+        [Route("api/[controller]/[action]")]
+        public async Task<ActionResult> Delete([FromBody] CollectionModifyDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("XX", "Not Valid!");
+                return BadRequest(ModelState);
+            }
+            model.UserId = long.Parse(_userManager.GetUserId(User)!);
+
+
+            try
+            {
+                await _collectionService.DeleteCollectionLimitedAsync(model);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("xx", ex.Message);
+                return BadRequest(ModelState);
+            }
+
+            return CreatedAtAction(
+                nameof(Index),
+                new { },
+                new { message = $"{model.Name} removed successfully!" }
+            );
+        }
+
     }
 }
