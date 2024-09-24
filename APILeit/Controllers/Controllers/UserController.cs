@@ -157,5 +157,44 @@ namespace APILeit.Controllers
 
             return Ok("Your password has been successfully reset.You can now log in using your new password.Please ensure to keep your password secure and do not share it with anyone.");
         }
+
+        [HttpPost]
+        [Route("api/[controller]/[action]")]
+        public async Task<IActionResult> Login([FromBody] LoginApiDto input)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var model = new PreLoginViewModel()
+            {
+                Identifier = input.Identifier,
+                Password = input.Password,
+                Mode = UserCheckMode.EmailAndUserName
+            };
+
+            var preLoginData = await _userService.PreLoginAsync(model);
+            var result = await _userService.LoginApiAsync(preLoginData);
+
+            if ((int)result.Result >= 9)
+            {
+                return BadRequest("An error has occurred while processing your request. Please try again later.");
+            }
+
+            if (result.Result is LoginResult.TwoFactorRequire)
+            {
+                return BadRequest("Two-factor authentication required. Please enter the code from your authentication app.");
+            }
+
+            if (result.Result is LoginResult.Success)
+            {
+                return Ok(result);
+            }
+
+            var error = result.Result.LoginResultError(preLoginData.User.LockoutEnd);
+            ModelState.AddModelError(error.key, error.message);
+            return BadRequest(ModelState);
+        }
     }
 }
