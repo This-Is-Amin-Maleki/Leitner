@@ -91,7 +91,6 @@ namespace APILeit
             });
 
             // Configure services and DI
-            builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<CollectionService>();
             builder.Services.AddScoped<CardService>();
             builder.Services.AddScoped<BoxService>();
