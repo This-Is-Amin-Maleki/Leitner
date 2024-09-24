@@ -48,5 +48,36 @@ namespace APILeit.Controllers
             List<UserListDto> user = await _userService.ReadAllAsync(active, type);
             return Ok(user);
         }
+
+        [HttpGet]
+        [Route("api/[controller]/[action]/{id}")]
+        public async Task<IActionResult> Get(long id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user is null)
+            {
+                return BadRequest(new { message = "User not valid!" });
+            }
+
+            var role = await _userManager.GetRolesAsync(user);
+            UserModifyViewModel output = new()
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Bio = user.Bio,
+                UserName = user.UserName,
+                Email = user.Email ?? string.Empty,
+                Phone = user.PhoneNumber,
+                TwoFactorAuthentication = user.TwoFactorEnabled,
+                Active = user.Active,
+                EmailConfirmed = user.EmailConfirmed,
+                LockoutEnabled = user.LockoutEnabled,
+                LockoutEnd = user.LockoutEnd,
+                PhoneConfirmed = user.PhoneNumberConfirmed,
+
+                Type = (UserType)Enum.Parse(typeof(UserType), role.First()),
+            };
+            return Ok(output);
+        }
     }
 }
