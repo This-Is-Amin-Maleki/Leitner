@@ -25,5 +25,21 @@ namespace APILeit.Controllers
             _collectionService = collectionService;
             _userManager = userManager;
         }
+
+        // GET: BoxController
+        [HttpGet]
+        [Route("api/[controller]/[action]/{userId}")]
+        //[Route("AdminBox/User/{userId?}")]
+        public async Task<ActionResult> GetAllByUser(long userId = 0)
+        {
+            List<BoxMiniDto> output;
+            if (userId is 0)
+            {
+                output = await _boxService.ReadAllAsync();
+                return Ok(output);
+            }
+            output = await _boxService.ReadAllAsync(userId);
+            return Ok(output);
+        }
     }
 }
