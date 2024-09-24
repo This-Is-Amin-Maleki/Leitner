@@ -7,6 +7,7 @@ using ModelsLeit.DTOs.User;
 using ModelsLeit.Entities;
 using ModelsLeit.ViewModels.User;
 using NetTopologySuite.Densify;
+using RTools_NTS.Util;
 using ServicesLeit.Interfaces;
 using SharedLeit;
 using System.Data;
@@ -31,6 +32,7 @@ namespace ServicesLeit.Services
         private readonly RoleManager<IdentityRole<long>> _roleManager;
         private readonly UrlEncoder _urlEncoder;
         private readonly NotificationService _notificationService;
+        private readonly ITokenService _tokenService;
         public UserService(
             ApplicationDbContext dbContext,
             UserManager<ApplicationUser> userManager,
@@ -38,7 +40,8 @@ namespace ServicesLeit.Services
             RoleManager<IdentityRole<long>> roleManager,
             UrlEncoder urlEncoder,
             ILogger<UserService> logger,
-            NotificationService notificationService)
+            NotificationService notificationService,
+            ITokenService tokenService)
         {
             _urlEncoder = urlEncoder;
             _dbContext = dbContext;
@@ -47,6 +50,7 @@ namespace ServicesLeit.Services
             _logger = logger;
             _roleManager = roleManager;
             _notificationService = notificationService;
+            _tokenService = tokenService;
         }
 
         public async Task<UserRegisterDto> RegisterAsync(UserRegisterViewModel model)
@@ -536,6 +540,57 @@ namespace ServicesLeit.Services
             return LoginResult.Success;
         }
 
+        public async Task<LoginApiReposponseDto> LoginApiAsync(UserLoginCheckDto model)
+        {
+
+            var responce = new LoginApiReposponseDto();
+
+            if (model.User is null)
+            {
+                responce.Result = LoginResult.NotFound;
+            }
+
+            if (!model.User.EmailConfirmed)
+            {
+                responce.Result = LoginResult.EmailNotConfirmed;
+            }
+
+            if (!model.User.Active)
+            {
+                responce.Result = LoginResult.Deactive;
+            }
+
+            var result = await _signInManager.CheckPasswordSignInAsync(model.User, model.Password, true);
+
+            if (result.IsLockedOut)
+            {
+                responce.Result = LoginResult.LockedOut;
+            }
+
+            if (result.RequiresTwoFactor)
+            {
+                responce.Result = LoginResult.TwoFactorRequire;
+            }
+
+            if (!result.Succeeded)
+            {
+                responce.Result = LoginResult.Fail;
+            }
+
+            if (result.Succeeded)
+            {
+                await _signInManager.SignInAsync(model.User, false);
+
+                List<string> roles = _roleManager.Roles.Select(x => x.Name).ToList();
+
+                var jwsToken = _tokenService.CreateJWTToken(model.User, roles);
+
+                responce.JwtToken = jwsToken;
+                responce.Result = LoginResult.Success;
+            }
+
+            return responce;
+        }
 
         /// <summary>
         /// 
