@@ -45,5 +45,45 @@ namespace APILeit.Controllers
             List<BoxMiniDto> model = await _boxService.ReadByCollectionAsync(collectionId);
             return Ok(model);
         }
+
+        // POST: BoxController/Create
+        [HttpPost]
+        [Route("api/[controller]/[action]")]
+        public async Task<ActionResult> Create([FromBody] BoxAddDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("XX", "Not Valid!");
+                return BadRequest(ModelState);
+            }
+
+            long userId = long.Parse(_userManager.GetUserId(User)!);
+            var collection = await _collectionService
+                .CheckExistCollectionAsync(model.CollectionId, userId);
+            if(collection is null)
+            {
+                ModelState.AddModelError("XX", "Not Allow!");
+                return BadRequest(ModelState);
+            }
+
+            collection.CardPerDay= model.CardPerDay;
+            collection.UserId = userId;
+#warning catch!!
+            try
+            { 
+               await _boxService.AddAsync(collection);
+            }
+            catch( Exception ex)
+            {
+                ModelState.AddModelError("xx", ex.Message);
+                return BadRequest(ModelState);
+            }
+
+            return CreatedAtAction(
+                nameof(GetAll),
+                new { },
+                new { message = $"{model.Name}'s Box created successfully!" }
+            );
+        }
     }
 }
