@@ -41,5 +41,14 @@ namespace APILeit.Controllers
             output = await _boxService.ReadAllAsync(userId);
             return Ok(output);
         }
+
+        //[Route("AdminBox/{id?}")]
+        [HttpGet]
+        [Route("api/[controller]/[action]/{collectionId}")]
+        public async Task<ActionResult> GetAll(long collectionId)
+        {
+            List<BoxMiniDto> output = await _boxService.ReadByCollectionAsync(collectionId);
+            return Ok(output);
+        }
     }
 }
