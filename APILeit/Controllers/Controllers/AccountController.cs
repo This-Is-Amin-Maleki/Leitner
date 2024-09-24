@@ -30,5 +30,25 @@ namespace APILeit.Controllers
             //_pageSize = configuration.GetValue<int>("Configuration:ItemsInList");
             _userService = userService;
         }
+        
+        [HttpGet]
+        [Route("api/[controller]/[action]")]
+        public async Task<IActionResult> Get()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user is null)
+            {
+                return BadRequest(new { message = "User not valid!" });
+            }
+
+            UserModifyProfileLimitedViewModel output = new()
+            {
+                Id = user.Id,
+                Bio = user.Bio,
+                Name = user.Name,
+            };
+
+            return Ok(output);
+        }
     }
 }
