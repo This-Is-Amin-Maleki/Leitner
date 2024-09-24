@@ -176,5 +176,27 @@ namespace APILeit.Controllers
                 new { message = "The study was successfully completed!" }
             );
         }
+
+        // GET: BoxController/Add
+        //[Route("Box/Next/{id}/{num}")]
+        [HttpGet]
+        [Route("api/[controller]/[action]/{id}/{num}")]
+        public async Task<ActionResult> Next(long id,int num)
+        {
+            
+            CardDto card = new();
+            try
+            {
+                var userId = long.Parse(_userManager.GetUserId(User)!);
+                card = await _boxService.ReadNextCardAsync(id, num, userId);
+            }
+            catch (Exception ex)
+            {
+                card.Id = 0;
+                card.Description = ex.Message;
+            }
+            return Ok(card);
+        }
+        
     }
 }
