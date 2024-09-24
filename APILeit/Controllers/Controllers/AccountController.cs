@@ -128,5 +128,29 @@ namespace APILeit.Controllers
 
             return Ok(result);
         }
+
+        [HttpPut]
+        [Route("api/[controller]/[action]")]
+        public async Task<IActionResult> Enable2FASave([FromBody] string model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var input = new TFAConfirmViewModel()
+            {
+                Code = model,
+                Principal = User,
+            };
+            var result = await _userService.TwoFactorConfirmAsync(input);
+            if (!result)
+            {
+                ModelState.AddModelError("Confirm", "Your two factor authenticator code could not be validated.");
+                return BadRequest(ModelState);
+            }
+
+            return Ok(new { message = "Two-factor authentication has been enabled successfully." });
+        }
     }
 }
