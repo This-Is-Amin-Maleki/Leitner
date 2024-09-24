@@ -36,5 +36,14 @@ namespace APILeit.Controllers
             List<BoxMiniDto> model = await _boxService.ReadAll4UserAsync(userId);
             return Ok(model);
         }
+
+        // GET: BoxController/List/id
+        [HttpGet]
+        [Route("api/[controller]/[action]/{collectionId}")]
+        public async Task<ActionResult> GetAllByCollection(long collectionId)
+        {
+            List<BoxMiniDto> model = await _boxService.ReadByCollectionAsync(collectionId);
+            return Ok(model);
+        }
     }
 }
