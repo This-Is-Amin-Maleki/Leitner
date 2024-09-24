@@ -196,5 +196,29 @@ namespace APILeit.Controllers
             ModelState.AddModelError(error.key, error.message);
             return BadRequest(ModelState);
         }
+
+        [HttpPost]
+        [Route("api/[controller]/[action]")]
+        public async Task<IActionResult> TwoFactor([FromBody] string model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _userService.TwoFactorCheckAsync(model);
+
+            if (result is LoginResult.Success)
+            {
+#warning    JWT
+                return Ok("JWT");
+            }
+
+            var error = result.LoginResultError();
+
+            ModelState.AddModelError(error.key, error.message);
+
+            return BadRequest(ModelState);
+#warning check modelState is OK!!
+        }
     }
 }
