@@ -47,5 +47,35 @@ namespace APILeit.Controllers
             var model = await _cardService.ReadCardLimitedAsync(id, userId);
             return Ok(model);
         }
+
+        // POST: CardController/Create
+        [HttpPost]
+        [Route("api/[controller]/[action]")]
+        public async Task<ActionResult> Create([FromBody] CardDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("XX", "Not Valid!");
+                return BadRequest(ModelState);
+            }
+
+            model.UserId = long.Parse(_userManager.GetUserId(User)!);
+#warning catch!!
+            try
+            {
+               await _cardService.AddCardAsync(model);
+            }
+            catch( Exception ex)
+            {
+                ModelState.AddModelError("xx", ex.Message);
+                return BadRequest(ModelState);
+            }
+
+            return CreatedAtAction(
+                nameof(GetAll),
+                new { id = model.Id},
+                new { message = "Card created!" }
+            );
+        }
     }
 }
