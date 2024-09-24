@@ -148,5 +148,33 @@ namespace APILeit.Controllers
 
             return Ok(model);
         }
+
+        // POST: BoxController/Add
+        [HttpPut]
+        [Route("api/[controller]/[action]")]
+        public async Task<ActionResult> Study([FromBody] ContainerStudiedDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("XX", "Not Valid!");
+                return BadRequest(ModelState);
+            }
+            #warning catch!!
+            try
+            {
+                await _boxService.UpdateAsync(model);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("xx", ex.Message);
+                return BadRequest(ModelState);
+            }
+
+            return CreatedAtAction(
+                nameof(GetAll),
+                new { },
+                new { message = "The study was successfully completed!" }
+            );
+        }
     }
 }
