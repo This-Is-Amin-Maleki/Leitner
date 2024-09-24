@@ -77,5 +77,65 @@ namespace APILeit.Controllers
                 new { message = "Card created!" }
             );
         }
+
+        // POST: CardController/Create
+        [HttpPost]
+        [Route("api/[controller]/[action]/{id}")]
+        public async Task<ActionResult> Upload(long id, IFormFile sheet)
+        {
+            if (sheet == null || sheet.Length == 0)
+            {
+                return CreatedAtAction(
+                nameof(GetAll),
+                    new { id },
+                    new { message = "No file uploaded!" }
+                );
+            }
+            bool error = false;
+            int processed = 0;
+            var extension = Path.GetExtension(sheet.FileName).ToLower();
+            var tempFilePath = Path.GetTempFileName() + extension;
+
+#warning catch!!
+            try
+            {
+                // Upload to temp
+                using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                {
+                    await sheet.CopyToAsync(stream);
+                }
+                // Processing data
+                List<Card> list = _fileService.ReadCardsFromExcelFile(tempFilePath, id, 1000);
+
+                //set userId
+                var userId = long.Parse(_userManager.GetUserId(User)!);
+                list.ForEach(x => x.UserId = userId);
+
+                await _cardService.BulkAddCardsAsync(list);
+            }
+            catch (Exception ex)
+            {
+                error = true;
+                ModelState.AddModelError("XX", ex.Message);
+            }
+            finally
+            {
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+            }
+
+            if (error)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return CreatedAtAction(
+                nameof(GetAll),
+                new { id },
+                new { message = "Cards upload successfully!" }
+            );
+        }
     }
 }
