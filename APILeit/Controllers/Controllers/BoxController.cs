@@ -26,5 +26,15 @@ namespace APILeit.Controllers
             _collectionService = collectionService;
             _userManager = userManager;
         }
+
+        // GET: BoxController
+        [HttpGet]
+        [Route("api/[controller]/[action]")]
+        public async Task<ActionResult> GetAll()
+        {
+            var userId = long.Parse(_userManager.GetUserId(User)!);
+            List<BoxMiniDto> model = await _boxService.ReadAll4UserAsync(userId);
+            return Ok(model);
+        }
     }
 }
