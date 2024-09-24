@@ -96,5 +96,22 @@ namespace APILeit.Controllers
                 new { message = "Card updated successfully!" }
             );
         }
+
+        [HttpGet]
+        [Route("api/[controller]/[action]/{id}")]
+        public async Task<ActionResult> CheckList([FromRoute] long id,[FromQuery] CardStatus? status,[FromQuery] int skip = 0)
+        {
+            CardCheckDto output;
+            try
+            {
+                output = await _cardService.ReadCardCheck(id, status, skip);
+                output.Skip = skip;
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            return Ok(output);
+        }
     }
 }
